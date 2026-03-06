@@ -157,6 +157,10 @@ namespace TP14_JeudelaVie
 
             InitializeGame();
             RenderGrid();
+
+#if DEBUG
+            // TestRleParser();  // Uncomment to test RLE parser
+#endif
         }
 
         /// <summary>
@@ -530,6 +534,50 @@ namespace TP14_JeudelaVie
             // Reinitialize with random pattern
             InitializeGame();
             RenderGrid();
+        }
+
+        private void TestRleParser()
+        {
+            // Simple glider pattern in RLE format
+            string gliderRle = @"#N Glider
+#C A small spaceship
+x = 3, y = 3, rule = B3/S23
+bob$2bo$3o!";
+
+            try
+            {
+                // Test parsing
+                GameOfLife.Pattern pattern = GameOfLife.RleParser.Parse(gliderRle);
+
+                MessageBox.Show($"Parse successful!\n" +
+                               $"Name: {pattern.Name}\n" +
+                               $"Description: {pattern.Description}\n" +
+                               $"Size: {pattern.Width}x{pattern.Height}\n" +
+                               $"Rule: {pattern.Rule}",
+                               "RLE Parser Test");
+
+                // Test writing
+                string written = GameOfLife.RleParser.Write(pattern);
+                MessageBox.Show($"Write successful!\n\n{written}", "RLE Writer Test");
+
+                // Verify roundtrip
+                GameOfLife.Pattern parsed2 = GameOfLife.RleParser.Parse(written);
+                bool cellsMatch = true;
+                for (int x = 0; x < pattern.Width; x++)
+                    for (int y = 0; y < pattern.Height; y++)
+                        if (pattern.Cells[x, y] != parsed2.Cells[x, y])
+                            cellsMatch = false;
+
+                MessageBox.Show(cellsMatch ? "Roundtrip test PASSED!" : "Roundtrip test FAILED!",
+                               "Roundtrip Test");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Test FAILED: {ex.Message}\n\nStack trace:\n{ex.StackTrace}",
+                               "Error",
+                               MessageBoxButtons.OK,
+                               MessageBoxIcon.Error);
+            }
         }
     }
 }
