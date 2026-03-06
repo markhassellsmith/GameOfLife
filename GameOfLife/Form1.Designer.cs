@@ -1,4 +1,4 @@
-﻿namespace TP14_JeudelaVie
+namespace TP14_JeudelaVie
 {
     partial class Form1
     {
@@ -10,7 +10,7 @@
         /// <summary>
         /// Nettoyage des ressources utilisées.
         /// </summary>
-        /// <param name="disposing">true si les ressources managées doivent être supprimées ; sinon, false.</param>
+        /// <param name="disposing">true si les ressources managées doivent être supprimées ; sinon, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -28,167 +28,241 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.menuEtatVitesse = new System.Windows.Forms.MenuStrip();
-            this.etatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.stopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.quitterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.vitesseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.lentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.middleSpeedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.rapideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.myTimer = new System.Windows.Forms.Timer(this.components);
-            this.squareModel = new System.Windows.Forms.PictureBox();
-            this.squareModelAlive = new System.Windows.Forms.PictureBox();
-            this.menuEtatVitesse.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.squareModel)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.squareModelAlive)).BeginInit();
-            this.SuspendLayout();
+            components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            menuEtatVitesse = new System.Windows.Forms.MenuStrip();
+            fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            resetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            simulationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            startToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            stopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            vitesseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            lentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            middleSpeedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            rapideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            patternToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            randomToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripIterationsTextbox = new System.Windows.Forms.ToolStripTextBox();
+            toolStripAliveCountBox = new System.Windows.Forms.ToolStripTextBox();
+            toolStripSpacebarComment = new System.Windows.Forms.ToolStripTextBox();
+            toolStripTextBoxStatus = new System.Windows.Forms.ToolStripTextBox();
+            myTimer = new System.Windows.Forms.Timer(components);
+            squareModel = new System.Windows.Forms.PictureBox();
+            squareModelAlive = new System.Windows.Forms.PictureBox();
+            menuEtatVitesse.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)squareModel).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)squareModelAlive).BeginInit();
+            SuspendLayout();
             // 
             // menuEtatVitesse
             // 
-            this.menuEtatVitesse.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.menuEtatVitesse.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.etatToolStripMenuItem,
-            this.vitesseToolStripMenuItem});
-            this.menuEtatVitesse.Location = new System.Drawing.Point(0, 0);
-            this.menuEtatVitesse.Name = "menuEtatVitesse";
-            this.menuEtatVitesse.Size = new System.Drawing.Size(447, 28);
-            this.menuEtatVitesse.TabIndex = 0;
-            this.menuEtatVitesse.Text = "menuStrip1";
+            menuEtatVitesse.ImageScalingSize = new System.Drawing.Size(20, 20);
+            menuEtatVitesse.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+                fileToolStripMenuItem,
+                simulationToolStripMenuItem,
+                vitesseToolStripMenuItem,
+                patternToolStripMenuItem,
+                toolStripIterationsTextbox,
+                toolStripAliveCountBox,
+                toolStripSpacebarComment,
+                toolStripTextBoxStatus
+            });
+            menuEtatVitesse.Location = new System.Drawing.Point(0, 0);
+            menuEtatVitesse.Name = "menuEtatVitesse";
+            menuEtatVitesse.Padding = new System.Windows.Forms.Padding(16, 4, 0, 4);
+            menuEtatVitesse.Size = new System.Drawing.Size(2146, 66);
+            menuEtatVitesse.TabIndex = 0;
+            menuEtatVitesse.Text = "menuStrip1";
+            menuEtatVitesse.ItemClicked += menuEtatVitesse_ItemClicked;
             // 
-            // etatToolStripMenuItem
+            // fileToolStripMenuItem
             // 
-            this.etatToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.newToolStripMenuItem,
-            this.runToolStripMenuItem,
-            this.stopToolStripMenuItem,
-            this.quitterToolStripMenuItem});
-            this.etatToolStripMenuItem.Name = "etatToolStripMenuItem";
-            this.etatToolStripMenuItem.Size = new System.Drawing.Size(57, 24);
-            this.etatToolStripMenuItem.Text = "State";
+            fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { resetToolStripMenuItem, exitToolStripMenuItem });
+            fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+            fileToolStripMenuItem.Size = new System.Drawing.Size(103, 58);
+            fileToolStripMenuItem.Text = "File";
             // 
-            // nouveauToolStripMenuItem
+            // resetToolStripMenuItem
             // 
-            this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.newToolStripMenuItem.Text = "New";
-            this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
+            resetToolStripMenuItem.Name = "resetToolStripMenuItem";
+            resetToolStripMenuItem.Size = new System.Drawing.Size(240, 60);
+            resetToolStripMenuItem.Text = "Reset";
+            resetToolStripMenuItem.Click += newToolStripMenuItem_Click;
             // 
-            // marcheToolStripMenuItem
+            // exitToolStripMenuItem
             // 
-            this.runToolStripMenuItem.Name = "runToolStripMenuItem";
-            this.runToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.runToolStripMenuItem.Text = "Start";
-            this.runToolStripMenuItem.Click += new System.EventHandler(this.runToolStripMenuItem_Click);
+            exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            exitToolStripMenuItem.Size = new System.Drawing.Size(240, 60);
+            exitToolStripMenuItem.Text = "Exit";
+            exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
             // 
-            // arretToolStripMenuItem
+            // simulationToolStripMenuItem
             // 
-            this.stopToolStripMenuItem.Name = "stopToolStripMenuItem";
-            this.stopToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.stopToolStripMenuItem.Text = "Stop";
-            this.stopToolStripMenuItem.Click += new System.EventHandler(this.stopToolStripMenuItem_Click);
+            simulationToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { startToolStripMenuItem, stopToolStripMenuItem });
+            simulationToolStripMenuItem.Name = "simulationToolStripMenuItem";
+            simulationToolStripMenuItem.Size = new System.Drawing.Size(201, 58);
+            simulationToolStripMenuItem.Text = "Simulation";
             // 
-            // quitterToolStripMenuItem
+            // startToolStripMenuItem
             // 
-            this.quitterToolStripMenuItem.Name = "quitterToolStripMenuItem";
-            this.quitterToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.quitterToolStripMenuItem.Text = "Exit";
-            this.quitterToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            startToolStripMenuItem.Name = "startToolStripMenuItem";
+            startToolStripMenuItem.Size = new System.Drawing.Size(240, 60);
+            startToolStripMenuItem.Text = "Start";
+            startToolStripMenuItem.Click += runToolStripMenuItem_Click;
+            // 
+            // stopToolStripMenuItem
+            // 
+            stopToolStripMenuItem.Name = "stopToolStripMenuItem";
+            stopToolStripMenuItem.Size = new System.Drawing.Size(240, 60);
+            stopToolStripMenuItem.Text = "Stop";
+            stopToolStripMenuItem.Click += stopToolStripMenuItem_Click;
             // 
             // vitesseToolStripMenuItem
             // 
-            this.vitesseToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.lentToolStripMenuItem,
-            this.middleSpeedToolStripMenuItem,
-            this.rapideToolStripMenuItem});
-            this.vitesseToolStripMenuItem.Name = "vitesseToolStripMenuItem";
-            this.vitesseToolStripMenuItem.Size = new System.Drawing.Size(65, 24);
-            this.vitesseToolStripMenuItem.Text = "Speed";
+            vitesseToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { lentToolStripMenuItem, middleSpeedToolStripMenuItem, rapideToolStripMenuItem });
+            vitesseToolStripMenuItem.Name = "vitesseToolStripMenuItem";
+            vitesseToolStripMenuItem.Size = new System.Drawing.Size(146, 58);
+            vitesseToolStripMenuItem.Text = "Speed";
             // 
             // lentToolStripMenuItem
             // 
-            this.lentToolStripMenuItem.Name = "lentToolStripMenuItem";
-            this.lentToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.lentToolStripMenuItem.Text = "Slow";
-            this.lentToolStripMenuItem.Click += new System.EventHandler(this.slowToolStripMenuItem_Click);
+            lentToolStripMenuItem.Name = "lentToolStripMenuItem";
+            lentToolStripMenuItem.Size = new System.Drawing.Size(303, 60);
+            lentToolStripMenuItem.Text = "Slow";
+            lentToolStripMenuItem.Click += slowToolStripMenuItem_Click;
             // 
-            // moyenToolStripMenuItem
+            // middleSpeedToolStripMenuItem
             // 
-            this.middleSpeedToolStripMenuItem.Name = "middleSpeedToolStripMenuItem";
-            this.middleSpeedToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.middleSpeedToolStripMenuItem.Text = "Medium";
-            this.middleSpeedToolStripMenuItem.Click += new System.EventHandler(this.normalSpeedToolStripMenuItem_Click);
+            middleSpeedToolStripMenuItem.Name = "middleSpeedToolStripMenuItem";
+            middleSpeedToolStripMenuItem.Size = new System.Drawing.Size(303, 60);
+            middleSpeedToolStripMenuItem.Text = "Medium";
+            middleSpeedToolStripMenuItem.Click += normalSpeedToolStripMenuItem_Click;
             // 
             // rapideToolStripMenuItem
             // 
-            this.rapideToolStripMenuItem.Name = "rapideToolStripMenuItem";
-            this.rapideToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
-            this.rapideToolStripMenuItem.Text = "Quick";
-            this.rapideToolStripMenuItem.Click += new System.EventHandler(this.quickToolStripMenuItem_Click);
+            rapideToolStripMenuItem.Name = "rapideToolStripMenuItem";
+            rapideToolStripMenuItem.Size = new System.Drawing.Size(303, 60);
+            rapideToolStripMenuItem.Text = "Quick";
+            rapideToolStripMenuItem.Click += quickToolStripMenuItem_Click;
             // 
-            // tmrAvanceTemps
+            // patternToolStripMenuItem
             // 
-            this.myTimer.Tick += new System.EventHandler(this.tmrClock_Tick);
+            patternToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { randomToolStripMenuItem });
+            patternToolStripMenuItem.Name = "patternToolStripMenuItem";
+            patternToolStripMenuItem.Size = new System.Drawing.Size(162, 58);
+            patternToolStripMenuItem.Text = "Pattern";
             // 
-            // picInitial
+            // randomToolStripMenuItem
             // 
-            this.squareModel.BackColor = System.Drawing.SystemColors.ActiveBorder;
-            this.squareModel.Location = new System.Drawing.Point(74, 104);
-            this.squareModel.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.squareModel.Name = "squareModel";
-            this.squareModel.Size = new System.Drawing.Size(20, 25);
-            this.squareModel.TabIndex = 1;
-            this.squareModel.TabStop = false;
+            randomToolStripMenuItem.Checked = true;
+            randomToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            randomToolStripMenuItem.Name = "randomToolStripMenuItem";
+            randomToolStripMenuItem.Size = new System.Drawing.Size(359, 60);
+            randomToolStripMenuItem.Text = "Random";
+            randomToolStripMenuItem.Click += randomToolStripMenuItem_Click;
             // 
-            // picVivant
+            // toolStripIterationsTextbox
             // 
-            this.squareModelAlive.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.squareModelAlive.Location = new System.Drawing.Point(131, 104);
-            this.squareModelAlive.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.squareModelAlive.Name = "squareModelAlive";
-            this.squareModelAlive.Size = new System.Drawing.Size(20, 25);
-            this.squareModelAlive.TabIndex = 2;
-            this.squareModelAlive.TabStop = false;
+            toolStripIterationsTextbox.Font = new System.Drawing.Font("Segoe UI", 12.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            toolStripIterationsTextbox.MaxLength = 200;
+            toolStripIterationsTextbox.Name = "toolStripIterationsTextbox";
+            toolStripIterationsTextbox.Size = new System.Drawing.Size(250, 58);
+            toolStripIterationsTextbox.Text = "Tick = 0";
+            toolStripIterationsTextbox.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // toolStripAliveCountBox
+            // 
+            toolStripAliveCountBox.Font = new System.Drawing.Font("Segoe UI", 12.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            toolStripAliveCountBox.Name = "toolStripAliveCountBox";
+            toolStripAliveCountBox.Size = new System.Drawing.Size(245, 58);
+            toolStripAliveCountBox.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // toolStripSpacebarComment
+            // 
+            toolStripSpacebarComment.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            toolStripSpacebarComment.Font = new System.Drawing.Font("Segoe UI", 12.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            toolStripSpacebarComment.Name = "toolStripSpacebarComment";
+            toolStripSpacebarComment.Size = new System.Drawing.Size(520, 58);
+            toolStripSpacebarComment.Text = "Spacebar=Start/Stop";
+            toolStripSpacebarComment.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // toolStripTextBoxStatus
+            // 
+            toolStripTextBoxStatus.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            toolStripTextBoxStatus.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            toolStripTextBoxStatus.ForeColor = System.Drawing.Color.Red;
+            toolStripTextBoxStatus.Name = "toolStripTextBoxStatus";
+            toolStripTextBoxStatus.Size = new System.Drawing.Size(250, 58);
+            toolStripTextBoxStatus.Text = "Stopped";
+            toolStripTextBoxStatus.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // myTimer
+            // 
+            myTimer.Tick += tmrClock_Tick;
+            // 
+            // squareModel
+            // 
+            squareModel.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            squareModel.Location = new System.Drawing.Point(194, 266);
+            squareModel.Margin = new System.Windows.Forms.Padding(7, 11, 7, 11);
+            squareModel.Name = "squareModel";
+            squareModel.Size = new System.Drawing.Size(51, 64);
+            squareModel.TabIndex = 1;
+            squareModel.TabStop = false;
+            // 
+            // squareModelAlive
+            // 
+            squareModelAlive.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
+            squareModelAlive.Location = new System.Drawing.Point(343, 266);
+            squareModelAlive.Margin = new System.Windows.Forms.Padding(7, 11, 7, 11);
+            squareModelAlive.Name = "squareModelAlive";
+            squareModelAlive.Size = new System.Drawing.Size(51, 64);
+            squareModelAlive.TabIndex = 2;
+            squareModelAlive.TabStop = false;
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(447, 325);
-            this.Controls.Add(this.squareModelAlive);
-            this.Controls.Add(this.squareModel);
-            this.Controls.Add(this.menuEtatVitesse);
-            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.Name = "Form1";
-            this.Text = "Game of Life";
-            this.Load += new System.EventHandler(this.Form1_Load);
-            this.menuEtatVitesse.ResumeLayout(false);
-            this.menuEtatVitesse.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.squareModel)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.squareModelAlive)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new System.Drawing.SizeF(21F, 51F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(2146, 1318);
+            Controls.Add(squareModelAlive);
+            Controls.Add(squareModel);
+            Controls.Add(menuEtatVitesse);
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
+            Margin = new System.Windows.Forms.Padding(7, 11, 7, 11);
+            Name = "Form1";
+            Text = "Game of Life";
+            Load += Form1_Load;
+            menuEtatVitesse.ResumeLayout(false);
+            menuEtatVitesse.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)squareModel).EndInit();
+            ((System.ComponentModel.ISupportInitialize)squareModelAlive).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
 
         private System.Windows.Forms.MenuStrip menuEtatVitesse;
-        private System.Windows.Forms.ToolStripMenuItem etatToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem runToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem resetToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem simulationToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem startToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem stopToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem quitterToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem vitesseToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem lentToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem middleSpeedToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem rapideToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem patternToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem randomToolStripMenuItem;
         private System.Windows.Forms.Timer myTimer;
         private System.Windows.Forms.PictureBox squareModel;
         private System.Windows.Forms.PictureBox squareModelAlive;
+        private System.Windows.Forms.ToolStripTextBox toolStripSpacebarComment;
+        private System.Windows.Forms.ToolStripTextBox toolStripIterationsTextbox;
+        private System.Windows.Forms.ToolStripTextBox toolStripAliveCountBox;
+        private System.Windows.Forms.ToolStripTextBox toolStripTextBoxStatus;
     }
 }
-
