@@ -1,3 +1,4 @@
+using GameOfLife;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -574,6 +575,89 @@ namespace TP14_JeudelaVie
                     }
                 }
             }
+        }
+
+        private void importPatternToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.Filter = "RLE Pattern Files (*.rle)|*.rle|All Files (*.*)|*.*";
+                ofd.Title = "Import Pattern";
+
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        // Read and parse the RLE file
+                        string rleContent = System.IO.File.ReadAllText(ofd.FileName);
+                        GameOfLife.Pattern pattern = GameOfLife.RleParser.Parse(rleContent);
+
+                        // Show preview dialog
+                        using (var previewDialog = new PatternPreviewDialog(pattern))
+                        {
+                            if (previewDialog.ShowDialog() == DialogResult.OK)
+                            {
+                                // User clicked Load - apply pattern to grid
+                                LoadPatternToGrid(pattern);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error importing pattern:\n{ex.Message}",
+                                       "Import Error",
+                                       MessageBoxButtons.OK,
+                                       MessageBoxIcon.Error);
+                    }
+                }
+            }
+        }
+
+        private void LoadPatternToGrid(GameOfLife.Pattern pattern)
+        {
+            // Clear the grid
+            for (int i = 0; i < squarePerLine; i++)
+            {
+                for (int j = 0; j < squarePerColumn; j++)
+                {
+                    squaresState[i, j] = false;
+                    cellColor[i, j] = squareModel.BackColor;
+                }
+            }
+
+            // Center the pattern on the grid
+            int startX = (squarePerLine - pattern.Width) / 2;
+            int startY = (squarePerColumn - pattern.Height) / 2;
+
+            // Load pattern cells
+            AliveCount = 0;
+            for (int x = 0; x < pattern.Width && startX + x < squarePerLine; x++)
+            {
+                for (int y = 0; y < pattern.Height && startY + y < squarePerColumn; y++)
+                {
+                    if (pattern.Cells[x, y])
+                    {
+                        squaresState[startX + x, startY + y] = true;
+                        cellColor[startX + x, startY + y] = squareModelAlive.BackColor;
+                        AliveCount++;
+                    }
+                }
+            }
+
+            // Reset game state
+            TickNumber = 0;
+            toolStripIterationsTextbox.Text = "Tick = 0";
+            toolStripAliveCountBox.Text = AliveCount.ToString() + " cells alive.";
+            PreviousAliveCount = -1;
+            stableConsecutiveCount = 0;
+
+            // Render the loaded pattern
+            RenderGrid();
+
+            MessageBox.Show($"Pattern '{pattern.Name}' loaded successfully!\n{AliveCount} cells alive.",
+                           "Import Successful",
+                           MessageBoxButtons.OK,
+                           MessageBoxIcon.Information);
         }
 
         private void TestRleParser()
