@@ -33,6 +33,7 @@ namespace TP14_JeudelaVie
             menuEtatVitesse = new System.Windows.Forms.MenuStrip();
             fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             resetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            exportPatternToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             simulationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             startToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -58,16 +59,7 @@ namespace TP14_JeudelaVie
             // menuEtatVitesse
             // 
             menuEtatVitesse.ImageScalingSize = new System.Drawing.Size(20, 20);
-            menuEtatVitesse.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-                fileToolStripMenuItem,
-                simulationToolStripMenuItem,
-                vitesseToolStripMenuItem,
-                patternToolStripMenuItem,
-                toolStripIterationsTextbox,
-                toolStripAliveCountBox,
-                toolStripSpacebarComment,
-                toolStripTextBoxStatus
-            });
+            menuEtatVitesse.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { fileToolStripMenuItem, simulationToolStripMenuItem, vitesseToolStripMenuItem, patternToolStripMenuItem, toolStripIterationsTextbox, toolStripAliveCountBox, toolStripSpacebarComment, toolStripTextBoxStatus });
             menuEtatVitesse.Location = new System.Drawing.Point(0, 0);
             menuEtatVitesse.Name = "menuEtatVitesse";
             menuEtatVitesse.Padding = new System.Windows.Forms.Padding(16, 4, 0, 4);
@@ -78,22 +70,30 @@ namespace TP14_JeudelaVie
             // 
             // fileToolStripMenuItem
             // 
-            fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { resetToolStripMenuItem, exitToolStripMenuItem });
+            fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { resetToolStripMenuItem, exportPatternToolStripMenuItem, exitToolStripMenuItem });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            fileToolStripMenuItem.Size = new System.Drawing.Size(103, 58);
+            fileToolStripMenuItem.Size = new System.Drawing.Size(99, 58);
             fileToolStripMenuItem.Text = "File";
             // 
             // resetToolStripMenuItem
             // 
             resetToolStripMenuItem.Name = "resetToolStripMenuItem";
-            resetToolStripMenuItem.Size = new System.Drawing.Size(240, 60);
+            resetToolStripMenuItem.Size = new System.Drawing.Size(433, 60);
             resetToolStripMenuItem.Text = "Reset";
             resetToolStripMenuItem.Click += newToolStripMenuItem_Click;
+            // 
+            // exportPatternToolStripMenuItem
+            // 
+            exportPatternToolStripMenuItem.Name = "exportPatternToolStripMenuItem";
+            exportPatternToolStripMenuItem.Size = new System.Drawing.Size(433, 60);
+            exportPatternToolStripMenuItem.Text = "Export Pattern ...";
+            exportPatternToolStripMenuItem.TextImageRelation = System.Windows.Forms.TextImageRelation.Overlay;
+            exportPatternToolStripMenuItem.Click += exportPatternToolStripMenuItem_Click;
             // 
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            exitToolStripMenuItem.Size = new System.Drawing.Size(240, 60);
+            exitToolStripMenuItem.Size = new System.Drawing.Size(433, 60);
             exitToolStripMenuItem.Text = "Exit";
             exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
             // 
@@ -101,7 +101,7 @@ namespace TP14_JeudelaVie
             // 
             simulationToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { startToolStripMenuItem, stopToolStripMenuItem });
             simulationToolStripMenuItem.Name = "simulationToolStripMenuItem";
-            simulationToolStripMenuItem.Size = new System.Drawing.Size(201, 58);
+            simulationToolStripMenuItem.Size = new System.Drawing.Size(220, 58);
             simulationToolStripMenuItem.Text = "Simulation";
             // 
             // startToolStripMenuItem
@@ -158,7 +158,7 @@ namespace TP14_JeudelaVie
             randomToolStripMenuItem.Checked = true;
             randomToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             randomToolStripMenuItem.Name = "randomToolStripMenuItem";
-            randomToolStripMenuItem.Size = new System.Drawing.Size(359, 60);
+            randomToolStripMenuItem.Size = new System.Drawing.Size(304, 60);
             randomToolStripMenuItem.Text = "Random";
             randomToolStripMenuItem.Click += randomToolStripMenuItem_Click;
             // 
@@ -264,5 +264,6 @@ namespace TP14_JeudelaVie
         private System.Windows.Forms.ToolStripTextBox toolStripIterationsTextbox;
         private System.Windows.Forms.ToolStripTextBox toolStripAliveCountBox;
         private System.Windows.Forms.ToolStripTextBox toolStripTextBoxStatus;
+        private System.Windows.Forms.ToolStripMenuItem exportPatternToolStripMenuItem;
     }
 }

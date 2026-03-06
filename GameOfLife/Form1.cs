@@ -536,6 +536,46 @@ namespace TP14_JeudelaVie
             RenderGrid();
         }
 
+        private void exportPatternToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (SaveFileDialog sfd = new SaveFileDialog())
+            {
+                sfd.Filter = "RLE Pattern Files (*.rle)|*.rle|All Files (*.*)|*.*";
+                sfd.DefaultExt = "rle";
+                sfd.Title = "Export Pattern";
+                sfd.FileName = "pattern.rle";
+
+                if (sfd.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        // Create pattern from current grid state
+                        var pattern = new GameOfLife.Pattern(squaresState)
+                        {
+                            Name = "Exported Pattern",
+                            Description = $"Exported at tick {TickNumber} with {AliveCount} alive cells"
+                        };
+
+                        // Write to file
+                        string rleContent = GameOfLife.RleParser.Write(pattern);
+                        System.IO.File.WriteAllText(sfd.FileName, rleContent);
+
+                        MessageBox.Show($"Pattern exported successfully to:\n{sfd.FileName}",
+                                       "Export Successful",
+                                       MessageBoxButtons.OK,
+                                       MessageBoxIcon.Information);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error exporting pattern:\n{ex.Message}",
+                                       "Export Error",
+                                       MessageBoxButtons.OK,
+                                       MessageBoxIcon.Error);
+                    }
+                }
+            }
+        }
+
         private void TestRleParser()
         {
             // Simple glider pattern in RLE format

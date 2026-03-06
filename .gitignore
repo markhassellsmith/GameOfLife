@@ -6,6 +6,12 @@ out/
 [Dd]ocumentations/
 *.idea/
 
+# User-generated pattern files
+PatternFiles/
+*.rle
+
+# But allow example patterns
+!ExamplePatterns/*.rle
 
 # Created by https://www.toptal.com/developers/gitignore/api/csharp
 # Edit at https://www.toptal.com/developers/gitignore?templates=csharp
