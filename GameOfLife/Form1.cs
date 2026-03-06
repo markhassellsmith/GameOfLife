@@ -95,6 +95,13 @@ namespace TP14_JeudelaVie
         // per-cell color to preserve birth color (age)
         private Color[,] cellColor = new Color[squarePerLine, squarePerColumn];
 
+        // Mouse drag editing fields
+        private bool isDragging = false;
+
+        private bool dragPaintMode = true; // true = paint alive, false = erase
+        private Point currentMouseCell = new Point(-1, -1); // Current cell under mouse
+        private bool mouseOverGrid = false; // Is mouse over the grid
+
         /// <summary>
         /// Form used for rendering the entire grid.
         /// </summary>
@@ -151,7 +158,13 @@ namespace TP14_JeudelaVie
                 Image = gridBitmap,
                 SizeMode = PictureBoxSizeMode.Normal
             };
-            gridDisplay.MouseClick += Grid_Click;
+
+            gridDisplay.MouseDown += Grid_MouseDown;
+            gridDisplay.MouseMove += Grid_MouseMove;
+            gridDisplay.MouseUp += Grid_MouseUp;
+            gridDisplay.MouseEnter += Grid_MouseEnter;
+            gridDisplay.MouseLeave += Grid_MouseLeave;
+            gridDisplay.Paint += Grid_Paint; // Add paint handler for cursor overlay
             this.Controls.Add(gridDisplay);
 
             this.Size = new Size(positionOffsetX + bitmapWidth + positionOffsetX, positionOffsetY + bitmapHeight + positionOffsetY + 50);
@@ -235,38 +248,6 @@ namespace TP14_JeudelaVie
             //squaresState[1, 2] = true;
             //squaresState[2, 2] = true;
             //squaresState[2, 3] = true;
-        }
-
-        private void Grid_Click(object sender, MouseEventArgs e)
-        {
-            // Translate mouse coordinates to grid indices
-            int i = e.X / cellSpacing;
-            int j = e.Y / cellSpacing;
-
-            if (i >= 0 && i < squarePerLine && j >= 0 && j < squarePerColumn)
-            {
-                // Toggle and keep AliveCount correct
-                squaresState[i, j] = !squaresState[i, j];
-                if (squaresState[i, j])
-                {
-                    AliveCount++;
-                    // assign birth color (current generation color)
-                    cellColor[i, j] = squareModelAlive.BackColor;
-                }
-                else
-                {
-                    AliveCount = Math.Max(0, AliveCount - 1); // avoid negative counts
-                    // reset color when dead
-                    cellColor[i, j] = squareModel.BackColor;
-                }
-
-                // Reset stability counter on manual change
-                stableConsecutiveCount = 0;
-                PreviousAliveCount = AliveCount;
-
-                toolStripAliveCountBox.Text = AliveCount.ToString() + " cells alive.";
-                RenderGrid();
-            }
         }
 
         private List<(int i, int j)> changedCells = new List<(int, int)>();
@@ -702,6 +683,216 @@ bob$2bo$3o!";
                                MessageBoxButtons.OK,
                                MessageBoxIcon.Error);
             }
+        }
+
+        private void Grid_MouseDown(object sender, MouseEventArgs e)
+        {
+            // Start dragging
+            isDragging = true;
+
+            // Determine paint or erase mode based on button
+            if (e.Button == MouseButtons.Left)
+                dragPaintMode = true;  // Left = paint alive
+            else if (e.Button == MouseButtons.Right)
+                dragPaintMode = false; // Right = erase
+            else
+                return; // Ignore other buttons
+
+            // Paint/erase the initial cell
+            PaintCell(e.X, e.Y);
+        }
+
+        private void Grid_MouseMove(object sender, MouseEventArgs e)
+        {
+            // Update current cell position
+            int cellI = e.X / cellSpacing;
+            int cellJ = e.Y / cellSpacing;
+
+            if (cellI != currentMouseCell.X || cellJ != currentMouseCell.Y)
+            {
+                currentMouseCell = new Point(cellI, cellJ);
+                gridDisplay.Invalidate(); // Redraw to show cursor
+            }
+
+            // Only process if we're dragging
+            if (!isDragging)
+                return;
+
+            // Paint/erase cells as we drag over them
+            PaintCell(e.X, e.Y);
+        }
+
+        private void Grid_MouseUp(object sender, MouseEventArgs e)
+        {
+            // Stop dragging
+            isDragging = false;
+        }
+
+        private void Grid_MouseEnter(object sender, EventArgs e)
+        {
+            mouseOverGrid = true;
+            gridDisplay.Invalidate();
+        }
+
+        private void Grid_MouseLeave(object sender, EventArgs e)
+        {
+            mouseOverGrid = false;
+            currentMouseCell = new Point(-1, -1);
+            gridDisplay.Invalidate();
+        }
+
+        private void PaintCell(int mouseX, int mouseY)
+        {
+            // Translate mouse coordinates to grid indices (center of brush)
+            int centerI = mouseX / cellSpacing;
+            int centerJ = mouseY / cellSpacing;
+
+            // Check center bounds
+            if (centerI < 0 || centerI >= squarePerLine || centerJ < 0 || centerJ >= squarePerColumn)
+                return;
+
+            // Track changed cells for dirty rendering
+            List<(int, int)> cellsToUpdate = new List<(int, int)>();
+
+            if (dragPaintMode)
+            {
+                // FINE-POINT SHARPIE: Paint only single cell
+                if (PaintSingleCell(centerI, centerJ, true))
+                    cellsToUpdate.Add((centerI, centerJ));
+            }
+            else
+            {
+                // BROAD ERASER: Erase 5×5 area
+                for (int di = -2; di <= 2; di++)
+                {
+                    for (int dj = -2; dj <= 2; dj++)
+                    {
+                        int i = centerI + di;
+                        int j = centerJ + dj;
+
+                        // Check bounds for each cell in the eraser area
+                        if (i >= 0 && i < squarePerLine && j >= 0 && j < squarePerColumn)
+                        {
+                            if (PaintSingleCell(i, j, false))
+                                cellsToUpdate.Add((i, j));
+                        }
+                    }
+                }
+            }
+
+            // Only update display if cells actually changed
+            if (cellsToUpdate.Count > 0)
+            {
+                toolStripAliveCountBox.Text = AliveCount.ToString() + " cells alive.";
+                RenderGridDirty(cellsToUpdate);  // Only redraw changed cells!
+            }
+        }
+
+        private bool PaintSingleCell(int i, int j, bool shouldBeAlive)
+        {
+            // Get current state
+            bool wasAlive = squaresState[i, j];
+
+            // Only update if state changes
+            if (wasAlive == shouldBeAlive)
+                return false;  // No change
+
+            // Update cell state
+            squaresState[i, j] = shouldBeAlive;
+
+            // Update color and count
+            if (shouldBeAlive)
+            {
+                AliveCount++;
+                cellColor[i, j] = squareModelAlive.BackColor;
+            }
+            else
+            {
+                AliveCount = Math.Max(0, AliveCount - 1);
+                cellColor[i, j] = squareModel.BackColor;
+            }
+
+            // Reset stability counter on manual change
+            stableConsecutiveCount = 0;
+            PreviousAliveCount = AliveCount;
+
+            return true;  // Cell changed
+        }
+
+        private void Grid_Paint(object sender, PaintEventArgs e)
+        {
+            // Only show cursor when mouse is over grid and we have a valid cell position
+            if (!mouseOverGrid || currentMouseCell.X < 0 || currentMouseCell.Y < 0)
+                return;
+
+            int cellI = currentMouseCell.X;
+            int cellJ = currentMouseCell.Y;
+
+            // Check bounds
+            if (cellI < 0 || cellI >= squarePerLine || cellJ < 0 || cellJ >= squarePerColumn)
+                return;
+
+            // Draw cursor overlay based on current mode
+            using (Pen cursorPen = new Pen(Color.Black, 2))
+            {
+                if (isDragging && !dragPaintMode) // Show eraser cursor right-click dragging
+                {
+                    // Calculate 5×5 eraser area bounds (centered on current cell)
+                    int eraserRadius = 2; // -2 to +2 = 5 cells
+                    int startI = Math.Max(0, cellI - eraserRadius);
+                    int startJ = Math.Max(0, cellJ - eraserRadius);
+                    int endI = Math.Min(squarePerLine - 1, cellI + eraserRadius);
+                    int endJ = Math.Min(squarePerColumn - 1, cellJ + eraserRadius);
+
+                    // Calculate pixel coordinates
+                    int x = startI * cellSpacing - 1;
+                    int y = startJ * cellSpacing - 1;
+                    int width = (endI - startI + 1) * cellSpacing + 2;
+                    int height = (endJ - startJ + 1) * cellSpacing + 2;
+
+                    // Draw rounded rectangle
+                    int cornerRadius = 8;
+                    e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+
+                    using (System.Drawing.Drawing2D.GraphicsPath path = new System.Drawing.Drawing2D.GraphicsPath())
+                    {
+                        path.AddArc(x, y, cornerRadius, cornerRadius, 180, 90);
+                        path.AddArc(x + width - cornerRadius, y, cornerRadius, cornerRadius, 270, 90);
+                        path.AddArc(x + width - cornerRadius, y + height - cornerRadius, cornerRadius, cornerRadius, 0, 90);
+                        path.AddArc(x, y + height - cornerRadius, cornerRadius, cornerRadius, 90, 90);
+                        path.CloseFigure();
+
+                        e.Graphics.DrawPath(cursorPen, path);
+                    }
+                }
+            }
+        }
+
+        private void clearGridToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Clear all cells to dead
+            for (int i = 0; i < squarePerLine; i++)
+            {
+                for (int j = 0; j < squarePerColumn; j++)
+                {
+                    squaresState[i, j] = false;
+                    cellColor[i, j] = squareModel.BackColor;
+                }
+            }
+
+            // Reset counters
+            TickNumber = 0;
+            AliveCount = 0;
+            PreviousAliveCount = -1;
+            stableConsecutiveCount = 0;
+
+            // Update UI
+            toolStripIterationsTextbox.Text = "Tick = 0";
+            toolStripAliveCountBox.Text = "0 cells alive.";
+            toolStripIterationsTextbox.BackColor = Color.White;
+
+            // Render empty grid
+            RenderGrid();
         }
     }
 }

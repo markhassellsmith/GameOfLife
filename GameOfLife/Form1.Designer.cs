@@ -33,6 +33,7 @@ namespace TP14_JeudelaVie
             menuEtatVitesse = new System.Windows.Forms.MenuStrip();
             fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             resetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            clearGridToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             exportPatternToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             importPatternToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -71,7 +72,7 @@ namespace TP14_JeudelaVie
             // 
             // fileToolStripMenuItem
             // 
-            fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { resetToolStripMenuItem, exportPatternToolStripMenuItem, importPatternToolStripMenuItem, exitToolStripMenuItem });
+            fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { resetToolStripMenuItem, clearGridToolStripMenuItem, exportPatternToolStripMenuItem, importPatternToolStripMenuItem, exitToolStripMenuItem });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             fileToolStripMenuItem.Size = new System.Drawing.Size(99, 58);
             fileToolStripMenuItem.Text = "File";
@@ -82,6 +83,13 @@ namespace TP14_JeudelaVie
             resetToolStripMenuItem.Size = new System.Drawing.Size(433, 60);
             resetToolStripMenuItem.Text = "Reset";
             resetToolStripMenuItem.Click += newToolStripMenuItem_Click;
+            // 
+            // clearGridToolStripMenuItem
+            // 
+            clearGridToolStripMenuItem.Name = "clearGridToolStripMenuItem";
+            clearGridToolStripMenuItem.Size = new System.Drawing.Size(433, 60);
+            clearGridToolStripMenuItem.Text = "Clear the Grid";
+            clearGridToolStripMenuItem.Click += clearGridToolStripMenuItem_Click;
             // 
             // exportPatternToolStripMenuItem
             // 
@@ -274,5 +282,6 @@ namespace TP14_JeudelaVie
         private System.Windows.Forms.ToolStripTextBox toolStripTextBoxStatus;
         private System.Windows.Forms.ToolStripMenuItem exportPatternToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importPatternToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem clearGridToolStripMenuItem;
     }
 }
