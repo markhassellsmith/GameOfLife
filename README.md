@@ -182,8 +182,6 @@ Automatically stops simulation when population count remains unchanged for 5 con
 
 ## 📜 Credits
 
-### Original Repository
-Forked from [Im-Rises/GameOfLife](https://github.com/Im-Rises/GameOfLife)
 
 ### Enhancements in This Fork
 - 360-color spectrum age visualization system
@@ -198,13 +196,24 @@ Created by mathematician **John Horton Conway** in 1970.
 
 ## 📄 License
 
-[Specify your license here - e.g., MIT, GPL, Apache 2.0]
+[ MIT ]
 
-## 👤 Author
+## 👤 Most Recent Author
 
-[Mark H. Smith]  
-[markhassellsmith]  
-[Your Email/Contact - optional]
+[Mark H. Smith]  :
+- <https://github.com/markhassellsmith>
+
+
+## Contributors
+
+Quentin MOREL :
+
+- @Im-Rises
+- <https://github.com/Im-Rises>
+
+
+
+
 
 ---
 
