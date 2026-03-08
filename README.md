@@ -235,7 +235,6 @@ if (AliveCount == PreviousAliveCount) {
 
 ### Planned Features
 - [ ] **Pattern Library**: Pre-load famous patterns (R-pentomino, gliders, pulsars, Gosper Glider Gun)
-- [x] **Save/Load Configurations**: Export/import pattern files (RLE format)
 - [ ] **Statistics Panel**: 
   - Birth/death rates per generation
   - Population density percentage
@@ -246,7 +245,6 @@ if (AliveCount == PreviousAliveCount) {
 - [ ] **Export Options**: Save as GIF animation or video
 - [ ] **Configurable Grid**: Runtime grid size adjustment
 - [ ] **Additional Palettes**: Monochrome, heat map, custom color schemes
-- [x] **Drawing Tools**: Paint/erase brush modes for pattern creation
 - [ ] **Undo/Redo**: Step backward/forward through generations
 - [ ] **Configurable aging factor**: Runtime adjustment of color change speed (`cellAgingColorFactor`)
 - [ ] **Hybrid mode**: Combine both color systems (hue = birth, brightness = age)
