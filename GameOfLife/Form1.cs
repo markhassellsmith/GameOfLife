@@ -15,6 +15,17 @@ using WinFormsFractal;
 namespace TP14_JeudelaVie
 {
     /// <summary>
+    /// Defines the coloring mode for cells in the simulation.
+    /// </summary>
+    public enum ColorMode
+    {
+        /// <summary>
+        /// Cells are colored based on the generation they were born in, and retain that color for their lifetime.
+        /// </summary>
+        BirthGeneration
+    }
+
+    /// <summary>
     /// Main form for Conway's Game of Life simulation.
     /// </summary>
     public partial class Form1 : Form
@@ -95,12 +106,20 @@ namespace TP14_JeudelaVie
         // per-cell color to preserve birth color (age)
         private Color[,] cellColor = new Color[squarePerLine, squarePerColumn];
 
+        // Coloring mode fields (for future extensibility)
+        private static ColorMode currentColorMode = ColorMode.BirthGeneration;
+
+        private static int[,] cellAge = new int[squarePerLine, squarePerColumn];
+
         // Mouse drag editing fields
         private bool isDragging = false;
 
         private bool dragPaintMode = true; // true = paint alive, false = erase
         private Point currentMouseCell = new Point(-1, -1); // Current cell under mouse
         private bool mouseOverGrid = false; // Is mouse over the grid
+
+        // Renderer for grid visualization
+        private GridRenderer gridRenderer;
 
         /// <summary>
         /// Form used for rendering the entire grid.
@@ -170,6 +189,10 @@ namespace TP14_JeudelaVie
             this.Size = new Size(positionOffsetX + bitmapWidth + positionOffsetX, positionOffsetY + bitmapHeight + positionOffsetY + 50);
 
             InitializeGame();
+
+            // Initialize the grid renderer
+            gridRenderer = new GridRenderer(gridBitmap, gridDisplay, squareModel, squarePerLine, squarePerColumn, squareSize, cellSpacing);
+
             RenderGrid();
 
 #if DEBUG
@@ -184,9 +207,10 @@ namespace TP14_JeudelaVie
         {
             TickNumber = 0;
             toolStripIterationsTextbox.Text = "Tick = " + TickNumber.ToString();
-            colornumber = 0;
+            // colornumber =   0;  // this sets the first color to index 0 of the palette (Red) on each new game
+            colornumber = 241;  // this sets the first color to index 241 in (0,0,255) in the palette (Blue)
 
-            // Set the initial color to the first color in Spectrum360
+            // Set the initial color using the colornumber as the index in Spectrum360
             squareModelAlive.BackColor = Color.FromArgb(
                 ColorPalettes.Spectrum360[colornumber].red,
                 ColorPalettes.Spectrum360[colornumber].green,
@@ -256,9 +280,8 @@ namespace TP14_JeudelaVie
         {
             changedCells.Clear();
 
-            colornumber++;
-            colornumber = colornumber % 360;
-            squareModelAlive.BackColor = Color.FromArgb(ColorPalettes.Spectrum360[colornumber].red, ColorPalettes.Spectrum360[colornumber].green, ColorPalettes.Spectrum360[colornumber].blue);
+            UpdateGenerationColor();
+
             toolStripIterationsTextbox.BackColor = squareModelAlive.BackColor;
             System.Drawing.Color InverseColor = Color.FromArgb(255 - squareModelAlive.BackColor.R, 255 - squareModelAlive.BackColor.G, 255 - squareModelAlive.BackColor.B);
             toolStripIterationsTextbox.ForeColor = InverseColor;
@@ -436,73 +459,25 @@ namespace TP14_JeudelaVie
 
         private void RenderGrid()
         {
-            using (Graphics g = Graphics.FromImage(gridBitmap))
-            {
-                Brush deadBrush = new SolidBrush(squareModel.BackColor);
-                Dictionary<Color, Brush> aliveBrushes = new Dictionary<Color, Brush>();
-
-                for (int i = 0; i < squarePerLine; i++)
-                {
-                    for (int j = 0; j < squarePerColumn; j++)
-                    {
-                        Brush brush;
-                        if (squaresState[i, j])
-                        {
-                            Color aliveColor = cellColor[i, j];
-                            if (!aliveBrushes.TryGetValue(aliveColor, out brush))
-                            {
-                                brush = new SolidBrush(aliveColor);
-                                aliveBrushes[aliveColor] = brush;
-                            }
-                        }
-                        else
-                        {
-                            brush = deadBrush;
-                        }
-
-                        g.FillRectangle(brush, i * cellSpacing, j * cellSpacing, squareSize, squareSize);
-                    }
-                }
-
-                deadBrush.Dispose();
-                foreach (var b in aliveBrushes.Values)
-                    b.Dispose();
-            }
-            gridDisplay.Invalidate();
+            gridRenderer.RenderGrid(squaresState, cellColor);
         }
 
         private void RenderGridDirty(List<(int i, int j)> changedCells)
         {
-            using (Graphics g = Graphics.FromImage(gridBitmap))
-            {
-                Brush deadBrush = new SolidBrush(squareModel.BackColor);
-                Dictionary<Color, Brush> aliveBrushes = new Dictionary<Color, Brush>();
+            gridRenderer.RenderGridDirty(squaresState, cellColor, changedCells);
+        }
 
-                foreach (var (i, j) in changedCells)
-                {
-                    Brush brush;
-                    if (squaresState[i, j])
-                    {
-                        Color aliveColor = cellColor[i, j];
-                        if (!aliveBrushes.TryGetValue(aliveColor, out brush))
-                        {
-                            brush = new SolidBrush(aliveColor);
-                            aliveBrushes[aliveColor] = brush;
-                        }
-                    }
-                    else
-                    {
-                        brush = deadBrush;
-                    }
-
-                    g.FillRectangle(brush, i * cellSpacing, j * cellSpacing, squareSize, squareSize);
-                }
-
-                deadBrush.Dispose();
-                foreach (var b in aliveBrushes.Values)
-                    b.Dispose();
-            }
-            gridDisplay.Invalidate();
+        /// <summary>
+        /// Updates the generation color based on current color mode.
+        /// </summary>
+        private void UpdateGenerationColor()
+        {
+            colornumber++;
+            colornumber = colornumber % ColorPalettes.Spectrum360.Length;
+            squareModelAlive.BackColor = Color.FromArgb(
+                ColorPalettes.Spectrum360[colornumber].red,
+                ColorPalettes.Spectrum360[colornumber].green,
+                ColorPalettes.Spectrum360[colornumber].blue);
         }
 
         private void toolStripMenuItem2_Click(object sender, EventArgs e)
