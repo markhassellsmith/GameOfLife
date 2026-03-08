@@ -22,7 +22,12 @@ namespace TP14_JeudelaVie
         /// <summary>
         /// Cells are colored based on the generation they were born in, and retain that color for their lifetime.
         /// </summary>
-        BirthGeneration
+        BirthGeneration,
+
+        /// <summary>
+        /// Cells start blue and age through the color spectrum as they survive.
+        /// </summary>
+        CellAging
     }
 
     /// <summary>
@@ -103,6 +108,12 @@ namespace TP14_JeudelaVie
 
         private const int stableRequiredTicks = 5;
 
+        /// <summary>
+        /// Multiplier for cell aging color progression. Higher values = faster color changes.
+        /// 1 = normal (1 color per generation), 2 = 2x speed, 3 = 3x speed, etc.
+        /// </summary>
+        private const int cellAgingColorFactor = 3;  // Adjust this to change aging speed!
+
         // per-cell color to preserve birth color (age)
         private Color[,] cellColor = new Color[squarePerLine, squarePerColumn];
 
@@ -161,6 +172,13 @@ namespace TP14_JeudelaVie
 
             stopToolStripMenuItem.Checked = true;
             middleSpeedToolStripMenuItem.Checked = true;
+
+            // Set up color mode combo box
+            colorModeComboBox.Items.Add("Constant Color from Birth");
+            colorModeComboBox.Items.Add("Cell Changes Color as Aging");
+            colorModeComboBox.SelectedIndex = 0; // Default to Constant Color from Birth
+            colorModeComboBox.DropDownStyle = ComboBoxStyle.DropDownList; // Prevent typing
+            colorModeComboBox.Width = 400; // Wide enough for longer descriptions
 
             cellSpacing = squareSize + squareSize / 4;
 
@@ -232,11 +250,27 @@ namespace TP14_JeudelaVie
                     if (squaresState[i, j])
                     {
                         AliveCount++;
-                        cellColor[i, j] = squareModelAlive.BackColor;
+
+                        // Set color based on current mode
+                        if (currentColorMode == ColorMode.BirthGeneration)
+                        {
+                            cellColor[i, j] = squareModelAlive.BackColor;
+                            cellAge[i, j] = 0;
+                        }
+                        else // CellAging mode
+                        {
+                            cellAge[i, j] = 0; // All initial cells start at age 0
+                            int colorIndex = 240; // Blue (0,0,255)
+                            cellColor[i, j] = Color.FromArgb(
+                                ColorPalettes.Spectrum360[colorIndex].red,
+                                ColorPalettes.Spectrum360[colorIndex].green,
+                                ColorPalettes.Spectrum360[colorIndex].blue);
+                        }
                     }
                     else
                     {
                         cellColor[i, j] = squareModel.BackColor;
+                        cellAge[i, j] = 0;
                     }
                 }
             }
@@ -282,9 +316,6 @@ namespace TP14_JeudelaVie
 
             UpdateGenerationColor();
 
-            toolStripIterationsTextbox.BackColor = squareModelAlive.BackColor;
-            System.Drawing.Color InverseColor = Color.FromArgb(255 - squareModelAlive.BackColor.R, 255 - squareModelAlive.BackColor.G, 255 - squareModelAlive.BackColor.B);
-            toolStripIterationsTextbox.ForeColor = InverseColor;
             TickNumber++;
             toolStripIterationsTextbox.Text = "Tick = " + TickNumber.ToString();
             AliveCount = 0;
@@ -321,12 +352,53 @@ namespace TP14_JeudelaVie
                     }
 
                     // If a cell is born this tick, record its birth color (current generation color)
+                    // Handle cell birth and aging based on color mode
+                    bool cellStateChanged = false;
+                    bool cellAged = false;
+
                     if (squaresFutureState[i, j] && !squaresState[i, j])
                     {
-                        cellColor[i, j] = squareModelAlive.BackColor;
+                        // Cell is born this tick
+                        if (currentColorMode == ColorMode.BirthGeneration)
+                        {
+                            cellColor[i, j] = squareModelAlive.BackColor;
+                            cellAge[i, j] = 0;
+                        }
+                        else // CellAging mode
+                        {
+                            cellAge[i, j] = 0; // Start at age 0
+                            int colorIndex = 240; // Blue (0,0,255)
+                            cellColor[i, j] = Color.FromArgb(
+                                ColorPalettes.Spectrum360[colorIndex].red,
+                                ColorPalettes.Spectrum360[colorIndex].green,
+                                ColorPalettes.Spectrum360[colorIndex].blue);
+                        }
+                        cellStateChanged = true;
+                    }
+                    else if (squaresFutureState[i, j] && squaresState[i, j])
+                    {
+                        // Cell survives - age it if in CellAging mode
+                        if (currentColorMode == ColorMode.CellAging)
+                        {
+                            cellAge[i, j]++;
+                            // Apply aging factor and allow continuous cycling through palette
+                            int ageDisplay = cellAge[i, j] * cellAgingColorFactor;
+                            int colorIndex = (240 + ageDisplay) % ColorPalettes.Spectrum360.Length;
+                            cellColor[i, j] = Color.FromArgb(
+                                ColorPalettes.Spectrum360[colorIndex].red,
+                                ColorPalettes.Spectrum360[colorIndex].green,
+                                ColorPalettes.Spectrum360[colorIndex].blue);
+                            cellAged = true;
+                        }
+                    }
+                    else if (!squaresFutureState[i, j] && squaresState[i, j])
+                    {
+                        // Cell dies
+                        cellStateChanged = true;
                     }
 
-                    if (squaresFutureState[i, j] != squaresState[i, j])
+                    // Add to changed cells if state changed OR cell aged
+                    if (cellStateChanged || cellAged)
                     {
                         changedCells.Add((i, j));
                     }
@@ -472,12 +544,19 @@ namespace TP14_JeudelaVie
         /// </summary>
         private void UpdateGenerationColor()
         {
-            colornumber++;
-            colornumber = colornumber % ColorPalettes.Spectrum360.Length;
-            squareModelAlive.BackColor = Color.FromArgb(
-                ColorPalettes.Spectrum360[colornumber].red,
-                ColorPalettes.Spectrum360[colornumber].green,
-                ColorPalettes.Spectrum360[colornumber].blue);
+            if (currentColorMode == ColorMode.BirthGeneration)
+            {
+                colornumber++;
+                colornumber = colornumber % ColorPalettes.Spectrum360.Length;
+                squareModelAlive.BackColor = Color.FromArgb(
+                    ColorPalettes.Spectrum360[colornumber].red,
+                    ColorPalettes.Spectrum360[colornumber].green,
+                    ColorPalettes.Spectrum360[colornumber].blue);
+
+                // Update tick counter color only in BirthGeneration mode
+                toolStripIterationsTextbox.BackColor = squareModelAlive.BackColor;
+            }
+            // In CellAging mode, we don't update the global color or tick counter
         }
 
         private void toolStripMenuItem2_Click(object sender, EventArgs e)
@@ -693,7 +772,7 @@ bob$2bo$3o!";
             if (!isDragging)
                 return;
 
-            // Paint/erase cells as we drag over them
+            // Paint/erase cells as we drag to
             PaintCell(e.X, e.Y);
         }
 
@@ -779,7 +858,21 @@ bob$2bo$3o!";
             if (shouldBeAlive)
             {
                 AliveCount++;
-                cellColor[i, j] = squareModelAlive.BackColor;
+
+                // Set color based on current mode
+                if (currentColorMode == ColorMode.BirthGeneration)
+                {
+                    cellColor[i, j] = squareModelAlive.BackColor;
+                }
+                else // CellAging mode
+                {
+                    cellAge[i, j] = 0; // New manually painted cell starts at age 0
+                    int colorIndex = 240; // Blue (0,0,255)
+                    cellColor[i, j] = Color.FromArgb(
+                        ColorPalettes.Spectrum360[colorIndex].red,
+                        ColorPalettes.Spectrum360[colorIndex].green,
+                        ColorPalettes.Spectrum360[colorIndex].blue);
+                }
             }
             else
             {
@@ -868,6 +961,75 @@ bob$2bo$3o!";
 
             // Render empty grid
             RenderGrid();
+        }
+
+        private void colorModeComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Switch the color mode based on selection
+            ColorMode newMode = colorModeComboBox.SelectedIndex == 0
+                ? ColorMode.BirthGeneration
+                : ColorMode.CellAging;
+
+            if (newMode != currentColorMode)
+            {
+                currentColorMode = newMode;
+
+                // Update tick counter appearance based on mode
+                if (currentColorMode == ColorMode.CellAging)
+                {
+                    // Reset to white background with black text in CellAging mode
+                    toolStripIterationsTextbox.BackColor = Color.White;
+                    toolStripIterationsTextbox.ForeColor = Color.Black;
+                }
+                else
+                {
+                    // Restore generation color in BirthGeneration mode
+                    toolStripIterationsTextbox.BackColor = squareModelAlive.BackColor;
+                    System.Drawing.Color InverseColor = Color.FromArgb(
+                        255 - squareModelAlive.BackColor.R,
+                        255 - squareModelAlive.BackColor.G,
+                        255 - squareModelAlive.BackColor.B);
+                    toolStripIterationsTextbox.ForeColor = InverseColor;
+                }
+
+                // Re-color all existing alive cells based on new mode
+                RecolorCellsForMode();
+
+                // Redraw the grid
+                RenderGrid();
+            }
+        }
+
+        /// <summary>
+        /// Re-colors all existing alive cells based on the current color mode.
+        /// </summary>
+        private void RecolorCellsForMode()
+        {
+            for (int i = 0; i < squarePerLine; i++)
+            {
+                for (int j = 0; j < squarePerColumn; j++)
+                {
+                    if (squaresState[i, j]) // If cell is alive
+                    {
+                        if (currentColorMode == ColorMode.BirthGeneration)
+                        {
+                            // Use current generation color
+                            cellColor[i, j] = squareModelAlive.BackColor;
+                            cellAge[i, j] = 0;
+                        }
+                        else // CellAging mode
+                        {
+                            // Apply aging factor for consistent coloring
+                            int ageDisplay = cellAge[i, j] * cellAgingColorFactor;
+                            int colorIndex = (240 + ageDisplay) % ColorPalettes.Spectrum360.Length;
+                            cellColor[i, j] = Color.FromArgb(
+                                ColorPalettes.Spectrum360[colorIndex].red,
+                                ColorPalettes.Spectrum360[colorIndex].green,
+                                ColorPalettes.Spectrum360[colorIndex].blue);
+                        }
+                    }
+                }
+            }
         }
     }
 }

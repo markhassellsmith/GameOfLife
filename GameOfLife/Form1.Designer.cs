@@ -50,6 +50,7 @@ namespace TP14_JeudelaVie
             toolStripAliveCountBox = new System.Windows.Forms.ToolStripTextBox();
             toolStripSpacebarComment = new System.Windows.Forms.ToolStripTextBox();
             toolStripTextBoxStatus = new System.Windows.Forms.ToolStripTextBox();
+            colorModeComboBox = new System.Windows.Forms.ToolStripComboBox();
             myTimer = new System.Windows.Forms.Timer(components);
             squareModel = new System.Windows.Forms.PictureBox();
             squareModelAlive = new System.Windows.Forms.PictureBox();
@@ -61,11 +62,11 @@ namespace TP14_JeudelaVie
             // menuEtatVitesse
             // 
             menuEtatVitesse.ImageScalingSize = new System.Drawing.Size(20, 20);
-            menuEtatVitesse.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { fileToolStripMenuItem, simulationToolStripMenuItem, vitesseToolStripMenuItem, patternToolStripMenuItem, toolStripIterationsTextbox, toolStripAliveCountBox, toolStripSpacebarComment, toolStripTextBoxStatus });
+            menuEtatVitesse.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { fileToolStripMenuItem, simulationToolStripMenuItem, vitesseToolStripMenuItem, patternToolStripMenuItem, colorModeComboBox, toolStripIterationsTextbox, toolStripAliveCountBox, toolStripSpacebarComment, toolStripTextBoxStatus });
             menuEtatVitesse.Location = new System.Drawing.Point(0, 0);
             menuEtatVitesse.Name = "menuEtatVitesse";
             menuEtatVitesse.Padding = new System.Windows.Forms.Padding(16, 4, 0, 4);
-            menuEtatVitesse.Size = new System.Drawing.Size(2146, 66);
+            menuEtatVitesse.Size = new System.Drawing.Size(2649, 66);
             menuEtatVitesse.TabIndex = 0;
             menuEtatVitesse.Text = "menuStrip1";
             menuEtatVitesse.ItemClicked += menuEtatVitesse_ItemClicked;
@@ -213,6 +214,14 @@ namespace TP14_JeudelaVie
             toolStripTextBoxStatus.Text = "Stopped";
             toolStripTextBoxStatus.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
+            // colorModeComboBox
+            // 
+            colorModeComboBox.DropDownWidth = 450;
+            colorModeComboBox.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            colorModeComboBox.Name = "colorModeComboBox";
+            colorModeComboBox.Size = new System.Drawing.Size(400, 58);
+            colorModeComboBox.SelectedIndexChanged += colorModeComboBox_SelectedIndexChanged;
+            // 
             // myTimer
             // 
             myTimer.Tick += tmrClock_Tick;
@@ -241,11 +250,12 @@ namespace TP14_JeudelaVie
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(21F, 51F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(2146, 1318);
+            ClientSize = new System.Drawing.Size(2649, 1316);
             Controls.Add(squareModelAlive);
             Controls.Add(squareModel);
             Controls.Add(menuEtatVitesse);
             Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
+            KeyPreview = true;
             Margin = new System.Windows.Forms.Padding(7, 11, 7, 11);
             Name = "Form1";
             Text = "Game of Life";
@@ -283,5 +293,6 @@ namespace TP14_JeudelaVie
         private System.Windows.Forms.ToolStripMenuItem exportPatternToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importPatternToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem clearGridToolStripMenuItem;
+        private System.Windows.Forms.ToolStripComboBox colorModeComboBox;
     }
 }
