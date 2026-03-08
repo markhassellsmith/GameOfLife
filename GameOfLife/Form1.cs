@@ -129,6 +129,22 @@ namespace TP14_JeudelaVie
         private Point currentMouseCell = new Point(-1, -1); // Current cell under mouse
         private bool mouseOverGrid = false; // Is mouse over the grid
 
+        /// <summary>
+        /// Population density percentage (0-100). Controls the proportion of alive cells.
+        /// Adjustable via mouse wheel in 5% increments. Default is 50%.
+        /// </summary>
+        private int populationDensity = 50;
+
+        /// <summary>
+        /// Tracks whether to show the density overlay (true when mouse wheel was recently used).
+        /// </summary>
+        private bool showDensityOverlay = false;
+
+        /// <summary>
+        /// Timer to hide the density overlay after 5 seconds of inactivity.
+        /// </summary>
+        private System.Windows.Forms.Timer densityOverlayTimer;
+
         // Renderer for grid visualization
         private GridRenderer gridRenderer;
 
@@ -201,6 +217,7 @@ namespace TP14_JeudelaVie
             gridDisplay.MouseUp += Grid_MouseUp;
             gridDisplay.MouseEnter += Grid_MouseEnter;
             gridDisplay.MouseLeave += Grid_MouseLeave;
+            gridDisplay.MouseWheel += Grid_MouseWheel;
             gridDisplay.Paint += Grid_Paint; // Add paint handler for cursor overlay
             this.Controls.Add(gridDisplay);
 
@@ -210,6 +227,16 @@ namespace TP14_JeudelaVie
 
             // Initialize the grid renderer
             gridRenderer = new GridRenderer(gridBitmap, gridDisplay, squareModel, squarePerLine, squarePerColumn, squareSize, cellSpacing);
+
+            // Initialize density overlay timer (5 seconds)
+            densityOverlayTimer = new System.Windows.Forms.Timer();
+            densityOverlayTimer.Interval = 5000; // 5 seconds
+            densityOverlayTimer.Tick += (s, ev) =>
+            {
+                showDensityOverlay = false;
+                densityOverlayTimer.Stop();
+                gridDisplay.Invalidate(); // Redraw to hide overlay
+            };
 
             RenderGrid();
 
@@ -782,6 +809,112 @@ bob$2bo$3o!";
             isDragging = false;
         }
 
+        private void Grid_MouseWheel(object sender, MouseEventArgs e)
+        {
+            // Adjust density in 5% increments
+            if (e.Delta > 0)
+            {
+                // Scroll up = increase density
+                populationDensity = Math.Min(100, populationDensity + 5);
+            }
+            else if (e.Delta < 0)
+            {
+                // Scroll down = decrease density
+                populationDensity = Math.Max(0, populationDensity - 5);
+            }
+
+            // Show density overlay and restart timer
+            showDensityOverlay = true;
+            densityOverlayTimer.Stop(); // Reset timer
+            densityOverlayTimer.Start(); // Start 5-second countdown
+            gridDisplay.Invalidate(); // Trigger redraw to show density
+
+            // Apply density to grid
+            ApplyDensityToGrid();
+        }
+
+        /// <summary>
+        /// Adjusts the grid to match the target population density by randomly adding or removing cells.
+        /// </summary>
+        private void ApplyDensityToGrid()
+        {
+            int totalCells = squarePerLine * squarePerColumn;
+            int targetAliveCount = (int)Math.Round(totalCells * populationDensity / 100.0);
+            int currentAliveCount = AliveCount;
+
+            Random random = new Random();
+            List<(int, int)> changedCells = new List<(int, int)>();
+
+            if (targetAliveCount > currentAliveCount)
+            {
+                // Need to add cells
+                int cellsToAdd = targetAliveCount - currentAliveCount;
+                int attempts = 0;
+                int maxAttempts = cellsToAdd * 150; // Higher multiplier for sparse grids
+
+                while (cellsToAdd > 0 && attempts < maxAttempts)
+                {
+                    int i = random.Next(squarePerLine);
+                    int j = random.Next(squarePerColumn);
+
+                    if (!squaresState[i, j]) // Cell is dead
+                    {
+                        squaresState[i, j] = true;
+                        AliveCount++;
+
+                        // Set color based on current mode
+                        if (currentColorMode == ColorMode.BirthGeneration)
+                        {
+                            cellColor[i, j] = squareModelAlive.BackColor;
+                        }
+                        else // CellAging mode
+                        {
+                            cellAge[i, j] = 0;
+                            int colorIndex = 240; // Blue
+                            cellColor[i, j] = Color.FromArgb(
+                                ColorPalettes.Spectrum360[colorIndex].red,
+                                ColorPalettes.Spectrum360[colorIndex].green,
+                                ColorPalettes.Spectrum360[colorIndex].blue);
+                        }
+
+                        changedCells.Add((i, j));
+                        cellsToAdd--;
+                    }
+                    attempts++;
+                }
+            }
+            else if (targetAliveCount < currentAliveCount)
+            {
+                // Need to remove cells
+                int cellsToRemove = currentAliveCount - targetAliveCount;
+                int attempts = 0;
+                int maxAttempts = cellsToRemove * 150; // Higher multiplier for sparse grids
+
+                while (cellsToRemove > 0 && attempts < maxAttempts)
+                {
+                    int i = random.Next(squarePerLine);
+                    int j = random.Next(squarePerColumn);
+
+                    if (squaresState[i, j]) // Cell is alive
+                    {
+                        squaresState[i, j] = false;
+                        AliveCount--;
+                        cellColor[i, j] = squareModel.BackColor;
+                        changedCells.Add((i, j));
+                        cellsToRemove--;
+                    }
+                    attempts++;
+                }
+            }
+
+            // Update UI and render
+            if (changedCells.Count > 0)
+            {
+                toolStripAliveCountBox.Text = AliveCount.ToString() + " cells alive.";
+                RenderGridDirty(changedCells);
+            }
+        }
+
         private void Grid_MouseEnter(object sender, EventArgs e)
         {
             mouseOverGrid = true;
@@ -889,6 +1022,29 @@ bob$2bo$3o!";
 
         private void Grid_Paint(object sender, PaintEventArgs e)
         {
+            // Show density overlay if mouse wheel was used
+            if (showDensityOverlay && mouseOverGrid)
+            {
+                string densityText = $"Density: {populationDensity}%";
+                using (Font font = new Font("Segoe UI", 16, FontStyle.Bold))
+                using (Brush textBrush = new SolidBrush(Color.Black))
+                using (Brush bgBrush = new SolidBrush(Color.FromArgb(220, 255, 200, 0))) // Semi-transparent orange
+                {
+                    SizeF textSize = e.Graphics.MeasureString(densityText, font);
+
+                    // Position near mouse cursor (offset to avoid covering cells)
+                    Point mousePos = gridDisplay.PointToClient(Cursor.Position);
+                    int overlayX = mousePos.X + 20;
+                    int overlayY = mousePos.Y - 30;
+
+                    // Draw background box
+                    e.Graphics.FillRectangle(bgBrush, overlayX, overlayY, textSize.Width + 10, textSize.Height + 5);
+
+                    // Draw text
+                    e.Graphics.DrawString(densityText, font, textBrush, overlayX + 5, overlayY + 2);
+                }
+            }
+
             // Only show cursor when mouse is over grid and we have a valid cell position
             if (!mouseOverGrid || currentMouseCell.X < 0 || currentMouseCell.Y < 0)
                 return;

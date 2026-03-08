@@ -47,11 +47,12 @@ Cells dynamically change color based on how many generations they survive, visua
 Mouse wheel adjusts initial population density; applies to all patterns (destructive of original pattern):
 - **Scroll up**: Increase density (more alive cells)
 - **Scroll down**: Decrease density (fewer alive cells)
+- Works whether simulation is stopped or running (applies to current grid state)
 - **Range from 0% to 100%** in 5% increments (default 50%)
 - **Density value appears near mouse cursor for real-time feedback while adjusting 
 - **Applies to**:
   - Random pattern: Adjusts probability of alive cells at start
-  - Any pattern: Randomly kills or alives cells to achieve target density while preserving overall structure
+  - Blank grid or Any pattern: Randomly kills or alives cells to achieve target density while preserving overall structure
   - Imported RLE patterns: Randomly kills or alives cells to achieve target density
 	 
 ### Core Simulation
