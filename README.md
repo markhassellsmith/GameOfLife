@@ -43,6 +43,17 @@ Cells dynamically change color based on how many generations they survive, visua
   - **Stable patterns**: 2×2 blocks cycle through rainbow continuously
   - **Exponential decay**: Most cells die young (blue dominates), few reach old age
 
+###  Density Variation
+Mouse wheel adjusts initial population density; applies to all patterns (destructive of original pattern):
+- **Scroll up**: Increase density (more alive cells)
+- **Scroll down**: Decrease density (fewer alive cells)
+- **Range from 0% to 100%** in 5% increments (default 50%)
+- **Density value appears near mouse cursor for real-time feedback while adjusting 
+- **Applies to**:
+  - Random pattern: Adjusts probability of alive cells at start
+  - Any pattern: Randomly kills or alives cells to achieve target density while preserving overall structure
+  - Imported RLE patterns: Randomly kills or alives cells to achieve target density
+	 
 ### Core Simulation
 - **150×72 cell grid** (10,800 cells total)
 - Classic Conway's rules (B3/S23): Birth on 3 neighbors, Survival on 2-3 neighbors
