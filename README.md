@@ -20,6 +20,7 @@ Cells preserve their birth generation color throughout their lifetime, creating 
 - **360-color gradient** cycling through full RGB spectrum
 - **Birth generation tracking**: Each generation assigns a unique color
 - **Lifetime preservation**: Cells keep their birth color until death
+- **Complementary foreground colors**: Tick counter text color automatically adjusts to complement the background for maximum readability
 - **Pattern revelation**:
   - **Still lifes** appear as solid single colors (ancient survivors)
   - **Oscillators** display alternating color bands
@@ -72,6 +73,7 @@ Mouse wheel adjusts initial population density; applies to all patterns (destruc
 ### Interactive Controls
 - **Color Mode Selector**: Dropdown to switch between birth and aging visualization modes
 - **Mouse Drag**: Left-click paints cells, right-click erases 5×5 area
+- **Mouse Wheel**: Adjusts population density in 5% increments (0-100%)
 - **Spacebar Hotkey**: Instant start/stop toggle
 - **Menu System**: Organized controls for simulation, speed, and patterns
 - **Real-time Statistics**: Live generation count and population display
@@ -129,6 +131,26 @@ dotnet run
 
 #### **Pattern**
 - **Random** - Generate random starting configuration *[default]*
+- **Load Preset...**
+  - **Shapes...** - Classic Game of Life patterns
+	- Glider - Simple period-4 spaceship
+	- Lightweight Spaceship (LWSS) - Period-4 spaceship
+	- Blinker - Period-2 oscillator
+	- Toad - Period-2 oscillator
+	- Beacon - Period-2 oscillator
+	- Pulsar - Period-3 oscillator
+	- *──────────*
+	- R-Pentomino - Famous methuselah (~1100 generations)
+	- Acorn - Methuselah (~5200 generations)
+	- Diehard - Methuselah (dies after 130 generations)
+	- *──────────*
+	- Gosper Glider Gun - Period-30 glider generator
+  - **Tilings...** - Full-grid geometric patterns
+	- Chessboard (5×5) - Alternating blocks with perfect symmetry
+	- Ladder Brick - Dynamic brick pattern with oscillators
+	- Diagonal Stripes - 45° bands spawning spaceships
+	- Double Diagonal - Cross-hatch diamond lattice
+	- Concentric Rectangles - Radial pulsing waves
 
 #### **Color Mode Dropdown** (in menu bar)
 Select visualization mode:
@@ -145,6 +167,8 @@ Select visualization mode:
 |--------|--------|
 | `Left Click + Drag` | Paint cells alive |
 | `Right Click + Drag` | Erase 5×5 area |
+| `Mouse Wheel Up` | Increase population density by 5% |
+| `Mouse Wheel Down` | Decrease population density by 5% |
 
 ### Status Bar
 - **Color Mode Selector**: Dropdown to switch between birth and aging visualization modes
@@ -246,8 +270,8 @@ if (AliveCount == PreviousAliveCount) {
 ## 🚧 Future Enhancements
 
 ### Planned Features
-- [ ] **Pattern Library**: Pre-load famous patterns (R-pentomino, gliders, pulsars, Gosper Glider Gun)
-- [ ] **Statistics Panel**: 
+- [x] ~~**Pattern Library**~~ **COMPLETED** - Now includes 10 preset shapes and 5 tiling patterns
+- [ ] **Statistics Panel**:
   - Birth/death rates per generation
   - Population density percentage
   - Peak population reached
@@ -305,11 +329,15 @@ Original repository: [Im-Rises/GameOfLife](https://github.com/Im-Rises/GameOfLif
   - 360-color spectrum generation age visualization
   - Dynamic age-based color progression with lifespan visualization
   - Real-time mode switching with instant grid recoloring
+- **Pattern Library**:
+  - 10 preset shapes (spaceships, oscillators, methuselahs, guns)
+  - 5 mathematically interesting tiling patterns
+  - Organized menu hierarchy (Shapes... and Tilings... submenus)
 - Optimized rendering pipeline (dirty rectangles + brush caching + age-aware invalidation)
 - Enhanced UI with color mode selector, status indicators, and reorganized menus
-- RLE pattern import/export support
+- RLE pattern import/export support with preview dialog
 - Stability detection and auto-stop
-- Interactive paint/erase tools
+- Interactive paint/erase tools with mouse wheel density control
 - Comprehensive documentation with statistical analysis
 
 ### Conway's Game of Life
@@ -358,12 +386,26 @@ Quentin MOREL:
 
 Try these to explore the dual color modes:
 
+### Classic Patterns
 1. **Create a 2×2 block** in aging mode → Watch it cycle through the rainbow forever
 2. **Start a random soup** → Compare how birth vs. aging modes show pattern evolution
 3. **Import an R-pentomino** → Observe birth explosion vs. survival patterns
 4. **Switch modes mid-simulation** → See how the same pattern looks from different perspectives
 5. **Look for "blue deserts"** in aging mode → Regions with constant rebirth (high chaos)
 6. **Find "red islands"** in aging mode → Stable patterns with ancient cells
+
+### Tiling Patterns
+7. **Load Chessboard tiling** in birth mode → See ancient solid blocks vs. random soup chaos
+8. **Load Ladder Brick tiling** in aging mode → Watch oscillators stay blue while stable parts age to red
+9. **Load Diagonal Stripes** in birth mode → See rainbow trails where gliders travel along diagonals
+10. **Load Double Diagonal** in aging mode → Find the ancient red intersections vs. young blue edges
+11. **Load Concentric Rectangles** → Observe radial wave propagation in birth mode vs. mortality distribution in aging mode
+12. **Try all 5 tilings** at different densities → See how density affects pattern evolution and longevity
+
+### Density Experiments (Mouse Wheel)
+13. **Mouse wheel a random soup** down to 10% density → Watch sparse evolution with long-lived structures
+14. **Mouse wheel any tiling pattern** up to 90% density → Observe overcrowding and rapid die-off
+15. **Adjust density mid-simulation** → See how population changes affect stable patterns
 
 ---
 

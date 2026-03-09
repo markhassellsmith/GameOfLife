@@ -46,14 +46,34 @@ namespace TP14_JeudelaVie
             rapideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             patternToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             randomToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            loadPresetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            shapesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            gliderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            lwssToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            blinkerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            beaconToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            pulsarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            rPentominoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            acornToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            diehardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            gosperGliderGunToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            colorModeComboBox = new System.Windows.Forms.ToolStripComboBox();
             toolStripIterationsTextbox = new System.Windows.Forms.ToolStripTextBox();
             toolStripAliveCountBox = new System.Windows.Forms.ToolStripTextBox();
             toolStripSpacebarComment = new System.Windows.Forms.ToolStripTextBox();
             toolStripTextBoxStatus = new System.Windows.Forms.ToolStripTextBox();
-            colorModeComboBox = new System.Windows.Forms.ToolStripComboBox();
             myTimer = new System.Windows.Forms.Timer(components);
             squareModel = new System.Windows.Forms.PictureBox();
             squareModelAlive = new System.Windows.Forms.PictureBox();
+            tilingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            chessboardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            brickPatternToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            diagonalStripesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            doubleDiagonalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            concentricRectanglesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             menuEtatVitesse.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)squareModel).BeginInit();
             ((System.ComponentModel.ISupportInitialize)squareModelAlive).BeginInit();
@@ -66,7 +86,7 @@ namespace TP14_JeudelaVie
             menuEtatVitesse.Location = new System.Drawing.Point(0, 0);
             menuEtatVitesse.Name = "menuEtatVitesse";
             menuEtatVitesse.Padding = new System.Windows.Forms.Padding(16, 4, 0, 4);
-            menuEtatVitesse.Size = new System.Drawing.Size(2649, 66);
+            menuEtatVitesse.Size = new System.Drawing.Size(3066, 66);
             menuEtatVitesse.TabIndex = 0;
             menuEtatVitesse.Text = "menuStrip1";
             menuEtatVitesse.ItemClicked += menuEtatVitesse_ItemClicked;
@@ -165,7 +185,7 @@ namespace TP14_JeudelaVie
             // 
             // patternToolStripMenuItem
             // 
-            patternToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { randomToolStripMenuItem });
+            patternToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { randomToolStripMenuItem, loadPresetToolStripMenuItem });
             patternToolStripMenuItem.Name = "patternToolStripMenuItem";
             patternToolStripMenuItem.Size = new System.Drawing.Size(162, 58);
             patternToolStripMenuItem.Text = "Pattern";
@@ -175,9 +195,111 @@ namespace TP14_JeudelaVie
             randomToolStripMenuItem.Checked = true;
             randomToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             randomToolStripMenuItem.Name = "randomToolStripMenuItem";
-            randomToolStripMenuItem.Size = new System.Drawing.Size(304, 60);
+            randomToolStripMenuItem.Size = new System.Drawing.Size(381, 60);
             randomToolStripMenuItem.Text = "Random";
             randomToolStripMenuItem.Click += randomToolStripMenuItem_Click;
+            // 
+            // loadPresetToolStripMenuItem
+            // 
+            loadPresetToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { shapesToolStripMenuItem, tilingsToolStripMenuItem });
+            loadPresetToolStripMenuItem.Name = "loadPresetToolStripMenuItem";
+            loadPresetToolStripMenuItem.Size = new System.Drawing.Size(381, 60);
+            loadPresetToolStripMenuItem.Text = "Load Preset...";
+            // 
+            // shapesToolStripMenuItem
+            // 
+            shapesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { gliderToolStripMenuItem, lwssToolStripMenuItem, blinkerToolStripMenuItem, toadToolStripMenuItem, beaconToolStripMenuItem, pulsarToolStripMenuItem, toolStripSeparator1, rPentominoToolStripMenuItem, acornToolStripMenuItem, diehardToolStripMenuItem, toolStripSeparator2, gosperGliderGunToolStripMenuItem });
+            shapesToolStripMenuItem.Name = "shapesToolStripMenuItem";
+            shapesToolStripMenuItem.Size = new System.Drawing.Size(450, 60);
+            shapesToolStripMenuItem.Text = "Shapes...";
+            // 
+            // gliderToolStripMenuItem
+            // 
+            gliderToolStripMenuItem.Name = "gliderToolStripMenuItem";
+            gliderToolStripMenuItem.Size = new System.Drawing.Size(662, 60);
+            gliderToolStripMenuItem.Text = "Glider";
+            gliderToolStripMenuItem.Click += gliderToolStripMenuItem_Click;
+            // 
+            // lwssToolStripMenuItem
+            // 
+            lwssToolStripMenuItem.Name = "lwssToolStripMenuItem";
+            lwssToolStripMenuItem.Size = new System.Drawing.Size(662, 60);
+            lwssToolStripMenuItem.Text = "Lightweight Spaceship (LWSS)";
+            lwssToolStripMenuItem.Click += lwssToolStripMenuItem_Click;
+            // 
+            // blinkerToolStripMenuItem
+            // 
+            blinkerToolStripMenuItem.Name = "blinkerToolStripMenuItem";
+            blinkerToolStripMenuItem.Size = new System.Drawing.Size(662, 60);
+            blinkerToolStripMenuItem.Text = "Blinker";
+            blinkerToolStripMenuItem.Click += blinkerToolStripMenuItem_Click;
+            // 
+            // toadToolStripMenuItem
+            // 
+            toadToolStripMenuItem.Name = "toadToolStripMenuItem";
+            toadToolStripMenuItem.Size = new System.Drawing.Size(662, 60);
+            toadToolStripMenuItem.Text = "Toad";
+            toadToolStripMenuItem.Click += toadToolStripMenuItem_Click;
+            // 
+            // beaconToolStripMenuItem
+            // 
+            beaconToolStripMenuItem.Name = "beaconToolStripMenuItem";
+            beaconToolStripMenuItem.Size = new System.Drawing.Size(662, 60);
+            beaconToolStripMenuItem.Text = "Beacon";
+            beaconToolStripMenuItem.Click += beaconToolStripMenuItem_Click;
+            // 
+            // pulsarToolStripMenuItem
+            // 
+            pulsarToolStripMenuItem.Name = "pulsarToolStripMenuItem";
+            pulsarToolStripMenuItem.Size = new System.Drawing.Size(662, 60);
+            pulsarToolStripMenuItem.Text = "Pulsar";
+            pulsarToolStripMenuItem.Click += pulsarToolStripMenuItem_Click;
+            // 
+            // toolStripSeparator1
+            // 
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new System.Drawing.Size(659, 6);
+            // 
+            // rPentominoToolStripMenuItem
+            // 
+            rPentominoToolStripMenuItem.Name = "rPentominoToolStripMenuItem";
+            rPentominoToolStripMenuItem.Size = new System.Drawing.Size(662, 60);
+            rPentominoToolStripMenuItem.Text = "R-Pentomino";
+            rPentominoToolStripMenuItem.Click += rPentominoToolStripMenuItem_Click;
+            // 
+            // acornToolStripMenuItem
+            // 
+            acornToolStripMenuItem.Name = "acornToolStripMenuItem";
+            acornToolStripMenuItem.Size = new System.Drawing.Size(662, 60);
+            acornToolStripMenuItem.Text = "Acorn";
+            acornToolStripMenuItem.Click += acornToolStripMenuItem_Click;
+            // 
+            // diehardToolStripMenuItem
+            // 
+            diehardToolStripMenuItem.Name = "diehardToolStripMenuItem";
+            diehardToolStripMenuItem.Size = new System.Drawing.Size(662, 60);
+            diehardToolStripMenuItem.Text = "Diehard";
+            diehardToolStripMenuItem.Click += diehardToolStripMenuItem_Click;
+            // 
+            // toolStripSeparator2
+            // 
+            toolStripSeparator2.Name = "toolStripSeparator2";
+            toolStripSeparator2.Size = new System.Drawing.Size(659, 6);
+            // 
+            // gosperGliderGunToolStripMenuItem
+            // 
+            gosperGliderGunToolStripMenuItem.Name = "gosperGliderGunToolStripMenuItem";
+            gosperGliderGunToolStripMenuItem.Size = new System.Drawing.Size(662, 60);
+            gosperGliderGunToolStripMenuItem.Text = "Gosper Glider Gun";
+            gosperGliderGunToolStripMenuItem.Click += gosperGliderGunToolStripMenuItem_Click;
+            // 
+            // colorModeComboBox
+            // 
+            colorModeComboBox.DropDownWidth = 450;
+            colorModeComboBox.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            colorModeComboBox.Name = "colorModeComboBox";
+            colorModeComboBox.Size = new System.Drawing.Size(400, 58);
+            colorModeComboBox.SelectedIndexChanged += colorModeComboBox_SelectedIndexChanged;
             // 
             // toolStripIterationsTextbox
             // 
@@ -214,14 +336,6 @@ namespace TP14_JeudelaVie
             toolStripTextBoxStatus.Text = "Stopped";
             toolStripTextBoxStatus.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
-            // colorModeComboBox
-            // 
-            colorModeComboBox.DropDownWidth = 450;
-            colorModeComboBox.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            colorModeComboBox.Name = "colorModeComboBox";
-            colorModeComboBox.Size = new System.Drawing.Size(400, 58);
-            colorModeComboBox.SelectedIndexChanged += colorModeComboBox_SelectedIndexChanged;
-            // 
             // myTimer
             // 
             myTimer.Tick += tmrClock_Tick;
@@ -246,11 +360,59 @@ namespace TP14_JeudelaVie
             squareModelAlive.TabIndex = 2;
             squareModelAlive.TabStop = false;
             // 
+            // tilingsToolStripMenuItem
+            // 
+            tilingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { 
+    chessboardToolStripMenuItem, 
+    brickPatternToolStripMenuItem, 
+    diagonalStripesToolStripMenuItem,
+    doubleDiagonalToolStripMenuItem,
+    concentricRectanglesToolStripMenuItem 
+});
+            tilingsToolStripMenuItem.Name = "tilingsToolStripMenuItem";
+            tilingsToolStripMenuItem.Size = new System.Drawing.Size(662, 60);
+            tilingsToolStripMenuItem.Text = "Tilings...";
+            // 
+            // chessboardToolStripMenuItem
+            // 
+            chessboardToolStripMenuItem.Name = "chessboardToolStripMenuItem";
+            chessboardToolStripMenuItem.Size = new System.Drawing.Size(450, 60);
+            chessboardToolStripMenuItem.Text = "Chessboard (5x5)";
+            chessboardToolStripMenuItem.Click += chessboardToolStripMenuItem_Click;
+            // 
+            // brickPatternToolStripMenuItem
+            // 
+            brickPatternToolStripMenuItem.Name = "brickPatternToolStripMenuItem";
+            brickPatternToolStripMenuItem.Size = new System.Drawing.Size(450, 60);
+            brickPatternToolStripMenuItem.Text = "Ladder Brick";
+            brickPatternToolStripMenuItem.Click += brickPatternToolStripMenuItem_Click;
+            // 
+            // diagonalStripesToolStripMenuItem
+            // 
+            diagonalStripesToolStripMenuItem.Name = "diagonalStripesToolStripMenuItem";
+            diagonalStripesToolStripMenuItem.Size = new System.Drawing.Size(450, 60);
+            diagonalStripesToolStripMenuItem.Text = "Diagonal Stripes";
+            diagonalStripesToolStripMenuItem.Click += diagonalStripesToolStripMenuItem_Click;
+            // 
+            // doubleDiagonalToolStripMenuItem
+            // 
+            doubleDiagonalToolStripMenuItem.Name = "doubleDiagonalToolStripMenuItem";
+            doubleDiagonalToolStripMenuItem.Size = new System.Drawing.Size(450, 60);
+            doubleDiagonalToolStripMenuItem.Text = "Double Diagonal";
+            doubleDiagonalToolStripMenuItem.Click += doubleDiagonalToolStripMenuItem_Click;
+            // 
+            // concentricRectanglesToolStripMenuItem
+            // 
+            concentricRectanglesToolStripMenuItem.Name = "concentricRectanglesToolStripMenuItem";
+            concentricRectanglesToolStripMenuItem.Size = new System.Drawing.Size(450, 60);
+            concentricRectanglesToolStripMenuItem.Text = "Concentric Rectangles";
+            concentricRectanglesToolStripMenuItem.Click += concentricRectanglesToolStripMenuItem_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(21F, 51F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(2649, 1316);
+            ClientSize = new System.Drawing.Size(3066, 1316);
             Controls.Add(squareModelAlive);
             Controls.Add(squareModel);
             Controls.Add(menuEtatVitesse);
@@ -294,5 +456,25 @@ namespace TP14_JeudelaVie
         private System.Windows.Forms.ToolStripMenuItem importPatternToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem clearGridToolStripMenuItem;
         private System.Windows.Forms.ToolStripComboBox colorModeComboBox;
+        private System.Windows.Forms.ToolStripMenuItem loadPresetToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem shapesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem gliderToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem lwssToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem blinkerToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem toadToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem beaconToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pulsarToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem rPentominoToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem acornToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem diehardToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem gosperGliderGunToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem tilingsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem chessboardToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem brickPatternToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem diagonalStripesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem doubleDiagonalToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem concentricRectanglesToolStripMenuItem;
     }
 }

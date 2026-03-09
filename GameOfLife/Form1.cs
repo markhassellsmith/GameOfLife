@@ -582,6 +582,13 @@ namespace TP14_JeudelaVie
 
                 // Update tick counter color only in BirthGeneration mode
                 toolStripIterationsTextbox.BackColor = squareModelAlive.BackColor;
+
+                // Set foreground to complementary color for readability
+                Color complementaryColor = Color.FromArgb(
+                    255 - squareModelAlive.BackColor.R,
+                    255 - squareModelAlive.BackColor.G,
+                    255 - squareModelAlive.BackColor.B);
+                toolStripIterationsTextbox.ForeColor = complementaryColor;
             }
             // In CellAging mode, we don't update the global color or tick counter
         }
@@ -722,375 +729,46 @@ namespace TP14_JeudelaVie
                            MessageBoxIcon.Information);
         }
 
-        private void TestRleParser()
+        /// <summary>
+        /// Loads a preset pattern from the pattern library.
+        /// </summary>
+        private void LoadPresetPattern(string patternName)
         {
-            // Simple glider pattern in RLE format
-            string gliderRle = @"#N Glider
-#C A small spaceship
-x = 3, y = 3, rule = B3/S23
-bob$2bo$3o!";
-
             try
             {
-                // Test parsing
-                GameOfLife.Pattern pattern = GameOfLife.RleParser.Parse(gliderRle);
+                var patterns = GameOfLife.PatternLibrary.GetAllPatterns();
+                if (!patterns.ContainsKey(patternName)) return;
 
-                MessageBox.Show($"Parse successful!\n" +
-                               $"Name: {pattern.Name}\n" +
-                               $"Description: {pattern.Description}\n" +
-                               $"Size: {pattern.Width}x{pattern.Height}\n" +
-                               $"Rule: {pattern.Rule}",
-                               "RLE Parser Test");
-
-                // Test writing
-                string written = GameOfLife.RleParser.Write(pattern);
-                MessageBox.Show($"Write successful!\n\n{written}", "RLE Writer Test");
-
-                // Verify roundtrip
-                GameOfLife.Pattern parsed2 = GameOfLife.RleParser.Parse(written);
-                bool cellsMatch = true;
-                for (int x = 0; x < pattern.Width; x++)
-                    for (int y = 0; y < pattern.Height; y++)
-                        if (pattern.Cells[x, y] != parsed2.Cells[x, y])
-                            cellsMatch = false;
-
-                MessageBox.Show(cellsMatch ? "Roundtrip test PASSED!" : "Roundtrip test FAILED!",
-                               "Roundtrip Test");
+                string rleContent = patterns[patternName];
+                GameOfLife.Pattern pattern = GameOfLife.RleParser.Parse(rleContent);
+                LoadPatternToGrid(pattern);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Test FAILED: {ex.Message}\n\nStack trace:\n{ex.StackTrace}",
-                               "Error",
-                               MessageBoxButtons.OK,
-                               MessageBoxIcon.Error);
+                MessageBox.Show($"Error loading preset pattern:\n{ex.Message}", "Load Error",
+                               MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void Grid_MouseDown(object sender, MouseEventArgs e)
-        {
-            // Start dragging
-            isDragging = true;
+        private void gliderToolStripMenuItem_Click(object sender, EventArgs e) => LoadPresetPattern("Glider");
 
-            // Determine paint or erase mode based on button
-            if (e.Button == MouseButtons.Left)
-                dragPaintMode = true;  // Left = paint alive
-            else if (e.Button == MouseButtons.Right)
-                dragPaintMode = false; // Right = erase
-            else
-                return; // Ignore other buttons
+        private void lwssToolStripMenuItem_Click(object sender, EventArgs e) => LoadPresetPattern("Lightweight Spaceship (LWSS)");
 
-            // Paint/erase the initial cell
-            PaintCell(e.X, e.Y);
-        }
+        private void blinkerToolStripMenuItem_Click(object sender, EventArgs e) => LoadPresetPattern("Blinker");
 
-        private void Grid_MouseMove(object sender, MouseEventArgs e)
-        {
-            // Update current cell position
-            int cellI = e.X / cellSpacing;
-            int cellJ = e.Y / cellSpacing;
+        private void toadToolStripMenuItem_Click(object sender, EventArgs e) => LoadPresetPattern("Toad");
 
-            if (cellI != currentMouseCell.X || cellJ != currentMouseCell.Y)
-            {
-                currentMouseCell = new Point(cellI, cellJ);
-                gridDisplay.Invalidate(); // Redraw to show cursor
-            }
+        private void beaconToolStripMenuItem_Click(object sender, EventArgs e) => LoadPresetPattern("Beacon");
 
-            // Only process if we're dragging
-            if (!isDragging)
-                return;
+        private void pulsarToolStripMenuItem_Click(object sender, EventArgs e) => LoadPresetPattern("Pulsar");
 
-            // Paint/erase cells as we drag to
-            PaintCell(e.X, e.Y);
-        }
+        private void rPentominoToolStripMenuItem_Click(object sender, EventArgs e) => LoadPresetPattern("R-Pentomino");
 
-        private void Grid_MouseUp(object sender, MouseEventArgs e)
-        {
-            // Stop dragging
-            isDragging = false;
-        }
+        private void acornToolStripMenuItem_Click(object sender, EventArgs e) => LoadPresetPattern("Acorn");
 
-        private void Grid_MouseWheel(object sender, MouseEventArgs e)
-        {
-            // Adjust density in 5% increments
-            if (e.Delta > 0)
-            {
-                // Scroll up = increase density
-                populationDensity = Math.Min(100, populationDensity + 5);
-            }
-            else if (e.Delta < 0)
-            {
-                // Scroll down = decrease density
-                populationDensity = Math.Max(0, populationDensity - 5);
-            }
+        private void diehardToolStripMenuItem_Click(object sender, EventArgs e) => LoadPresetPattern("Diehard");
 
-            // Show density overlay and restart timer
-            showDensityOverlay = true;
-            densityOverlayTimer.Stop(); // Reset timer
-            densityOverlayTimer.Start(); // Start 5-second countdown
-            gridDisplay.Invalidate(); // Trigger redraw to show density
-
-            // Apply density to grid
-            ApplyDensityToGrid();
-        }
-
-        /// <summary>
-        /// Adjusts the grid to match the target population density by randomly adding or removing cells.
-        /// </summary>
-        private void ApplyDensityToGrid()
-        {
-            int totalCells = squarePerLine * squarePerColumn;
-            int targetAliveCount = (int)Math.Round(totalCells * populationDensity / 100.0);
-            int currentAliveCount = AliveCount;
-
-            Random random = new Random();
-            List<(int, int)> changedCells = new List<(int, int)>();
-
-            if (targetAliveCount > currentAliveCount)
-            {
-                // Need to add cells
-                int cellsToAdd = targetAliveCount - currentAliveCount;
-                int attempts = 0;
-                int maxAttempts = cellsToAdd * 150; // Higher multiplier for sparse grids
-
-                while (cellsToAdd > 0 && attempts < maxAttempts)
-                {
-                    int i = random.Next(squarePerLine);
-                    int j = random.Next(squarePerColumn);
-
-                    if (!squaresState[i, j]) // Cell is dead
-                    {
-                        squaresState[i, j] = true;
-                        AliveCount++;
-
-                        // Set color based on current mode
-                        if (currentColorMode == ColorMode.BirthGeneration)
-                        {
-                            cellColor[i, j] = squareModelAlive.BackColor;
-                        }
-                        else // CellAging mode
-                        {
-                            cellAge[i, j] = 0;
-                            int colorIndex = 240; // Blue
-                            cellColor[i, j] = Color.FromArgb(
-                                ColorPalettes.Spectrum360[colorIndex].red,
-                                ColorPalettes.Spectrum360[colorIndex].green,
-                                ColorPalettes.Spectrum360[colorIndex].blue);
-                        }
-
-                        changedCells.Add((i, j));
-                        cellsToAdd--;
-                    }
-                    attempts++;
-                }
-            }
-            else if (targetAliveCount < currentAliveCount)
-            {
-                // Need to remove cells
-                int cellsToRemove = currentAliveCount - targetAliveCount;
-                int attempts = 0;
-                int maxAttempts = cellsToRemove * 150; // Higher multiplier for sparse grids
-
-                while (cellsToRemove > 0 && attempts < maxAttempts)
-                {
-                    int i = random.Next(squarePerLine);
-                    int j = random.Next(squarePerColumn);
-
-                    if (squaresState[i, j]) // Cell is alive
-                    {
-                        squaresState[i, j] = false;
-                        AliveCount--;
-                        cellColor[i, j] = squareModel.BackColor;
-                        changedCells.Add((i, j));
-                        cellsToRemove--;
-                    }
-                    attempts++;
-                }
-            }
-
-            // Update UI and render
-            if (changedCells.Count > 0)
-            {
-                toolStripAliveCountBox.Text = AliveCount.ToString() + " cells alive.";
-                RenderGridDirty(changedCells);
-            }
-        }
-
-        private void Grid_MouseEnter(object sender, EventArgs e)
-        {
-            mouseOverGrid = true;
-            gridDisplay.Invalidate();
-        }
-
-        private void Grid_MouseLeave(object sender, EventArgs e)
-        {
-            mouseOverGrid = false;
-            currentMouseCell = new Point(-1, -1);
-            gridDisplay.Invalidate();
-        }
-
-        private void PaintCell(int mouseX, int mouseY)
-        {
-            // Translate mouse coordinates to grid indices (center of brush)
-            int centerI = mouseX / cellSpacing;
-            int centerJ = mouseY / cellSpacing;
-
-            // Check center bounds
-            if (centerI < 0 || centerI >= squarePerLine || centerJ < 0 || centerJ >= squarePerColumn)
-                return;
-
-            // Track changed cells for dirty rendering
-            List<(int, int)> cellsToUpdate = new List<(int, int)>();
-
-            if (dragPaintMode)
-            {
-                // FINE-POINT SHARPIE: Paint only single cell
-                if (PaintSingleCell(centerI, centerJ, true))
-                    cellsToUpdate.Add((centerI, centerJ));
-            }
-            else
-            {
-                // BROAD ERASER: Erase 5×5 area
-                for (int di = -2; di <= 2; di++)
-                {
-                    for (int dj = -2; dj <= 2; dj++)
-                    {
-                        int i = centerI + di;
-                        int j = centerJ + dj;
-
-                        // Check bounds for each cell in the eraser area
-                        if (i >= 0 && i < squarePerLine && j >= 0 && j < squarePerColumn)
-                        {
-                            if (PaintSingleCell(i, j, false))
-                                cellsToUpdate.Add((i, j));
-                        }
-                    }
-                }
-            }
-
-            // Only update display if cells actually changed
-            if (cellsToUpdate.Count > 0)
-            {
-                toolStripAliveCountBox.Text = AliveCount.ToString() + " cells alive.";
-                RenderGridDirty(cellsToUpdate);  // Only redraw changed cells!
-            }
-        }
-
-        private bool PaintSingleCell(int i, int j, bool shouldBeAlive)
-        {
-            // Get current state
-            bool wasAlive = squaresState[i, j];
-
-            // Only update if state changes
-            if (wasAlive == shouldBeAlive)
-                return false;  // No change
-
-            // Update cell state
-            squaresState[i, j] = shouldBeAlive;
-
-            // Update color and count
-            if (shouldBeAlive)
-            {
-                AliveCount++;
-
-                // Set color based on current mode
-                if (currentColorMode == ColorMode.BirthGeneration)
-                {
-                    cellColor[i, j] = squareModelAlive.BackColor;
-                }
-                else // CellAging mode
-                {
-                    cellAge[i, j] = 0; // New manually painted cell starts at age 0
-                    int colorIndex = 240; // Blue (0,0,255)
-                    cellColor[i, j] = Color.FromArgb(
-                        ColorPalettes.Spectrum360[colorIndex].red,
-                        ColorPalettes.Spectrum360[colorIndex].green,
-                        ColorPalettes.Spectrum360[colorIndex].blue);
-                }
-            }
-            else
-            {
-                AliveCount = Math.Max(0, AliveCount - 1);
-                cellColor[i, j] = squareModel.BackColor;
-            }
-
-            // Reset stability counter on manual change
-            stableConsecutiveCount = 0;
-            PreviousAliveCount = AliveCount;
-
-            return true;  // Cell changed
-        }
-
-        private void Grid_Paint(object sender, PaintEventArgs e)
-        {
-            // Show density overlay if mouse wheel was used
-            if (showDensityOverlay && mouseOverGrid)
-            {
-                string densityText = $"Density: {populationDensity}%";
-                using (Font font = new Font("Segoe UI", 16, FontStyle.Bold))
-                using (Brush textBrush = new SolidBrush(Color.Black))
-                using (Brush bgBrush = new SolidBrush(Color.FromArgb(220, 255, 200, 0))) // Semi-transparent orange
-                {
-                    SizeF textSize = e.Graphics.MeasureString(densityText, font);
-
-                    // Position near mouse cursor (offset to avoid covering cells)
-                    Point mousePos = gridDisplay.PointToClient(Cursor.Position);
-                    int overlayX = mousePos.X + 20;
-                    int overlayY = mousePos.Y - 30;
-
-                    // Draw background box
-                    e.Graphics.FillRectangle(bgBrush, overlayX, overlayY, textSize.Width + 10, textSize.Height + 5);
-
-                    // Draw text
-                    e.Graphics.DrawString(densityText, font, textBrush, overlayX + 5, overlayY + 2);
-                }
-            }
-
-            // Only show cursor when mouse is over grid and we have a valid cell position
-            if (!mouseOverGrid || currentMouseCell.X < 0 || currentMouseCell.Y < 0)
-                return;
-
-            int cellI = currentMouseCell.X;
-            int cellJ = currentMouseCell.Y;
-
-            // Check bounds
-            if (cellI < 0 || cellI >= squarePerLine || cellJ < 0 || cellJ >= squarePerColumn)
-                return;
-
-            // Draw cursor overlay based on current mode
-            using (Pen cursorPen = new Pen(Color.Black, 2))
-            {
-                if (isDragging && !dragPaintMode) // Show eraser cursor right-click dragging
-                {
-                    // Calculate 5×5 eraser area bounds (centered on current cell)
-                    int eraserRadius = 2; // -2 to +2 = 5 cells
-                    int startI = Math.Max(0, cellI - eraserRadius);
-                    int startJ = Math.Max(0, cellJ - eraserRadius);
-                    int endI = Math.Min(squarePerLine - 1, cellI + eraserRadius);
-                    int endJ = Math.Min(squarePerColumn - 1, cellJ + eraserRadius);
-
-                    // Calculate pixel coordinates
-                    int x = startI * cellSpacing - 1;
-                    int y = startJ * cellSpacing - 1;
-                    int width = (endI - startI + 1) * cellSpacing + 2;
-                    int height = (endJ - startJ + 1) * cellSpacing + 2;
-
-                    // Draw rounded rectangle
-                    int cornerRadius = 8;
-                    e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-
-                    using (System.Drawing.Drawing2D.GraphicsPath path = new System.Drawing.Drawing2D.GraphicsPath())
-                    {
-                        path.AddArc(x, y, cornerRadius, cornerRadius, 180, 90);
-                        path.AddArc(x + width - cornerRadius, y, cornerRadius, cornerRadius, 270, 90);
-                        path.AddArc(x + width - cornerRadius, y + height - cornerRadius, cornerRadius, cornerRadius, 0, 90);
-                        path.AddArc(x, y + height - cornerRadius, cornerRadius, cornerRadius, 90, 90);
-                        path.CloseFigure();
-
-                        e.Graphics.DrawPath(cursorPen, path);
-                    }
-                }
-            }
-        }
+        private void gosperGliderGunToolStripMenuItem_Click(object sender, EventArgs e) => LoadPresetPattern("Gosper Glider Gun");
 
         private void clearGridToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1119,63 +797,287 @@ bob$2bo$3o!";
             RenderGrid();
         }
 
+        private void Grid_MouseDown(object sender, MouseEventArgs e)
+        {
+            isDragging = true;
+            if (e.Button == MouseButtons.Left)
+                dragPaintMode = true;
+            else if (e.Button == MouseButtons.Right)
+                dragPaintMode = false;
+            else
+                return;
+            PaintCell(e.X, e.Y);
+        }
+
+        private void Grid_MouseMove(object sender, MouseEventArgs e)
+        {
+            int cellI = e.X / cellSpacing;
+            int cellJ = e.Y / cellSpacing;
+            if (cellI != currentMouseCell.X || cellJ != currentMouseCell.Y)
+            {
+                currentMouseCell = new Point(cellI, cellJ);
+                gridDisplay.Invalidate();
+            }
+            if (!isDragging) return;
+            PaintCell(e.X, e.Y);
+        }
+
+        private void Grid_MouseUp(object sender, MouseEventArgs e)
+        {
+            isDragging = false;
+        }
+
+        private void Grid_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if (e.Delta > 0)
+                populationDensity = Math.Min(100, populationDensity + 5);
+            else if (e.Delta < 0)
+                populationDensity = Math.Max(0, populationDensity - 5);
+
+            showDensityOverlay = true;
+            densityOverlayTimer.Stop();
+            densityOverlayTimer.Start();
+            gridDisplay.Invalidate();
+            ApplyDensityToGrid();
+        }
+
+        private void ApplyDensityToGrid()
+        {
+            int totalCells = squarePerLine * squarePerColumn;
+            int targetAliveCount = (int)Math.Round(totalCells * populationDensity / 100.0);
+            int currentAliveCount = AliveCount;
+            Random random = new Random();
+            List<(int, int)> changedCells = new List<(int, int)>();
+
+            if (targetAliveCount > currentAliveCount)
+            {
+                int cellsToAdd = targetAliveCount - currentAliveCount;
+                int attempts = 0;
+                int maxAttempts = cellsToAdd * 150;
+                while (cellsToAdd > 0 && attempts < maxAttempts)
+                {
+                    int i = random.Next(squarePerLine);
+                    int j = random.Next(squarePerColumn);
+                    if (!squaresState[i, j])
+                    {
+                        squaresState[i, j] = true;
+                        AliveCount++;
+                        if (currentColorMode == ColorMode.BirthGeneration)
+                            cellColor[i, j] = squareModelAlive.BackColor;
+                        else
+                        {
+                            cellAge[i, j] = 0;
+                            int colorIndex = 240;
+                            cellColor[i, j] = Color.FromArgb(
+                                ColorPalettes.Spectrum360[colorIndex].red,
+                                ColorPalettes.Spectrum360[colorIndex].green,
+                                ColorPalettes.Spectrum360[colorIndex].blue);
+                        }
+                        changedCells.Add((i, j));
+                        cellsToAdd--;
+                    }
+                    attempts++;
+                }
+            }
+            else if (targetAliveCount < currentAliveCount)
+            {
+                int cellsToRemove = currentAliveCount - targetAliveCount;
+                int attempts = 0;
+                int maxAttempts = cellsToRemove * 150;
+                while (cellsToRemove > 0 && attempts < maxAttempts)
+                {
+                    int i = random.Next(squarePerLine);
+                    int j = random.Next(squarePerColumn);
+                    if (squaresState[i, j])
+                    {
+                        squaresState[i, j] = false;
+                        AliveCount--;
+                        cellColor[i, j] = squareModel.BackColor;
+                        changedCells.Add((i, j));
+                        cellsToRemove--;
+                    }
+                    attempts++;
+                }
+            }
+
+            if (changedCells.Count > 0)
+            {
+                toolStripAliveCountBox.Text = AliveCount.ToString() + " cells alive.";
+                RenderGridDirty(changedCells);
+            }
+        }
+
+        private void Grid_MouseEnter(object sender, EventArgs e)
+        {
+            mouseOverGrid = true;
+            gridDisplay.Invalidate();
+        }
+
+        private void Grid_MouseLeave(object sender, EventArgs e)
+        {
+            mouseOverGrid = false;
+            currentMouseCell = new Point(-1, -1);
+            gridDisplay.Invalidate();
+        }
+
+        private void PaintCell(int mouseX, int mouseY)
+        {
+            int centerI = mouseX / cellSpacing;
+            int centerJ = mouseY / cellSpacing;
+            if (centerI < 0 || centerI >= squarePerLine || centerJ < 0 || centerJ >= squarePerColumn)
+                return;
+
+            List<(int, int)> cellsToUpdate = new List<(int, int)>();
+            if (dragPaintMode)
+            {
+                if (PaintSingleCell(centerI, centerJ, true))
+                    cellsToUpdate.Add((centerI, centerJ));
+            }
+            else
+            {
+                for (int di = -2; di <= 2; di++)
+                {
+                    for (int dj = -2; dj <= 2; dj++)
+                    {
+                        int i = centerI + di;
+                        int j = centerJ + dj;
+                        if (i >= 0 && i < squarePerLine && j >= 0 && j < squarePerColumn)
+                        {
+                            if (PaintSingleCell(i, j, false))
+                                cellsToUpdate.Add((i, j));
+                        }
+                    }
+                }
+            }
+
+            if (cellsToUpdate.Count > 0)
+            {
+                toolStripAliveCountBox.Text = AliveCount.ToString() + " cells alive.";
+                RenderGridDirty(cellsToUpdate);
+            }
+        }
+
+        private bool PaintSingleCell(int i, int j, bool shouldBeAlive)
+        {
+            bool wasAlive = squaresState[i, j];
+            if (wasAlive == shouldBeAlive) return false;
+
+            squaresState[i, j] = shouldBeAlive;
+            if (shouldBeAlive)
+            {
+                AliveCount++;
+                if (currentColorMode == ColorMode.BirthGeneration)
+                    cellColor[i, j] = squareModelAlive.BackColor;
+                else
+                {
+                    cellAge[i, j] = 0;
+                    int colorIndex = 240;
+                    cellColor[i, j] = Color.FromArgb(
+                        ColorPalettes.Spectrum360[colorIndex].red,
+                        ColorPalettes.Spectrum360[colorIndex].green,
+                        ColorPalettes.Spectrum360[colorIndex].blue);
+                }
+            }
+            else
+            {
+                AliveCount = Math.Max(0, AliveCount - 1);
+                cellColor[i, j] = squareModel.BackColor;
+            }
+
+            stableConsecutiveCount = 0;
+            PreviousAliveCount = AliveCount;
+            return true;
+        }
+
+        private void Grid_Paint(object sender, PaintEventArgs e)
+        {
+            if (showDensityOverlay && mouseOverGrid)
+            {
+                string densityText = $"Density: {populationDensity}%";
+                using (Font font = new Font("Segoe UI", 16, FontStyle.Bold))
+                using (Brush textBrush = new SolidBrush(Color.Black))
+                using (Brush bgBrush = new SolidBrush(Color.FromArgb(220, 255, 200, 0)))
+                {
+                    SizeF textSize = e.Graphics.MeasureString(densityText, font);
+                    Point mousePos = gridDisplay.PointToClient(Cursor.Position);
+                    int overlayX = mousePos.X + 20;
+                    int overlayY = mousePos.Y - 30;
+                    e.Graphics.FillRectangle(bgBrush, overlayX, overlayY, textSize.Width + 10, textSize.Height + 5);
+                    e.Graphics.DrawString(densityText, font, textBrush, overlayX + 5, overlayY + 2);
+                }
+            }
+
+            if (!mouseOverGrid || currentMouseCell.X < 0 || currentMouseCell.Y < 0) return;
+            int cellI = currentMouseCell.X;
+            int cellJ = currentMouseCell.Y;
+            if (cellI < 0 || cellI >= squarePerLine || cellJ < 0 || cellJ >= squarePerColumn) return;
+
+            using (Pen cursorPen = new Pen(Color.Black, 2))
+            {
+                if (isDragging && !dragPaintMode)
+                {
+                    int eraserRadius = 2;
+                    int startI = Math.Max(0, cellI - eraserRadius);
+                    int startJ = Math.Max(0, cellJ - eraserRadius);
+                    int endI = Math.Min(squarePerLine - 1, cellI + eraserRadius);
+                    int endJ = Math.Min(squarePerColumn - 1, cellJ + eraserRadius);
+                    int x = startI * cellSpacing - 1;
+                    int y = startJ * cellSpacing - 1;
+                    int width = (endI - startI + 1) * cellSpacing + 2;
+                    int height = (endJ - startJ + 1) * cellSpacing + 2;
+                    int cornerRadius = 8;
+                    e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+                    using (System.Drawing.Drawing2D.GraphicsPath path = new System.Drawing.Drawing2D.GraphicsPath())
+                    {
+                        path.AddArc(x, y, cornerRadius, cornerRadius, 180, 90);
+                        path.AddArc(x + width - cornerRadius, y, cornerRadius, cornerRadius, 270, 90);
+                        path.AddArc(x + width - cornerRadius, y + height - cornerRadius, cornerRadius, cornerRadius, 0, 90);
+                        path.AddArc(x, y + height - cornerRadius, cornerRadius, cornerRadius, 90, 90);
+                        path.CloseFigure();
+                        e.Graphics.DrawPath(cursorPen, path);
+                    }
+                }
+            }
+        }
+
         private void colorModeComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // Switch the color mode based on selection
-            ColorMode newMode = colorModeComboBox.SelectedIndex == 0
-                ? ColorMode.BirthGeneration
-                : ColorMode.CellAging;
-
+            ColorMode newMode = colorModeComboBox.SelectedIndex == 0 ? ColorMode.BirthGeneration : ColorMode.CellAging;
             if (newMode != currentColorMode)
             {
                 currentColorMode = newMode;
-
-                // Update tick counter appearance based on mode
                 if (currentColorMode == ColorMode.CellAging)
                 {
-                    // Reset to white background with black text in CellAging mode
                     toolStripIterationsTextbox.BackColor = Color.White;
                     toolStripIterationsTextbox.ForeColor = Color.Black;
                 }
                 else
                 {
-                    // Restore generation color in BirthGeneration mode
                     toolStripIterationsTextbox.BackColor = squareModelAlive.BackColor;
-                    System.Drawing.Color InverseColor = Color.FromArgb(
-                        255 - squareModelAlive.BackColor.R,
-                        255 - squareModelAlive.BackColor.G,
-                        255 - squareModelAlive.BackColor.B);
+                    Color InverseColor = Color.FromArgb(255 - squareModelAlive.BackColor.R,
+                        255 - squareModelAlive.BackColor.G, 255 - squareModelAlive.BackColor.B);
                     toolStripIterationsTextbox.ForeColor = InverseColor;
                 }
-
-                // Re-color all existing alive cells based on new mode
                 RecolorCellsForMode();
-
-                // Redraw the grid
                 RenderGrid();
             }
         }
 
-        /// <summary>
-        /// Re-colors all existing alive cells based on the current color mode.
-        /// </summary>
         private void RecolorCellsForMode()
         {
             for (int i = 0; i < squarePerLine; i++)
             {
                 for (int j = 0; j < squarePerColumn; j++)
                 {
-                    if (squaresState[i, j]) // If cell is alive
+                    if (squaresState[i, j])
                     {
                         if (currentColorMode == ColorMode.BirthGeneration)
                         {
-                            // Use current generation color
                             cellColor[i, j] = squareModelAlive.BackColor;
                             cellAge[i, j] = 0;
                         }
-                        else // CellAging mode
+                        else
                         {
-                            // Apply aging factor for consistent coloring
                             int ageDisplay = cellAge[i, j] * cellAgingColorFactor;
                             int colorIndex = (240 + ageDisplay) % ColorPalettes.Spectrum360.Length;
                             cellColor[i, j] = Color.FromArgb(
@@ -1186,6 +1088,506 @@ bob$2bo$3o!";
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Loads a chessboard tiling pattern with 5x5 blocks.
+        /// </summary>
+        private void chessboardToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LoadChessboardPattern(5);
+        }
+
+        /// <summary>
+        /// Generates a chessboard tiling pattern across the entire grid.
+        /// </summary>
+        /// <param name="blockSize">Size of each square block in the chessboard pattern.</param>
+        private void LoadChessboardPattern(int blockSize)
+        {
+            // Clear the grid first
+            for (int i = 0; i < squarePerLine; i++)
+            {
+                for (int j = 0; j < squarePerColumn; j++)
+                {
+                    squaresState[i, j] = false;
+                    cellColor[i, j] = squareModel.BackColor;
+                }
+            }
+
+            // Create chessboard pattern
+            AliveCount = 0;
+            for (int i = 0; i < squarePerLine; i++)
+            {
+                for (int j = 0; j < squarePerColumn; j++)
+                {
+                    // Determine which block this cell belongs to
+                    int blockI = i / blockSize;
+                    int blockJ = j / blockSize;
+
+                    // Chessboard pattern: alternate blocks based on sum of block indices
+                    bool shouldBeAlive = (blockI + blockJ) % 2 == 0;
+
+                    if (shouldBeAlive)
+                    {
+                        squaresState[i, j] = true;
+                        AliveCount++;
+
+                        // Set color based on current mode
+                        if (currentColorMode == ColorMode.BirthGeneration)
+                        {
+                            cellColor[i, j] = squareModelAlive.BackColor;
+                            cellAge[i, j] = 0;
+                        }
+                        else // CellAging mode
+                        {
+                            cellAge[i, j] = 0;
+                            int colorIndex = 240; // Blue (0,0,255)
+                            cellColor[i, j] = Color.FromArgb(
+                                ColorPalettes.Spectrum360[colorIndex].red,
+                                ColorPalettes.Spectrum360[colorIndex].green,
+                                ColorPalettes.Spectrum360[colorIndex].blue);
+                        }
+                    }
+                }
+            }
+
+            // Reset game state
+            TickNumber = 0;
+            toolStripIterationsTextbox.Text = "Tick = 0";
+            toolStripAliveCountBox.Text = AliveCount.ToString() + " cells alive.";
+            PreviousAliveCount = -1;
+            stableConsecutiveCount = 0;
+
+            // Render the pattern
+            RenderGrid();
+
+            MessageBox.Show($"Chessboard pattern ({blockSize}x{blockSize} blocks) loaded!\n{AliveCount} cells alive.",
+                           "Pattern Loaded",
+                           MessageBoxButtons.OK,
+                           MessageBoxIcon.Information);
+        }
+
+        /// <summary>
+        /// Loads a brick/running bond tiling pattern.
+        /// </summary>
+        private void brickPatternToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LoadBrickPattern(5, 3);
+        }
+
+        /// <summary>
+        /// Loads diagonal stripes pattern.
+        /// </summary>
+        private void diagonalStripesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LoadDiagonalStripesPattern(5);
+        }
+
+        /// <summary>
+        /// Loads double diagonal (cross-hatch) pattern.
+        /// </summary>
+        private void doubleDiagonalToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LoadDoubleDiagonalPattern(5);
+        }
+
+        /// <summary>
+        /// Loads concentric rectangles pattern.
+        /// </summary>
+        private void concentricRectanglesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LoadConcentricRectanglesPattern(3);
+        }
+
+        /// <summary>
+        /// Generates a brick/running bond tiling pattern.
+        /// Alternating rows are offset, creating a brick wall appearance.
+        /// </summary>
+        /// <param name="brickWidth">Width of each brick.</param>
+        /// <param name="brickHeight">Height of each brick.</param>
+
+        /// <summary>
+        /// Generates diagonal stripe pattern across the grid.
+        /// Creates diagonal bands that often spawn gliders and spaceships.
+        /// </summary>
+        /// <param name="stripeWidth">Width of each stripe in cells.</param>
+        private void LoadDiagonalStripesPattern(int stripeWidth)
+        {
+            // Clear the grid first
+            for (int i = 0; i < squarePerLine; i++)
+            {
+                for (int j = 0; j < squarePerColumn; j++)
+                {
+                    squaresState[i, j] = false;
+                    cellColor[i, j] = squareModel.BackColor;
+                }
+            }
+
+            // Create diagonal stripes pattern
+            AliveCount = 0;
+            for (int i = 0; i < squarePerLine; i++)
+            {
+                for (int j = 0; j < squarePerColumn; j++)
+                {
+                    // Diagonal pattern: use sum of coordinates modulo stripe width
+                    int diagonalIndex = (i + j) / stripeWidth;
+                    bool shouldBeAlive = diagonalIndex % 2 == 0;
+
+                    if (shouldBeAlive)
+                    {
+                        squaresState[i, j] = true;
+                        AliveCount++;
+
+                        // Set color based on current mode
+                        if (currentColorMode == ColorMode.BirthGeneration)
+                        {
+                            cellColor[i, j] = squareModelAlive.BackColor;
+                            cellAge[i, j] = 0;
+                        }
+                        else // CellAging mode
+                        {
+                            cellAge[i, j] = 0;
+                            int colorIndex = 240; // Blue
+                            cellColor[i, j] = Color.FromArgb(
+                                ColorPalettes.Spectrum360[colorIndex].red,
+                                ColorPalettes.Spectrum360[colorIndex].green,
+                                ColorPalettes.Spectrum360[colorIndex].blue);
+                        }
+                    }
+                }
+            }
+
+            // Reset game state
+            TickNumber = 0;
+            toolStripIterationsTextbox.Text = "Tick = 0";
+            toolStripAliveCountBox.Text = AliveCount.ToString() + " cells alive.";
+            PreviousAliveCount = -1;
+            stableConsecutiveCount = 0;
+
+            // Render the pattern
+            RenderGrid();
+
+            MessageBox.Show($"Diagonal stripes pattern (width {stripeWidth}) loaded!\n{AliveCount} cells alive.",
+                   "Pattern Loaded",
+                   MessageBoxButtons.OK,
+                   MessageBoxIcon.Information);
+        }
+
+        /// <summary>
+        /// Generates double diagonal (cross-hatch) pattern across the grid.
+        /// Creates diamond lattice patterns with diagonals running in both directions.
+        /// Maintains beautiful geometric structure while evolving gracefully.
+        /// </summary>
+        /// <param name="stripeWidth">Width of each diagonal stripe in cells.</param>
+        private void LoadDoubleDiagonalPattern(int stripeWidth)
+        {
+            // Clear the grid first
+            for (int i = 0; i < squarePerLine; i++)
+            {
+                for (int j = 0; j < squarePerColumn; j++)
+                {
+                    squaresState[i, j] = false;
+                    cellColor[i, j] = squareModel.BackColor;
+                }
+            }
+
+            // Create double diagonal (cross-hatch) lattice pattern
+            AliveCount = 0;
+            int diagonalSpacing = 12; // Distance between parallel diagonals
+            int diagonalWidth = 3; // Width of each diagonal line (3 cells wide for stability)
+
+            for (int i = 0; i < squarePerLine; i++)
+            {
+                for (int j = 0; j < squarePerColumn; j++)
+                {
+                    // First diagonal family: upper-left to lower-right (using i + j)
+                    int diagonal1Pos = (i + j) % diagonalSpacing;
+                    bool onDiagonal1 = diagonal1Pos < diagonalWidth;
+
+                    // Second diagonal family: lower-left to upper-right (using i - j)
+                    int diagonal2Pos = (i - j + squarePerColumn * 2) % diagonalSpacing;
+                    bool onDiagonal2 = diagonal2Pos < diagonalWidth;
+
+                    // Cell is on a diagonal if it's on either family
+                    bool onAnyDiagonal = onDiagonal1 || onDiagonal2;
+
+                    if (onAnyDiagonal)
+                    {
+                        bool shouldBeAlive = true;
+
+                        // Create very sparse, regular gaps for controlled evolution
+                        // Only create gaps at specific intervals to maintain structure
+                        int positionAlongDiagonal = (i + j) / 2;
+
+                        // Small gaps every 15 cells along the diagonal (very sparse)
+                        bool smallGap = (positionAlongDiagonal % 15 == 7);
+
+                        // At intersection points, always keep cells alive for lattice continuity
+                        bool atIntersection = onDiagonal1 && onDiagonal2;
+
+                        if (atIntersection)
+                        {
+                            // Intersections are always alive - they anchor the lattice
+                            shouldBeAlive = true;
+                        }
+                        else if (smallGap && !atIntersection)
+                        {
+                            // Create a small gap, but only away from intersections
+                            shouldBeAlive = false;
+                        }
+
+                        // Add a few seed patterns at specific locations for gliders
+                        // But only in the middle cell of each diagonal stripe
+                        if (onDiagonal1 && diagonal1Pos == 1 && (i + j) % 24 == 12)
+                        {
+                            shouldBeAlive = false; // Strategic gap for oscillator formation
+                        }
+
+                        if (shouldBeAlive)
+                        {
+                            squaresState[i, j] = true;
+                            AliveCount++;
+
+                            // Set color based on current mode
+                            if (currentColorMode == ColorMode.BirthGeneration)
+                            {
+                                cellColor[i, j] = squareModelAlive.BackColor;
+                                cellAge[i, j] = 0;
+                            }
+                            else // CellAging mode
+                            {
+                                cellAge[i, j] = 0;
+                                int colorIndex = 240; // Blue
+                                cellColor[i, j] = Color.FromArgb(
+                                    ColorPalettes.Spectrum360[colorIndex].red,
+                                    ColorPalettes.Spectrum360[colorIndex].green,
+                                    ColorPalettes.Spectrum360[colorIndex].blue);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Reset game state
+            TickNumber = 0;
+            toolStripIterationsTextbox.Text = "Tick = 0";
+            toolStripAliveCountBox.Text = AliveCount.ToString() + " cells alive.";
+            PreviousAliveCount = -1;
+            stableConsecutiveCount = 0;
+
+            // Render the pattern
+            RenderGrid();
+
+            MessageBox.Show($"Double diagonal lattice loaded!\n{AliveCount} cells alive.\n\nWatch the diamond lattice evolve while maintaining its geometric beauty!",
+                   "Geometric Pattern Loaded",
+                   MessageBoxButtons.OK,
+                   MessageBoxIcon.Information);
+        }
+
+        /// <summary>
+        /// Generates concentric rectangles expanding from the center.
+        /// Creates pulsing wave-like patterns in Game of Life.
+        /// </summary>
+        /// <param name="spacing">Spacing between consecutive rectangles.</param>
+        private void LoadConcentricRectanglesPattern(int spacing)
+        {
+            // Clear the grid first
+            for (int i = 0; i < squarePerLine; i++)
+            {
+                for (int j = 0; j < squarePerColumn; j++)
+                {
+                    squaresState[i, j] = false;
+                    cellColor[i, j] = squareModel.BackColor;
+                }
+            }
+
+            // Find center of grid
+            int centerX = squarePerLine / 2;
+            int centerY = squarePerColumn / 2;
+
+            // Create concentric rectangles
+            AliveCount = 0;
+            for (int i = 0; i < squarePerLine; i++)
+            {
+                for (int j = 0; j < squarePerColumn; j++)
+                {
+                    // Calculate distance from center using Chebyshev distance (max of dx, dy)
+                    int dx = Math.Abs(i - centerX);
+                    int dy = Math.Abs(j - centerY);
+                    int distance = Math.Max(dx, dy);
+
+                    // Create rings at specific distances
+                    bool shouldBeAlive = (distance / spacing) % 2 == 0;
+
+                    if (shouldBeAlive)
+                    {
+                        squaresState[i, j] = true;
+                        AliveCount++;
+
+                        // Set color based on current mode
+                        if (currentColorMode == ColorMode.BirthGeneration)
+                        {
+                            cellColor[i, j] = squareModelAlive.BackColor;
+                            cellAge[i, j] = 0;
+                        }
+                        else // CellAging mode
+                        {
+                            cellAge[i, j] = 0;
+                            int colorIndex = 240; // Blue
+                            cellColor[i, j] = Color.FromArgb(
+                                ColorPalettes.Spectrum360[colorIndex].red,
+                                ColorPalettes.Spectrum360[colorIndex].green,
+                                ColorPalettes.Spectrum360[colorIndex].blue);
+                        }
+                    }
+                }
+            }
+
+            // Reset game state
+            TickNumber = 0;
+            toolStripIterationsTextbox.Text = "Tick = 0";
+            toolStripAliveCountBox.Text = AliveCount.ToString() + " cells alive.";
+            PreviousAliveCount = -1;
+            stableConsecutiveCount = 0;
+
+            // Render the pattern
+            RenderGrid();
+
+            MessageBox.Show($"Concentric rectangles pattern (spacing {spacing}) loaded!\n{AliveCount} cells alive.",
+                   "Pattern Loaded",
+                   MessageBoxButtons.OK,
+                   MessageBoxIcon.Information);
+        }
+
+        /// <summary>
+        /// Generates a "Ladder Brick" pattern - brick-like structure with strategic gaps.
+        /// Creates oscillators, gliders, and evolving patterns while maintaining structure.
+        /// Much more dynamic and long-lasting than traditional brick patterns.
+        /// </summary>
+        /// <param name="brickWidth">Width of each brick section (default 6).</param>
+        /// <param name="brickHeight">Height of each brick (default 2).</param>
+        private void LoadBrickPattern(int brickWidth = 6, int brickHeight = 2)
+        {
+            // Clear the grid first
+            for (int i = 0; i < squarePerLine; i++)
+            {
+                for (int j = 0; j < squarePerColumn; j++)
+                {
+                    squaresState[i, j] = false;
+                    cellColor[i, j] = squareModel.BackColor;
+                }
+            }
+
+            // Pattern spacing parameters for dynamic behavior
+            int ladderSpacing = 8; // Space between ladder rungs
+            int railWidth = 1; // Width of vertical supports
+            int rungGap = 2; // Gap in each rung to create oscillators
+
+            // Create ladder brick pattern
+            AliveCount = 0;
+            for (int j = 0; j < squarePerColumn; j += ladderSpacing)
+            {
+                for (int jOffset = 0; jOffset < brickHeight && (j + jOffset) < squarePerColumn; jOffset++)
+                {
+                    int currentRow = j + jOffset;
+
+                    // Draw horizontal "rungs" with strategic gaps
+                    for (int i = 0; i < squarePerLine; i++)
+                    {
+                        // Create brick-like sections with gaps for oscillators
+                        int sectionPos = i % (brickWidth + rungGap);
+
+                        // Draw brick section (not the gap)
+                        if (sectionPos < brickWidth)
+                        {
+                            // Add some randomness to make it more interesting
+                            // Skip some cells to create seed patterns
+                            bool shouldPlace = true;
+
+                            // Create vertical "supports" every 20 cells
+                            if (i % 20 == 0 && jOffset == 0)
+                            {
+                                // This creates vertical elements
+                                shouldPlace = true;
+                            }
+                            // Create strategic gaps for blinker/toad formation
+                            else if (sectionPos == brickWidth / 2 && (i / (brickWidth + rungGap)) % 3 == 0)
+                            {
+                                shouldPlace = false; // Gap for oscillator
+                            }
+
+                            if (shouldPlace)
+                            {
+                                squaresState[i, currentRow] = true;
+                                AliveCount++;
+
+                                // Set color
+                                if (currentColorMode == ColorMode.BirthGeneration)
+                                {
+                                    cellColor[i, currentRow] = squareModelAlive.BackColor;
+                                    cellAge[i, currentRow] = 0;
+                                }
+                                else
+                                {
+                                    cellAge[i, currentRow] = 0;
+                                    int colorIndex = 240;
+                                    cellColor[i, currentRow] = Color.FromArgb(
+                                        ColorPalettes.Spectrum360[colorIndex].red,
+                                        ColorPalettes.Spectrum360[colorIndex].green,
+                                        ColorPalettes.Spectrum360[colorIndex].blue);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Add vertical "rails" between rungs to connect structure
+                if (j + brickHeight + 2 < squarePerColumn)
+                {
+                    for (int i = 0; i < squarePerLine; i += (brickWidth + rungGap))
+                    {
+                        // Place small vertical connector
+                        for (int k = 0; k < 2 && (j + brickHeight + k) < squarePerColumn; k++)
+                        {
+                            if (i < squarePerLine)
+                            {
+                                squaresState[i, j + brickHeight + k] = true;
+                                AliveCount++;
+
+                                if (currentColorMode == ColorMode.BirthGeneration)
+                                {
+                                    cellColor[i, j + brickHeight + k] = squareModelAlive.BackColor;
+                                    cellAge[i, j + brickHeight + k] = 0;
+                                }
+                                else
+                                {
+                                    cellAge[i, j + brickHeight + k] = 0;
+                                    int colorIndex = 240;
+                                    cellColor[i, j + brickHeight + k] = Color.FromArgb(
+                                        ColorPalettes.Spectrum360[colorIndex].red,
+                                        ColorPalettes.Spectrum360[colorIndex].green,
+                                        ColorPalettes.Spectrum360[colorIndex].blue);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Reset game state
+            TickNumber = 0;
+            toolStripIterationsTextbox.Text = "Tick = 0";
+            toolStripAliveCountBox.Text = AliveCount.ToString() + " cells alive.";
+            PreviousAliveCount = -1;
+            stableConsecutiveCount = 0;
+
+            // Render the pattern
+            RenderGrid();
+
+            MessageBox.Show($"Ladder Brick pattern loaded!\n{AliveCount} cells alive.\n\nThis pattern creates oscillators, gliders, and evolving shapes!",
+                   "Dynamic Pattern Loaded",
+                   MessageBoxButtons.OK,
+                   MessageBoxIcon.Information);
         }
     }
 }
