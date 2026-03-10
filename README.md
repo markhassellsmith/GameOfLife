@@ -221,6 +221,8 @@ Select visualization mode:
 
 **Left-Hand Friendly**: Ctrl+R and Ctrl+S work regardless of which control has focus!
 
+**Tip**: Press **Alt** to reveal menu access keys (Alt+F for File, Alt+S for Simulation, Alt+E for Speed, Alt+P for Pattern)
+
 ### Mouse Controls
 | Action | Result | Visual Feedback |
 |--------|--------|-----------------|

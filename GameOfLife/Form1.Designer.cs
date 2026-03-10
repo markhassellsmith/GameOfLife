@@ -97,7 +97,7 @@ namespace TP14_JeudelaVie
             fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { resetToolStripMenuItem, clearGridToolStripMenuItem, exportPatternToolStripMenuItem, importPatternToolStripMenuItem, exitToolStripMenuItem });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             fileToolStripMenuItem.Size = new System.Drawing.Size(99, 58);
-            fileToolStripMenuItem.Text = "File";
+            fileToolStripMenuItem.Text = "&File";
             // 
             // resetToolStripMenuItem
             // 
@@ -141,14 +141,14 @@ namespace TP14_JeudelaVie
             simulationToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { startToolStripMenuItem, stopToolStripMenuItem });
             simulationToolStripMenuItem.Name = "simulationToolStripMenuItem";
             simulationToolStripMenuItem.Size = new System.Drawing.Size(220, 58);
-            simulationToolStripMenuItem.Text = "Simulation";
+            simulationToolStripMenuItem.Text = "&Simulation";
             // 
             // startToolStripMenuItem
             // 
             startToolStripMenuItem.Name = "startToolStripMenuItem";
             startToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
             startToolStripMenuItem.Size = new System.Drawing.Size(240, 60);
-            startToolStripMenuItem.Text = "Start";
+            startToolStripMenuItem.Text = "Run";
             startToolStripMenuItem.Click += runToolStripMenuItem_Click;
             // 
             // stopToolStripMenuItem
@@ -164,7 +164,7 @@ namespace TP14_JeudelaVie
             vitesseToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { lentToolStripMenuItem, middleSpeedToolStripMenuItem, rapideToolStripMenuItem });
             vitesseToolStripMenuItem.Name = "vitesseToolStripMenuItem";
             vitesseToolStripMenuItem.Size = new System.Drawing.Size(146, 58);
-            vitesseToolStripMenuItem.Text = "Speed";
+            vitesseToolStripMenuItem.Text = "Sp&eed";
             // 
             // lentToolStripMenuItem
             // 
@@ -192,7 +192,7 @@ namespace TP14_JeudelaVie
             patternToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { randomToolStripMenuItem, tileSelectionToolStripMenuItem, shapesToolStripMenuItem, tilingsToolStripMenuItem });
             patternToolStripMenuItem.Name = "patternToolStripMenuItem";
             patternToolStripMenuItem.Size = new System.Drawing.Size(162, 58);
-            patternToolStripMenuItem.Text = "Pattern";
+            patternToolStripMenuItem.Text = "&Pattern";
             // 
             // randomToolStripMenuItem
             // 
