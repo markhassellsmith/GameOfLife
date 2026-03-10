@@ -1,9 +1,9 @@
 # Conway's Game of Life - Enhanced Edition
 
-	A high-performance Windows Forms implementation of Conway's Game of Life featuring dual cellular visualization modes: generation-based birth colors and dynamic age-based color progression through a 360-color spectrum palette.
+A high-performance Windows Forms implementation of Conway's Game of Life featuring dual cellular visualization modes, intelligent pattern tiling, and an intuitive creative workflow for exploring cellular automata.
 
-![.NET 7](https://img.shields.io/badge/.NET-7.0-blue)
-![C#](https://img.shields.io/badge/C%23-11.0-purple)
+![.NET 10](https://img.shields.io/badge/.NET-10.0-blue)
+![C#](https://img.shields.io/badge/C%23-14.0-purple)
 ![Platform](https://img.shields.io/badge/platform-Windows-lightgrey)
 
 ## 🌟 Overview
@@ -44,6 +44,43 @@ Cells dynamically change color based on how many generations they survive, visua
   - **Stable patterns**: 2×2 blocks cycle through rainbow continuously
   - **Exponential decay**: Most cells die young (blue dominates), few reach old age
 
+### 🎯 **Pattern Tiling System** - NEW!
+
+Create complex designs effortlessly with intelligent region tiling:
+
+#### **Ctrl+Drag Selection** (Windows-standard interaction)
+- **Hold Ctrl** over grid → Cursor changes to crosshair + hint appears
+- **Ctrl+Left-drag** → Blue dashed rectangle shows selection
+- **Live dimensions** displayed above selection (e.g., "12×8 cells")
+- **Press Enter** → Pattern tiles across entire grid
+- **Press Escape** → Cancel selection
+
+#### **T-Key Selection Mode** (Persistent mode for multiple selections)
+- **Press T** → Enter selection mode (mode indicator turns cyan)
+- **Click-drag** → Create selection rectangles
+- **Press Enter** → Apply tiling
+- **Press Escape** or **Press T again** → Exit selection mode
+
+#### **How Tiling Works**
+1. **Select any rectangular region** (pattern + spacing you want)
+2. **Selection captures**:
+   - Cell states (alive/dead)
+   - Cell colors (preserves visual appearance)
+   - Empty spacing around pattern
+3. **Grid clears** and tiles pattern from (0,0) using modulo wrapping
+4. **Result**: Seamless repetition across entire grid
+
+#### **Creative Workflow**
+```
+Draw small pattern → Ctrl+Drag to select → Enter → Ctrl+R to run!
+```
+
+**Perfect for**:
+- Creating symmetric initial conditions
+- Testing how local patterns interact globally
+- Generating beautiful geometric structures
+- Quick experimentation with spacing variations
+
 ###  Density Variation
 Mouse wheel adjusts initial population density; applies to all patterns (destructive of original pattern):
 - **Scroll up**: Increase density (more alive cells)
@@ -72,16 +109,28 @@ Mouse wheel adjusts initial population density; applies to all patterns (destruc
 
 ### Interactive Controls
 - **Color Mode Selector**: Dropdown to switch between birth and aging visualization modes
-- **Mouse Drag**: Left-click paints cells, right-click erases 5×5 area
+- **Mouse Drawing**: 
+  - **Left-click + drag** paints cells alive (single cell precision)
+  - **Right-click + drag** erases 5×5 area (rounded eraser cursor shown)
 - **Mouse Wheel**: Adjusts population density in 5% increments (0-100%)
-- **Spacebar Hotkey**: Instant start/stop toggle
-- **Menu System**: Organized controls for simulation, speed, and patterns
+- **Pattern Tiling**:
+  - **Ctrl+Drag** for quick one-off selections
+  - **T key** for persistent selection mode
+  - **Enter** to apply tiling
+  - **Escape** to cancel selection
+- **Keyboard Shortcuts**: 
+  - **Ctrl+R** = Run/Start
+  - **Ctrl+S** = Stop
+  - **Spacebar** = Toggle (when grid focused)
+  - **T** = Toggle tiling selection mode
+- **Menu System**: Organized controls for simulation, speed, patterns, and tiling
 - **Real-time Statistics**: Live generation count and population display
 - **Status Indicator**: Color-coded "Running" (green) / "Stopped" (red) display
+- **Mode Indicator**: Shows current interaction mode (Drawing / Selection)
 
 ## 📋 Requirements
 
-- **.NET 7.0 SDK** or higher
+- **.NET 10.0 SDK** or higher
 - **Windows** operating system (WinForms dependency)
 - **Visual Studio 2022** or later (recommended for development)
 - **~1600×900 screen resolution** or higher (optimized for 1728×972 window)
@@ -117,12 +166,12 @@ dotnet run
 - **Reset** - Clear grid and generate new random pattern
 - **Clear the Grid** - Remove all cells (blank slate for manual drawing)
 - **Export Pattern...** - Save current grid as RLE file
-- **Import Pattern...** - Load pattern from RLE file
-- **Exit** - Close application
+- **Import Pattern...** - Load pattern from RLE file with preview
+- **Exit (Alt+F4)** - Close application
 
 #### **Simulation**
-- **Start** - Begin the simulation
-- **Stop** - Pause the simulation
+- **Start (Ctrl+R)** - Begin the simulation [Left-hand shortcut!]
+- **Stop (Ctrl+S)** - Pause the simulation [Left-hand shortcut!]
 
 #### **Speed**
 - **Slow** - 1 generation per second (1000ms)
@@ -151,6 +200,7 @@ dotnet run
 	- Diagonal Stripes - 45° bands spawning spaceships
 	- Double Diagonal - Cross-hatch diamond lattice
 	- Concentric Rectangles - Radial pulsing waves
+- **Tile Selection (Ctrl+Drag or T)** - Enter/exit manual tiling mode
 
 #### **Color Mode Dropdown** (in menu bar)
 Select visualization mode:
@@ -158,26 +208,47 @@ Select visualization mode:
 - **Cell Changes Color as Aging** - Visualize lifespan and survival time
 
 ### Keyboard Shortcuts
-| Key | Action |
-|-----|--------|
-| `Spacebar` | Toggle Start/Stop |
+| Key | Action | Always Available? |
+|-----|--------|-------------------|
+| **Ctrl+R** | **Run/Start** simulation | ✅ Yes (menu shortcut) |
+| **Ctrl+S** | **Stop** simulation | ✅ Yes (menu shortcut) |
+| `Spacebar` | Toggle Start/Stop | When grid focused |
+| **T** | Toggle Tiling Selection mode | ✅ Yes |
+| **Ctrl+Drag** | Quick tiling selection | While holding Ctrl |
+| **Enter** | Apply tiling (when selection active) | ✅ Yes |
+| **Escape** | Cancel selection / Exit tiling mode | ✅ Yes |
+| `Alt+F4` | Exit application | ✅ Yes (menu shortcut) |
+
+**Left-Hand Friendly**: Ctrl+R and Ctrl+S work regardless of which control has focus!
 
 ### Mouse Controls
-| Action | Result |
-|--------|--------|
-| `Left Click + Drag` | Paint cells alive |
-| `Right Click + Drag` | Erase 5×5 area |
-| `Mouse Wheel Up` | Increase population density by 5% |
-| `Mouse Wheel Down` | Decrease population density by 5% |
+| Action | Result | Visual Feedback |
+|--------|--------|-----------------|
+| `Left Click + Drag` | Paint cells alive | Single cell precision |
+| `Right Click + Drag` | Erase 5×5 area | Rounded eraser cursor |
+| `Mouse Wheel Up` | Increase density +5% | Overlay shows "Density: X%" |
+| `Mouse Wheel Down` | Decrease density -5% | Overlay shows "Density: X%" |
+| **Hold Ctrl** | Show selection cursor | Crosshair + cyan hint in mode indicator |
+| **Ctrl + Left Drag** | Select region for tiling | Blue dashed rectangle + dimensions |
+
+### Visual Feedback
+- **Mode Indicator** (in menu bar):
+  - Green "Mode: Drawing" = Normal state
+  - Cyan "Ctrl+Drag to Select" = Ctrl key held
+  - Sky blue "Mode: Select Region (Ctrl)" = Ctrl+drag active
+  - Sky blue "Mode: Select Region (T)" = T-key mode active
+- **Selection Rectangle**: Blue dashed line with dimensions overlay
+- **Density Overlay**: Yellow tooltip near cursor (auto-hides after 5 seconds)
+- **Eraser Cursor**: Black rounded rectangle outline (5×5 cells)
 
 ### Status Bar
 - **Color Mode Selector**: Dropdown to switch between birth and aging visualization modes
+- **Mode Indicator**: Shows interaction state (Drawing / Ctrl+Drag to Select / Select Region)
 - **Tick Counter**: Shows current generation number
   - In **Birth mode**: Background cycles through spectrum
   - In **Aging mode**: White background (doesn't interfere with age colors)
 - **Population Display**: Real-time count of alive cells
 - **Status Indicator**: Shows "Running" (green) or "Stopped" (red)
-- **Hint Text**: "Spacebar=Start/Stop"
 
 ## 🏗️ Architecture
 
@@ -187,6 +258,11 @@ Select visualization mode:
 - **Dual Color Systems**: 
   - `ColorMode.BirthGeneration`: Tracks generation of birth
   - `ColorMode.CellAging`: Tracks generations survived
+- **Tiling System**:
+  - `InteractionMode.Drawing`: Normal paint/erase mode
+  - `InteractionMode.TilingSelection`: Selection mode (T-key or Ctrl+drag)
+  - Smart pattern capture (states + colors)
+  - Modulo-based seamless tiling algorithm
 - **Grid Management**: 150×72 boolean array with double-buffering
 - **Simulation Engine**: Neighbor calculation with toroidal wrapping
 - **Rendering Pipeline**: Optimized bitmap-based drawing with age-aware invalidation
@@ -194,6 +270,9 @@ Select visualization mode:
   - `cellColor[,]`: Per-cell color array
   - `cellAge[,]`: Age tracking array (generations survived)
 - **Event Handlers**: UI interaction and timer-driven updates
+- **Keyboard Handling**: 
+  - Form-level `KeyPreview = true` for reliable key capture
+  - Menu shortcuts (Ctrl+R, Ctrl+S) work regardless of focus
 
 #### **ColorPalettes.cs**
 - **Spectrum360**: 360-color RGB gradient array
@@ -213,6 +292,44 @@ if (dead && neighbors == 3)
 ```
 
 ## 🔧 Technical Highlights
+
+### Pattern Tiling Algorithm
+
+**Smart Capture**:
+```csharp
+// Convert selection rectangle to cell coordinates
+int startCellX = selectionRect.X / cellSpacing;
+int startCellY = selectionRect.Y / cellSpacing;
+int endCellX = (selectionRect.X + selectionRect.Width) / cellSpacing;
+int endCellY = (selectionRect.Y + selectionRect.Height) / cellSpacing;
+
+// Capture tile unit (no +1 - endCell is already one past)
+int patternWidth = endCellX - startCellX;
+int patternHeight = endCellY - startCellY;
+
+// Preserve both states AND colors
+for (int i = 0; i < patternWidth; i++) {
+	for (int j = 0; j < patternHeight; j++) {
+		pattern[i, j] = squaresState[startCellX + i, startCellY + j];
+		patternColors[i, j] = cellColor[startCellX + i, startCellY + j];
+	}
+}
+```
+
+**Seamless Tiling with Modulo**:
+```csharp
+// Tile from (0,0) using modulo wrapping
+for (int i = 0; i < squarePerLine; i++) {
+	for (int j = 0; j < squarePerColumn; j++) {
+		int patternI = i % patternWidth;  // Repeat horizontally
+		int patternJ = j % patternHeight; // Repeat vertically
+		squaresState[i, j] = pattern[patternI, patternJ];
+		cellColor[i, j] = patternColors[patternI, patternJ];
+	}
+}
+```
+
+**Result**: Perfect seamless repetition with preserved visual appearance!
 
 ### Dual Color System Architecture
 
@@ -325,6 +442,17 @@ Based on the Conway's Game of Life implementation by **Quentin MOREL**
 Original repository: [Im-Rises/GameOfLife](https://github.com/Im-Rises/GameOfLife)
 
 ### Enhancements in This Fork
+- **Pattern Tiling System**:
+  - Windows-standard Ctrl+Drag interaction for quick selections
+  - T-key persistent selection mode
+  - Smart pattern capture (states + colors + spacing)
+  - Seamless modulo-based tiling algorithm
+  - Visual feedback (crosshair cursor, mode indicator, selection dimensions)
+- **Left-Hand Keyboard Shortcuts**:
+  - Ctrl+R = Run/Start (always available via menu shortcut)
+  - Ctrl+S = Stop (always available via menu shortcut)
+  - Reliable focus handling with `KeyPreview = true`
+  - T key for tiling mode toggle
 - **Dual color mode system**:
   - 360-color spectrum generation age visualization
   - Dynamic age-based color progression with lifespan visualization
@@ -333,6 +461,11 @@ Original repository: [Im-Rises/GameOfLife](https://github.com/Im-Rises/GameOfLif
   - 10 preset shapes (spaceships, oscillators, methuselahs, guns)
   - 5 mathematically interesting tiling patterns
   - Organized menu hierarchy (Shapes... and Tilings... submenus)
+- **Visual Feedback Enhancements**:
+  - Mode indicator with state-based coloring (green/cyan/sky blue)
+  - Rounded eraser cursor preview
+  - Selection rectangle with dimensions overlay
+  - Density adjustment overlay (auto-hides after 5 seconds)
 - Optimized rendering pipeline (dirty rectangles + brush caching + age-aware invalidation)
 - Enhanced UI with color mode selector, status indicators, and reorganized menus
 - RLE pattern import/export support with preview dialog
@@ -366,15 +499,21 @@ Quentin MOREL:
 2. **Select color mode** from dropdown in menu bar:
    - "Constant Color from Birth" - See pattern formation history *[default]*
    - "Cell Changes Color as Aging" - See lifespan distribution
-3. **Press Spacebar** to start simulation with random pattern
+3. **Press Ctrl+R** to start simulation with random pattern (or press Spacebar)
 4. **Watch** the colors reveal pattern dynamics:
    - Birth mode: Rainbow trails show generation waves
    - Aging mode: Blue dominance shows exponential decay (most cells die young)
-5. **Click and drag** to paint/erase cells manually
-6. **Switch modes** anytime to see different perspectives on the same pattern
-7. **Adjust speed** via Speed menu
-8. **Press Spacebar** again to pause
-9. **File → Reset** to generate new random pattern
+5. **Try the tiling feature**:
+   - Draw a small pattern (3-5 cells)
+   - **Hold Ctrl** (cursor becomes crosshair)
+   - **Drag** to select pattern + spacing around it
+   - **Press Enter** to tile it across the grid
+   - **Press Ctrl+R** to watch it evolve!
+6. **Click and drag** to paint/erase cells manually
+7. **Switch modes** anytime to see different perspectives on the same pattern
+8. **Adjust speed** via Speed menu
+9. **Press Ctrl+S** to pause
+10. **File → Reset** to generate new random pattern
 
 ---
 
@@ -384,7 +523,7 @@ Quentin MOREL:
 
 ## 🧪 Experiment Ideas
 
-Try these to explore the dual color modes:
+Try these to explore the dual color modes and tiling:
 
 ### Classic Patterns
 1. **Create a 2×2 block** in aging mode → Watch it cycle through the rainbow forever
@@ -394,10 +533,16 @@ Try these to explore the dual color modes:
 5. **Look for "blue deserts"** in aging mode → Regions with constant rebirth (high chaos)
 6. **Find "red islands"** in aging mode → Stable patterns with ancient cells
 
-### Tiling Patterns
-7. **Load Chessboard tiling** in birth mode → See ancient solid blocks vs. random soup chaos
-8. **Load Ladder Brick tiling** in aging mode → Watch oscillators stay blue while stable parts age to red
-9. **Load Diagonal Stripes** in birth mode → See rainbow trails where gliders travel along diagonals
+### Tiling Experiments
+7. **Draw a glider** → Ctrl+Drag select with spacing → Tile → Watch gliders interact!
+8. **Create a 3×3 block with 2-cell spacing** → Tile → Observe emergent behavior
+9. **Load Chessboard tiling** in birth mode → See ancient solid blocks vs. random soup chaos
+10. **Load Ladder Brick tiling** in aging mode → Watch oscillators stay blue while stable parts age to red
+11. **Load Diagonal Stripes** in birth mode → See rainbow trails where gliders travel along diagonals
+12. **Draw an oscillator** (blinker/toad) → Select with tight spacing → Tile → Beautiful synchronization!
+13. **Freehand doodle** a pattern → Ctrl+Drag → See what emerges from your art!
+14. **Single alive cell** → Select 10×10 region around it → Tile → Uniform starting condition
+15. **Combine patterns**: Tile a pattern, then use T-mode to select and tile a different region again!
 10. **Load Double Diagonal** in aging mode → Find the ancient red intersections vs. young blue edges
 11. **Load Concentric Rectangles** → Observe radial wave propagation in birth mode vs. mortality distribution in aging mode
 12. **Try all 5 tilings** at different densities → See how density affects pattern evolution and longevity

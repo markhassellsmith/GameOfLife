@@ -46,6 +46,7 @@ namespace TP14_JeudelaVie
             rapideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             patternToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             randomToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            tileSelectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             shapesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             gliderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             lwssToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -62,6 +63,7 @@ namespace TP14_JeudelaVie
             colorModeComboBox = new System.Windows.Forms.ToolStripComboBox();
             toolStripIterationsTextbox = new System.Windows.Forms.ToolStripTextBox();
             toolStripAliveCountBox = new System.Windows.Forms.ToolStripTextBox();
+            toolStripModeIndicator = new System.Windows.Forms.ToolStripTextBox();
             toolStripSpacebarComment = new System.Windows.Forms.ToolStripTextBox();
             toolStripTextBoxStatus = new System.Windows.Forms.ToolStripTextBox();
             myTimer = new System.Windows.Forms.Timer(components);
@@ -81,7 +83,7 @@ namespace TP14_JeudelaVie
             // menuEtatVitesse
             // 
             menuEtatVitesse.ImageScalingSize = new System.Drawing.Size(20, 20);
-            menuEtatVitesse.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { fileToolStripMenuItem, simulationToolStripMenuItem, vitesseToolStripMenuItem, patternToolStripMenuItem, colorModeComboBox, toolStripIterationsTextbox, toolStripAliveCountBox, toolStripSpacebarComment, toolStripTextBoxStatus });
+            menuEtatVitesse.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { fileToolStripMenuItem, simulationToolStripMenuItem, vitesseToolStripMenuItem, patternToolStripMenuItem, colorModeComboBox, toolStripIterationsTextbox, toolStripAliveCountBox, toolStripModeIndicator, toolStripSpacebarComment, toolStripTextBoxStatus });
             menuEtatVitesse.Location = new System.Drawing.Point(0, 0);
             menuEtatVitesse.Name = "menuEtatVitesse";
             menuEtatVitesse.Padding = new System.Windows.Forms.Padding(16, 4, 0, 4);
@@ -129,6 +131,7 @@ namespace TP14_JeudelaVie
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
             exitToolStripMenuItem.Size = new System.Drawing.Size(433, 60);
             exitToolStripMenuItem.Text = "Exit";
             exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
@@ -143,6 +146,7 @@ namespace TP14_JeudelaVie
             // startToolStripMenuItem
             // 
             startToolStripMenuItem.Name = "startToolStripMenuItem";
+            startToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
             startToolStripMenuItem.Size = new System.Drawing.Size(240, 60);
             startToolStripMenuItem.Text = "Start";
             startToolStripMenuItem.Click += runToolStripMenuItem_Click;
@@ -150,6 +154,7 @@ namespace TP14_JeudelaVie
             // stopToolStripMenuItem
             // 
             stopToolStripMenuItem.Name = "stopToolStripMenuItem";
+            stopToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
             stopToolStripMenuItem.Size = new System.Drawing.Size(240, 60);
             stopToolStripMenuItem.Text = "Stop";
             stopToolStripMenuItem.Click += stopToolStripMenuItem_Click;
@@ -184,7 +189,7 @@ namespace TP14_JeudelaVie
             // 
             // patternToolStripMenuItem
             // 
-            patternToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { randomToolStripMenuItem, shapesToolStripMenuItem, tilingsToolStripMenuItem });
+            patternToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { randomToolStripMenuItem, tileSelectionToolStripMenuItem, shapesToolStripMenuItem, tilingsToolStripMenuItem });
             patternToolStripMenuItem.Name = "patternToolStripMenuItem";
             patternToolStripMenuItem.Size = new System.Drawing.Size(162, 58);
             patternToolStripMenuItem.Text = "Pattern";
@@ -197,6 +202,13 @@ namespace TP14_JeudelaVie
             randomToolStripMenuItem.Size = new System.Drawing.Size(381, 60);
             randomToolStripMenuItem.Text = "Random";
             randomToolStripMenuItem.Click += randomToolStripMenuItem_Click;
+            // 
+            // tileSelectionToolStripMenuItem
+            // 
+            tileSelectionToolStripMenuItem.Name = "tileSelectionToolStripMenuItem";
+            tileSelectionToolStripMenuItem.Size = new System.Drawing.Size(381, 60);
+            tileSelectionToolStripMenuItem.Text = "Tile Selection... (T)";
+            tileSelectionToolStripMenuItem.Click += tileSelectionToolStripMenuItem_Click;
             // 
             // shapesToolStripMenuItem
             // 
@@ -308,6 +320,17 @@ namespace TP14_JeudelaVie
             toolStripAliveCountBox.Name = "toolStripAliveCountBox";
             toolStripAliveCountBox.Size = new System.Drawing.Size(245, 58);
             toolStripAliveCountBox.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // toolStripModeIndicator
+            // 
+            toolStripModeIndicator.AutoSize = false;
+            toolStripModeIndicator.BackColor = System.Drawing.Color.LightGreen;
+            toolStripModeIndicator.Font = new System.Drawing.Font("Segoe UI", 12.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            toolStripModeIndicator.Name = "toolStripModeIndicator";
+            toolStripModeIndicator.ReadOnly = true;
+            toolStripModeIndicator.Size = new System.Drawing.Size(320, 58);
+            toolStripModeIndicator.Text = "Mode: Drawing";
+            toolStripModeIndicator.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // toolStripSpacebarComment
             // 
@@ -437,12 +460,14 @@ namespace TP14_JeudelaVie
         private System.Windows.Forms.ToolStripMenuItem rapideToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem patternToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem randomToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem tileSelectionToolStripMenuItem;
         private System.Windows.Forms.Timer myTimer;
         private System.Windows.Forms.PictureBox squareModel;
         private System.Windows.Forms.PictureBox squareModelAlive;
         private System.Windows.Forms.ToolStripTextBox toolStripSpacebarComment;
         private System.Windows.Forms.ToolStripTextBox toolStripIterationsTextbox;
         private System.Windows.Forms.ToolStripTextBox toolStripAliveCountBox;
+        private System.Windows.Forms.ToolStripTextBox toolStripModeIndicator;
         private System.Windows.Forms.ToolStripTextBox toolStripTextBoxStatus;
         private System.Windows.Forms.ToolStripMenuItem exportPatternToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importPatternToolStripMenuItem;

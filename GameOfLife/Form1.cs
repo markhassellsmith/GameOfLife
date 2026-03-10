@@ -31,6 +31,22 @@ namespace TP14_JeudelaVie
     }
 
     /// <summary>
+    /// Defines the interaction mode for the grid.
+    /// </summary>
+    public enum InteractionMode
+    {
+        /// <summary>
+        /// Normal drawing mode - paint and erase cells with mouse.
+        /// </summary>
+        Drawing,
+
+        /// <summary>
+        /// Selection mode - select a rectangular region to tile across the grid.
+        /// </summary>
+        TilingSelection
+    }
+
+    /// <summary>
     /// Main form for Conway's Game of Life simulation.
     /// </summary>
     public partial class Form1 : Form
@@ -129,6 +145,14 @@ namespace TP14_JeudelaVie
         private Point currentMouseCell = new Point(-1, -1); // Current cell under mouse
         private bool mouseOverGrid = false; // Is mouse over the grid
 
+        // Tiling selection mode fields
+        private InteractionMode currentMode = InteractionMode.Drawing;
+        private bool isSelecting = false;
+        private Point selectionStart = Point.Empty;
+        private Point selectionEnd = Point.Empty;
+        private Rectangle selectionRect = Rectangle.Empty;
+        private bool isCtrlKeyHeld = false; // Track Ctrl key state for temporary selection mode
+
         /// <summary>
         /// Population density percentage (0-100). Controls the proportion of alive cells.
         /// Adjustable via mouse wheel in 5% increments. Default is 50%.
@@ -155,6 +179,8 @@ namespace TP14_JeudelaVie
         {
             InitializeComponent();
             this.KeyDown += new KeyEventHandler(Form1_KeyDown);
+            this.KeyUp += new KeyEventHandler(Form1_KeyUp);
+            this.KeyPreview = true; // Ensure form receives key events before controls
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
@@ -170,6 +196,45 @@ namespace TP14_JeudelaVie
                     stopToolStripMenuItem_Click(sender, e);
                 }
                 isStart = !isStart;
+            }
+            else if (e.KeyCode == Keys.T && !e.Control && !e.Shift && !e.Alt)
+            {
+                // Toggle selection mode with T key
+                tileSelectionToolStripMenuItem_Click(sender, e);
+            }
+            else if (e.KeyCode == Keys.Escape)
+            {
+                // Exit selection mode with Escape (works for both T-key and Ctrl-drag)
+                if (currentMode == InteractionMode.TilingSelection || !selectionRect.IsEmpty)
+                {
+                    ExitSelectionMode();
+                }
+            }
+            else if (e.KeyCode == Keys.Enter && !selectionRect.IsEmpty)
+            {
+                // Apply tiling with Enter key (works for both modes)
+                ApplyTiling();
+            }
+            else if (e.KeyCode == Keys.ControlKey || e.KeyCode == Keys.LControlKey || e.KeyCode == Keys.RControlKey)
+            {
+                // Ctrl key pressed - update state and cursor
+                if (!isCtrlKeyHeld && mouseOverGrid)
+                {
+                    isCtrlKeyHeld = true;
+                    UpdateCursorForCtrlKey();
+                    UpdateModeIndicatorForCtrl();
+                }
+            }
+        }
+
+        private void Form1_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.ControlKey || e.KeyCode == Keys.LControlKey || e.KeyCode == Keys.RControlKey)
+            {
+                // Ctrl key released - update state and cursor
+                isCtrlKeyHeld = false;
+                UpdateCursorForCtrlKey();
+                RestoreModeIndicator();
             }
         }
 
@@ -209,7 +274,8 @@ namespace TP14_JeudelaVie
                 Location = new Point(positionOffsetX, positionOffsetY),
                 Size = new Size(bitmapWidth, bitmapHeight),
                 Image = gridBitmap,
-                SizeMode = PictureBoxSizeMode.Normal
+                SizeMode = PictureBoxSizeMode.Normal,
+                TabStop = true  // Make grid focusable so it can receive keyboard events
             };
 
             gridDisplay.MouseDown += Grid_MouseDown;
@@ -219,6 +285,7 @@ namespace TP14_JeudelaVie
             gridDisplay.MouseLeave += Grid_MouseLeave;
             gridDisplay.MouseWheel += Grid_MouseWheel;
             gridDisplay.Paint += Grid_Paint; // Add paint handler for cursor overlay
+            gridDisplay.Click += (s, e) => gridDisplay.Focus(); // Focus grid when clicked
             this.Controls.Add(gridDisplay);
 
             this.Size = new Size(positionOffsetX + bitmapWidth + positionOffsetX, positionOffsetY + bitmapHeight + positionOffsetY + 50);
@@ -770,6 +837,226 @@ namespace TP14_JeudelaVie
 
         private void gosperGliderGunToolStripMenuItem_Click(object sender, EventArgs e) => LoadPresetPattern("Gosper Glider Gun");
 
+        /// <summary>
+        /// Handles the Tile Selection menu item click to enter selection mode.
+        /// </summary>
+        private void tileSelectionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (currentMode == InteractionMode.Drawing)
+            {
+                EnterSelectionMode();
+            }
+            else
+            {
+                ExitSelectionMode();
+            }
+        }
+
+        /// <summary>
+        /// Enters tiling selection mode.
+        /// </summary>
+        private void EnterSelectionMode()
+        {
+            currentMode = InteractionMode.TilingSelection;
+            isSelecting = false;
+            selectionStart = Point.Empty;
+            selectionEnd = Point.Empty;
+            selectionRect = Rectangle.Empty;
+
+            // Update UI
+            toolStripModeIndicator.Text = "Mode: Select Region (T)";
+            toolStripModeIndicator.BackColor = Color.LightSkyBlue;
+            tileSelectionToolStripMenuItem.Text = "Exit Selection Mode (Esc)";
+
+            // Change cursor
+            gridDisplay.Cursor = Cursors.Cross;
+
+            gridDisplay.Invalidate();
+        }
+
+        /// <summary>
+        /// Exits tiling selection mode and returns to drawing mode.
+        /// </summary>
+        private void ExitSelectionMode()
+        {
+            currentMode = InteractionMode.Drawing;
+            isSelecting = false;
+            selectionStart = Point.Empty;
+            selectionEnd = Point.Empty;
+            selectionRect = Rectangle.Empty;
+
+            // Update UI
+            toolStripModeIndicator.Text = "Mode: Drawing";
+            toolStripModeIndicator.BackColor = Color.LightGreen;
+            tileSelectionToolStripMenuItem.Text = "Tile Selection (Ctrl+Drag or T)";
+
+            // Reset cursor (respecting Ctrl key state)
+            UpdateCursorForCtrlKey();
+
+            gridDisplay.Invalidate();
+        }
+
+        /// <summary>
+        /// Temporarily enters selection mode for Ctrl+drag operation.
+        /// </summary>
+        private void EnterTemporarySelectionMode()
+        {
+            currentMode = InteractionMode.TilingSelection;
+
+            // Update UI to show temporary selection mode
+            toolStripModeIndicator.Text = "Mode: Select Region (Ctrl)";
+            toolStripModeIndicator.BackColor = Color.LightSkyBlue;
+
+            // Cursor already set to crosshair by Ctrl key
+        }
+
+        /// <summary>
+        /// Updates cursor based on Ctrl key state.
+        /// </summary>
+        private void UpdateCursorForCtrlKey()
+        {
+            if (!mouseOverGrid)
+                return;
+
+            if (currentMode == InteractionMode.TilingSelection)
+            {
+                gridDisplay.Cursor = Cursors.Cross;
+            }
+            else if (isCtrlKeyHeld)
+            {
+                gridDisplay.Cursor = Cursors.Cross; // Show selection cursor when Ctrl is held
+            }
+            else
+            {
+                gridDisplay.Cursor = Cursors.Default;
+            }
+        }
+
+        /// <summary>
+        /// Updates mode indicator to show Ctrl+drag hint.
+        /// </summary>
+        private void UpdateModeIndicatorForCtrl()
+        {
+            if (currentMode == InteractionMode.Drawing && mouseOverGrid)
+            {
+                toolStripModeIndicator.Text = "Ctrl+Drag to Select";
+                toolStripModeIndicator.BackColor = Color.LightCyan;
+            }
+        }
+
+        /// <summary>
+        /// Restores mode indicator to normal state.
+        /// </summary>
+        private void RestoreModeIndicator()
+        {
+            if (currentMode == InteractionMode.Drawing)
+            {
+                toolStripModeIndicator.Text = "Mode: Drawing";
+                toolStripModeIndicator.BackColor = Color.LightGreen;
+            }
+        }
+
+        /// <summary>
+        /// Applies the tiling of the selected region across the entire grid.
+        /// The selection defines the tile unit (pattern + spacing) which is repeated seamlessly.
+        /// </summary>
+        private void ApplyTiling()
+        {
+            if (selectionRect.IsEmpty || selectionRect.Width == 0 || selectionRect.Height == 0)
+            {
+                MessageBox.Show("No valid region selected for tiling.", "Tiling Error",
+                               MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Convert pixel coordinates to cell coordinates
+            int startCellX = selectionRect.X / cellSpacing;
+            int startCellY = selectionRect.Y / cellSpacing;
+            int endCellX = (selectionRect.X + selectionRect.Width) / cellSpacing;
+            int endCellY = (selectionRect.Y + selectionRect.Height) / cellSpacing;
+
+            // Ensure bounds
+            startCellX = Math.Max(0, startCellX);
+            startCellY = Math.Max(0, startCellY);
+            endCellX = Math.Min(squarePerLine, endCellX);
+            endCellY = Math.Min(squarePerColumn, endCellY);
+
+            // Calculate pattern dimensions (tile unit size)
+            // Note: No +1 here because endCell is already one past the last cell
+            int patternWidth = endCellX - startCellX;
+            int patternHeight = endCellY - startCellY;
+
+            if (patternWidth <= 0 || patternHeight <= 0)
+            {
+                MessageBox.Show("Selected region is too small.", "Tiling Error",
+                               MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Capture the tile unit (pattern + spacing + colors)
+            bool[,] pattern = new bool[patternWidth, patternHeight];
+            Color[,] patternColors = new Color[patternWidth, patternHeight];
+
+            for (int i = 0; i < patternWidth; i++)
+            {
+                for (int j = 0; j < patternHeight; j++)
+                {
+                    pattern[i, j] = squaresState[startCellX + i, startCellY + j];
+                    patternColors[i, j] = cellColor[startCellX + i, startCellY + j];
+                }
+            }
+
+            // Clear the grid
+            for (int i = 0; i < squarePerLine; i++)
+            {
+                for (int j = 0; j < squarePerColumn; j++)
+                {
+                    squaresState[i, j] = false;
+                    cellAge[i, j] = 0;
+                }
+            }
+
+            // Tile the pattern across the entire grid starting from (0,0)
+            // Uses modulo to repeat the tile unit seamlessly
+            for (int i = 0; i < squarePerLine; i++)
+            {
+                for (int j = 0; j < squarePerColumn; j++)
+                {
+                    int patternI = i % patternWidth;
+                    int patternJ = j % patternHeight;
+                    squaresState[i, j] = pattern[patternI, patternJ];
+                    cellColor[i, j] = patternColors[patternI, patternJ];
+                }
+            }
+
+            // Reset generation and count alive cells
+            TickNumber = 0;
+            toolStripIterationsTextbox.Text = "Tick = 0";
+            AliveCount = 0;
+
+            for (int i = 0; i < squarePerLine; i++)
+            {
+                for (int j = 0; j < squarePerColumn; j++)
+                {
+                    if (squaresState[i, j])
+                        AliveCount++;
+                }
+            }
+
+            toolStripAliveCountBox.Text = AliveCount.ToString() + " cells alive.";
+            PreviousAliveCount = -1;
+            stableConsecutiveCount = 0;
+
+            // Render and exit selection mode
+            RenderGrid();
+            ExitSelectionMode();
+
+            MessageBox.Show($"Pattern tiled successfully!\n{patternWidth}×{patternHeight} tile unit repeated across grid.\n{AliveCount} cells alive.",
+                           "Tiling Complete",
+                           MessageBoxButtons.OK,
+                           MessageBoxIcon.Information);
+        }
+
         private void clearGridToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Clear all cells to dead
@@ -799,14 +1086,42 @@ namespace TP14_JeudelaVie
 
         private void Grid_MouseDown(object sender, MouseEventArgs e)
         {
-            isDragging = true;
-            if (e.Button == MouseButtons.Left)
-                dragPaintMode = true;
-            else if (e.Button == MouseButtons.Right)
-                dragPaintMode = false;
-            else
+            // Check if Ctrl+Left-drag should start selection (temporary mode)
+            if (isCtrlKeyHeld && e.Button == MouseButtons.Left && currentMode == InteractionMode.Drawing)
+            {
+                // Temporarily enter selection mode for Ctrl+drag
+                EnterTemporarySelectionMode();
+                isSelecting = true;
+                selectionStart = e.Location;
+                selectionEnd = e.Location;
+                selectionRect = new Rectangle(selectionStart.X, selectionStart.Y, 0, 0);
+                gridDisplay.Invalidate();
                 return;
-            PaintCell(e.X, e.Y);
+            }
+
+            if (currentMode == InteractionMode.TilingSelection)
+            {
+                // Start selection in persistent mode (T-key activated)
+                if (e.Button == MouseButtons.Left)
+                {
+                    isSelecting = true;
+                    selectionStart = e.Location;
+                    selectionEnd = e.Location;
+                    selectionRect = new Rectangle(selectionStart.X, selectionStart.Y, 0, 0);
+                    gridDisplay.Invalidate();
+                }
+            }
+            else // Drawing mode
+            {
+                isDragging = true;
+                if (e.Button == MouseButtons.Left)
+                    dragPaintMode = true;
+                else if (e.Button == MouseButtons.Right)
+                    dragPaintMode = false;
+                else
+                    return;
+                PaintCell(e.X, e.Y);
+            }
         }
 
         private void Grid_MouseMove(object sender, MouseEventArgs e)
@@ -818,13 +1133,37 @@ namespace TP14_JeudelaVie
                 currentMouseCell = new Point(cellI, cellJ);
                 gridDisplay.Invalidate();
             }
-            if (!isDragging) return;
-            PaintCell(e.X, e.Y);
+
+            if (currentMode == InteractionMode.TilingSelection && isSelecting)
+            {
+                // Update selection rectangle
+                selectionEnd = e.Location;
+
+                int x = Math.Min(selectionStart.X, selectionEnd.X);
+                int y = Math.Min(selectionStart.Y, selectionEnd.Y);
+                int width = Math.Abs(selectionEnd.X - selectionStart.X);
+                int height = Math.Abs(selectionEnd.Y - selectionStart.Y);
+
+                selectionRect = new Rectangle(x, y, width, height);
+                gridDisplay.Invalidate();
+            }
+            else if (currentMode == InteractionMode.Drawing && isDragging)
+            {
+                PaintCell(e.X, e.Y);
+            }
         }
 
         private void Grid_MouseUp(object sender, MouseEventArgs e)
         {
-            isDragging = false;
+            if (currentMode == InteractionMode.TilingSelection && isSelecting)
+            {
+                // Finalize selection - user can now press Enter to apply or keep selecting
+                isSelecting = false;
+            }
+            else if (currentMode == InteractionMode.Drawing)
+            {
+                isDragging = false;
+            }
         }
 
         private void Grid_MouseWheel(object sender, MouseEventArgs e)
@@ -910,6 +1249,11 @@ namespace TP14_JeudelaVie
         private void Grid_MouseEnter(object sender, EventArgs e)
         {
             mouseOverGrid = true;
+            UpdateCursorForCtrlKey();
+            if (isCtrlKeyHeld)
+            {
+                UpdateModeIndicatorForCtrl();
+            }
             gridDisplay.Invalidate();
         }
 
@@ -917,6 +1261,10 @@ namespace TP14_JeudelaVie
         {
             mouseOverGrid = false;
             currentMouseCell = new Point(-1, -1);
+            if (isCtrlKeyHeld)
+            {
+                RestoreModeIndicator();
+            }
             gridDisplay.Invalidate();
         }
 
@@ -991,6 +1339,33 @@ namespace TP14_JeudelaVie
 
         private void Grid_Paint(object sender, PaintEventArgs e)
         {
+            // Draw selection rectangle if in tiling mode
+            if (currentMode == InteractionMode.TilingSelection && !selectionRect.IsEmpty)
+            {
+                using (Pen selectionPen = new Pen(Color.Blue, 3))
+                {
+                    selectionPen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
+                    e.Graphics.DrawRectangle(selectionPen, selectionRect);
+                }
+
+                // Draw selection info
+                int cellWidth = selectionRect.Width / cellSpacing;
+                int cellHeight = selectionRect.Height / cellSpacing;
+                string selectionInfo = $"{cellWidth}×{cellHeight} cells";
+                using (Font font = new Font("Segoe UI", 14, FontStyle.Bold))
+                using (Brush textBrush = new SolidBrush(Color.White))
+                using (Brush bgBrush = new SolidBrush(Color.FromArgb(200, 0, 0, 255)))
+                {
+                    SizeF textSize = e.Graphics.MeasureString(selectionInfo, font);
+                    int infoX = selectionRect.X + selectionRect.Width / 2 - (int)(textSize.Width / 2);
+                    int infoY = selectionRect.Y - 30;
+                    if (infoY < 0) infoY = selectionRect.Y + 5;
+
+                    e.Graphics.FillRectangle(bgBrush, infoX - 5, infoY - 2, textSize.Width + 10, textSize.Height + 4);
+                    e.Graphics.DrawString(selectionInfo, font, textBrush, infoX, infoY);
+                }
+            }
+
             if (showDensityOverlay && mouseOverGrid)
             {
                 string densityText = $"Density: {populationDensity}%";
