@@ -46,7 +46,6 @@ namespace TP14_JeudelaVie
             rapideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             patternToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             randomToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            loadPresetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             shapesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             gliderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             lwssToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -185,7 +184,7 @@ namespace TP14_JeudelaVie
             // 
             // patternToolStripMenuItem
             // 
-            patternToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { randomToolStripMenuItem, loadPresetToolStripMenuItem });
+            patternToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { randomToolStripMenuItem, shapesToolStripMenuItem, tilingsToolStripMenuItem });
             patternToolStripMenuItem.Name = "patternToolStripMenuItem";
             patternToolStripMenuItem.Size = new System.Drawing.Size(162, 58);
             patternToolStripMenuItem.Text = "Pattern";
@@ -199,18 +198,11 @@ namespace TP14_JeudelaVie
             randomToolStripMenuItem.Text = "Random";
             randomToolStripMenuItem.Click += randomToolStripMenuItem_Click;
             // 
-            // loadPresetToolStripMenuItem
-            // 
-            loadPresetToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { shapesToolStripMenuItem, tilingsToolStripMenuItem });
-            loadPresetToolStripMenuItem.Name = "loadPresetToolStripMenuItem";
-            loadPresetToolStripMenuItem.Size = new System.Drawing.Size(381, 60);
-            loadPresetToolStripMenuItem.Text = "Load Preset...";
-            // 
             // shapesToolStripMenuItem
             // 
             shapesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { gliderToolStripMenuItem, lwssToolStripMenuItem, blinkerToolStripMenuItem, toadToolStripMenuItem, beaconToolStripMenuItem, pulsarToolStripMenuItem, toolStripSeparator1, rPentominoToolStripMenuItem, acornToolStripMenuItem, diehardToolStripMenuItem, toolStripSeparator2, gosperGliderGunToolStripMenuItem });
             shapesToolStripMenuItem.Name = "shapesToolStripMenuItem";
-            shapesToolStripMenuItem.Size = new System.Drawing.Size(450, 60);
+            shapesToolStripMenuItem.Size = new System.Drawing.Size(381, 60);
             shapesToolStripMenuItem.Text = "Shapes...";
             // 
             // gliderToolStripMenuItem
@@ -370,7 +362,7 @@ namespace TP14_JeudelaVie
     concentricRectanglesToolStripMenuItem 
 });
             tilingsToolStripMenuItem.Name = "tilingsToolStripMenuItem";
-            tilingsToolStripMenuItem.Size = new System.Drawing.Size(662, 60);
+            tilingsToolStripMenuItem.Size = new System.Drawing.Size(381, 60);
             tilingsToolStripMenuItem.Text = "Tilings...";
             // 
             // chessboardToolStripMenuItem
@@ -456,7 +448,6 @@ namespace TP14_JeudelaVie
         private System.Windows.Forms.ToolStripMenuItem importPatternToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem clearGridToolStripMenuItem;
         private System.Windows.Forms.ToolStripComboBox colorModeComboBox;
-        private System.Windows.Forms.ToolStripMenuItem loadPresetToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem shapesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem gliderToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem lwssToolStripMenuItem;
