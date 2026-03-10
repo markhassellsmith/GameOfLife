@@ -1200,14 +1200,6 @@ namespace TP14_JeudelaVie
         }
 
         /// <summary>
-        /// Loads blinkers tiling pattern.
-        /// </summary>
-        private void blinkersToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            LoadBlinkersPattern();
-        }
-
-        /// <summary>
         /// Generates a brick/running bond tiling pattern.
         /// Alternating rows are offset, creating a brick wall appearance.
         /// </summary>
@@ -1594,117 +1586,6 @@ namespace TP14_JeudelaVie
 
             MessageBox.Show($"Ladder Brick pattern loaded!\n{AliveCount} cells alive.\n\nThis pattern creates oscillators, gliders, and evolving shapes!",
                    "Dynamic Pattern Loaded",
-                   MessageBoxButtons.OK,
-                   MessageBoxIcon.Information);
-        }
-
-        /// <summary>
-        /// Generates a "Blinkers" tiling pattern with alternating horizontal and vertical blinkers.
-        /// Classic period-2 oscillators distributed across the entire grid in a checkerboard arrangement.
-        /// Each blinker separated by exactly 1 empty cell from orthogonal neighbors (3-cell spacing).
-        /// Creates mesmerizing synchronized pulsing effect with directional alternation.
-        /// </summary>
-        private void LoadBlinkersPattern()
-        {
-            // Clear the grid first
-            for (int i = 0; i < squarePerLine; i++)
-            {
-                for (int j = 0; j < squarePerColumn; j++)
-                {
-                    squaresState[i, j] = false;
-                    cellColor[i, j] = squareModel.BackColor;
-                }
-            }
-
-            // Pattern spacing: 3-cell spacing between centers gives exactly 1 empty cell between orthogonal blinkers
-            // Horizontal at j=1, Vertical at j=4 (occupies 3,4,5), gap at j=2 (1 cell)
-            int blinkerSpacing = 4;  // Spacing between centers
-
-            // Create grid of alternating horizontal and vertical blinkers (3 cells each)
-            AliveCount = 0;
-            for (int blockJ = 0; blockJ <= squarePerColumn / blinkerSpacing; blockJ++)
-            {
-                for (int blockI = 0; blockI <= squarePerLine / blinkerSpacing; blockI++)
-                {
-                    // Offset centers to achieve 1-cell gap between orthogonal neighbors
-                    int centerI = blockI * blinkerSpacing;
-                    int centerJ = blockJ * blinkerSpacing;
-
-                    // Basketweave pattern: 2×2 blocks of same orientation create woven appearance
-                    // Divide block indices by 2 to create larger checker blocks
-                    bool isHorizontal = ((blockI / 2) + (blockJ / 2)) % 2 == 0;
-
-                    if (isHorizontal)
-                    {
-                        // Place 3-cell horizontal blinker (3 wide, 1 tall)
-                        for (int k = 0; k < 3; k++)
-                        {
-                            if (centerI + k >= 0 && centerI + k < squarePerLine && centerJ >= 0 && centerJ < squarePerColumn)
-                            {
-                                squaresState[centerI + k, centerJ] = true;
-                                AliveCount++;
-
-                                // Set color based on current mode
-                                if (currentColorMode == ColorMode.BirthGeneration)
-                                {
-                                    cellColor[centerI + k, centerJ] = squareModelAlive.BackColor;
-                                    cellAge[centerI + k, centerJ] = 0;
-                                }
-                                else // CellAging mode
-                                {
-                                    cellAge[centerI + k, centerJ] = 0;
-                                    int colorIndex = 240; // Blue
-                                    cellColor[centerI + k, centerJ] = Color.FromArgb(
-                                        ColorPalettes.Spectrum360[colorIndex].red,
-                                        ColorPalettes.Spectrum360[colorIndex].green,
-                                        ColorPalettes.Spectrum360[colorIndex].blue);
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        // Place 3-cell vertical blinker (1 wide, 3 tall)
-                        for (int k = 0; k < 3; k++)
-                        {
-                            if (centerI >= 0 && centerI < squarePerLine && centerJ + k >= 0 && centerJ + k < squarePerColumn)
-                            {
-                                squaresState[centerI, centerJ + k] = true;
-                                AliveCount++;
-
-                                // Set color based on current mode
-                                if (currentColorMode == ColorMode.BirthGeneration)
-                                {
-                                    cellColor[centerI, centerJ + k] = squareModelAlive.BackColor;
-                                    cellAge[centerI, centerJ + k] = 0;
-                                }
-                                else // CellAging mode
-                                {
-                                    cellAge[centerI, centerJ + k] = 0;
-                                    int colorIndex = 240; // Blue
-                                    cellColor[centerI, centerJ + k] = Color.FromArgb(
-                                        ColorPalettes.Spectrum360[colorIndex].red,
-                                        ColorPalettes.Spectrum360[colorIndex].green,
-                                        ColorPalettes.Spectrum360[colorIndex].blue);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Reset game state
-            TickNumber = 0;
-            toolStripIterationsTextbox.Text = "Tick = 0";
-            toolStripAliveCountBox.Text = AliveCount.ToString() + " cells alive.";
-            PreviousAliveCount = -1;
-            stableConsecutiveCount = 0;
-
-            // Render the pattern
-            RenderGrid();
-
-            MessageBox.Show($"Blinkers tiling pattern loaded!\n{AliveCount} cells alive.\n\nVery dense alternating blinkers (exactly 1-cell gap) pulse in perfect synchronization!",
-                   "Oscillator Pattern Loaded",
                    MessageBoxButtons.OK,
                    MessageBoxIcon.Information);
         }

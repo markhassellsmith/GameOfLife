@@ -151,7 +151,6 @@ dotnet run
 	- Diagonal Stripes - 45° bands spawning spaceships
 	- Double Diagonal - Cross-hatch diamond lattice
 	- Concentric Rectangles - Radial pulsing waves
-	- Blinkers - Basketweave of synchronized oscillators
 
 #### **Color Mode Dropdown** (in menu bar)
 Select visualization mode:
@@ -298,12 +297,6 @@ if (AliveCount == PreviousAliveCount) {
 | **Methuselah** (R-pentomino) | Explosive rainbow | High birth activity across many generations |
 | **Stable Region** | Few solid colors | Low activity, ancient survivors |
 | **Chaotic Region** | Multi-colored mess | High turnover, many generations mixed |
-| **Chessboard Tiling** | Solid ancient color | Large stable blocks from generation 0 |
-| **Ladder Brick Tiling** | Rainbow mix of bands | Oscillators born at different generations |
-| **Diagonal Stripes Tiling** | Rainbow diagonal bands | Gliders leave trails along stripe edges |
-| **Double Diagonal Tiling** | Cross-hatch rainbow lattice | Diamond intersections show ancient structure |
-| **Concentric Rectangles** | Rainbow rings from center | Waves of births expanding outward |
-| **Blinkers Tiling** | Two alternating colors | All blinkers born/reborn on alternating ticks |
 
 ### Cell Changes Color as Aging Mode
 

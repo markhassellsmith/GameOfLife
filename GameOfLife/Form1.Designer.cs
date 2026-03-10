@@ -74,7 +74,6 @@ namespace TP14_JeudelaVie
             diagonalStripesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             doubleDiagonalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             concentricRectanglesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            blinkersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             menuEtatVitesse.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)squareModel).BeginInit();
             ((System.ComponentModel.ISupportInitialize)squareModelAlive).BeginInit();
@@ -368,8 +367,7 @@ namespace TP14_JeudelaVie
     brickPatternToolStripMenuItem, 
     diagonalStripesToolStripMenuItem,
     doubleDiagonalToolStripMenuItem,
-    concentricRectanglesToolStripMenuItem,
-    blinkersToolStripMenuItem
+    concentricRectanglesToolStripMenuItem 
 });
             tilingsToolStripMenuItem.Name = "tilingsToolStripMenuItem";
             tilingsToolStripMenuItem.Size = new System.Drawing.Size(662, 60);
@@ -410,15 +408,8 @@ namespace TP14_JeudelaVie
             concentricRectanglesToolStripMenuItem.Text = "Concentric Rectangles";
             concentricRectanglesToolStripMenuItem.Click += concentricRectanglesToolStripMenuItem_Click;
             // 
-            // blinkersToolStripMenuItem
-            // 
-            blinkersToolStripMenuItem.Name = "blinkersToolStripMenuItem";
-            blinkersToolStripMenuItem.Size = new System.Drawing.Size(450, 60);
-            blinkersToolStripMenuItem.Text = "Blinkers";
-            blinkersToolStripMenuItem.Click += blinkersToolStripMenuItem_Click;
-            // 
             // Form1
-            //
+            // 
             AutoScaleDimensions = new System.Drawing.SizeF(21F, 51F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(3066, 1316);
@@ -485,6 +476,5 @@ namespace TP14_JeudelaVie
         private System.Windows.Forms.ToolStripMenuItem diagonalStripesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem doubleDiagonalToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem concentricRectanglesToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem blinkersToolStripMenuItem;
     }
 }
