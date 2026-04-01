@@ -147,6 +147,7 @@ namespace TP14_JeudelaVie
 
         // Tiling selection mode fields
         private InteractionMode currentMode = InteractionMode.Drawing;
+
         private bool isSelecting = false;
         private Point selectionStart = Point.Empty;
         private Point selectionEnd = Point.Empty;

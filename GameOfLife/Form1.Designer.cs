@@ -344,7 +344,7 @@ namespace TP14_JeudelaVie
             colorModeComboBox.DropDownWidth = 450;
             colorModeComboBox.Font = new System.Drawing.Font("Segoe UI", 12F);
             colorModeComboBox.Name = "colorModeComboBox";
-            colorModeComboBox.Size = new System.Drawing.Size(249, 58);
+            colorModeComboBox.Size = new System.Drawing.Size(450, 58);
             colorModeComboBox.SelectedIndexChanged += colorModeComboBox_SelectedIndexChanged;
             // 
             // toolStripIterationsTextbox
@@ -352,7 +352,7 @@ namespace TP14_JeudelaVie
             toolStripIterationsTextbox.Font = new System.Drawing.Font("Segoe UI", 12.75F, System.Drawing.FontStyle.Bold);
             toolStripIterationsTextbox.MaxLength = 200;
             toolStripIterationsTextbox.Name = "toolStripIterationsTextbox";
-            toolStripIterationsTextbox.Size = new System.Drawing.Size(156, 58);
+            toolStripIterationsTextbox.Size = new System.Drawing.Size(275, 58);
             toolStripIterationsTextbox.Text = "Tick = 0";
             toolStripIterationsTextbox.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -360,7 +360,7 @@ namespace TP14_JeudelaVie
             // 
             toolStripAliveCountBox.Font = new System.Drawing.Font("Segoe UI", 12.75F, System.Drawing.FontStyle.Bold);
             toolStripAliveCountBox.Name = "toolStripAliveCountBox";
-            toolStripAliveCountBox.Size = new System.Drawing.Size(153, 58);
+            toolStripAliveCountBox.Size = new System.Drawing.Size(250, 58);
             toolStripAliveCountBox.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // toolStripModeIndicator
@@ -370,8 +370,8 @@ namespace TP14_JeudelaVie
             toolStripModeIndicator.Font = new System.Drawing.Font("Segoe UI", 12.75F, System.Drawing.FontStyle.Bold);
             toolStripModeIndicator.Name = "toolStripModeIndicator";
             toolStripModeIndicator.ReadOnly = true;
-            toolStripModeIndicator.Size = new System.Drawing.Size(200, 53);
-            toolStripModeIndicator.Text = "Mode: Drawing";
+            toolStripModeIndicator.Size = new System.Drawing.Size(350, 53);
+            toolStripModeIndicator.Text = "Draw with mouse";
             toolStripModeIndicator.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // toolStripSpacebarComment
