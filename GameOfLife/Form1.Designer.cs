@@ -60,6 +60,12 @@ namespace TP14_JeudelaVie
             diehardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             gosperGliderGunToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            tilingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            chessboardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            brickPatternToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            diagonalStripesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            doubleDiagonalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            concentricRectanglesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             colorModeComboBox = new System.Windows.Forms.ToolStripComboBox();
             toolStripIterationsTextbox = new System.Windows.Forms.ToolStripTextBox();
             toolStripAliveCountBox = new System.Windows.Forms.ToolStripTextBox();
@@ -69,12 +75,6 @@ namespace TP14_JeudelaVie
             myTimer = new System.Windows.Forms.Timer(components);
             squareModel = new System.Windows.Forms.PictureBox();
             squareModelAlive = new System.Windows.Forms.PictureBox();
-            tilingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            chessboardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            brickPatternToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            diagonalStripesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            doubleDiagonalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            concentricRectanglesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             menuEtatVitesse.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)squareModel).BeginInit();
             ((System.ComponentModel.ISupportInitialize)squareModelAlive).BeginInit();
@@ -86,8 +86,8 @@ namespace TP14_JeudelaVie
             menuEtatVitesse.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { fileToolStripMenuItem, simulationToolStripMenuItem, vitesseToolStripMenuItem, patternToolStripMenuItem, colorModeComboBox, toolStripIterationsTextbox, toolStripAliveCountBox, toolStripModeIndicator, toolStripSpacebarComment, toolStripTextBoxStatus });
             menuEtatVitesse.Location = new System.Drawing.Point(0, 0);
             menuEtatVitesse.Name = "menuEtatVitesse";
-            menuEtatVitesse.Padding = new System.Windows.Forms.Padding(16, 4, 0, 4);
-            menuEtatVitesse.Size = new System.Drawing.Size(3066, 66);
+            menuEtatVitesse.Padding = new System.Windows.Forms.Padding(10, 3, 0, 3);
+            menuEtatVitesse.Size = new System.Drawing.Size(2313, 64);
             menuEtatVitesse.TabIndex = 0;
             menuEtatVitesse.Text = "menuStrip1";
             menuEtatVitesse.ItemClicked += menuEtatVitesse_ItemClicked;
@@ -96,27 +96,27 @@ namespace TP14_JeudelaVie
             // 
             fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { resetToolStripMenuItem, clearGridToolStripMenuItem, exportPatternToolStripMenuItem, importPatternToolStripMenuItem, exitToolStripMenuItem });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            fileToolStripMenuItem.Size = new System.Drawing.Size(99, 58);
+            fileToolStripMenuItem.Size = new System.Drawing.Size(71, 58);
             fileToolStripMenuItem.Text = "&File";
             // 
             // resetToolStripMenuItem
             // 
             resetToolStripMenuItem.Name = "resetToolStripMenuItem";
-            resetToolStripMenuItem.Size = new System.Drawing.Size(433, 60);
+            resetToolStripMenuItem.Size = new System.Drawing.Size(318, 44);
             resetToolStripMenuItem.Text = "Reset";
             resetToolStripMenuItem.Click += newToolStripMenuItem_Click;
             // 
             // clearGridToolStripMenuItem
             // 
             clearGridToolStripMenuItem.Name = "clearGridToolStripMenuItem";
-            clearGridToolStripMenuItem.Size = new System.Drawing.Size(433, 60);
+            clearGridToolStripMenuItem.Size = new System.Drawing.Size(318, 44);
             clearGridToolStripMenuItem.Text = "Clear the Grid";
             clearGridToolStripMenuItem.Click += clearGridToolStripMenuItem_Click;
             // 
             // exportPatternToolStripMenuItem
             // 
             exportPatternToolStripMenuItem.Name = "exportPatternToolStripMenuItem";
-            exportPatternToolStripMenuItem.Size = new System.Drawing.Size(433, 60);
+            exportPatternToolStripMenuItem.Size = new System.Drawing.Size(318, 44);
             exportPatternToolStripMenuItem.Text = "Export Pattern ...";
             exportPatternToolStripMenuItem.TextImageRelation = System.Windows.Forms.TextImageRelation.Overlay;
             exportPatternToolStripMenuItem.Click += exportPatternToolStripMenuItem_Click;
@@ -124,15 +124,15 @@ namespace TP14_JeudelaVie
             // importPatternToolStripMenuItem
             // 
             importPatternToolStripMenuItem.Name = "importPatternToolStripMenuItem";
-            importPatternToolStripMenuItem.Size = new System.Drawing.Size(433, 60);
+            importPatternToolStripMenuItem.Size = new System.Drawing.Size(318, 44);
             importPatternToolStripMenuItem.Text = "Import Pattern..";
             importPatternToolStripMenuItem.Click += importPatternToolStripMenuItem_Click;
             // 
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            exitToolStripMenuItem.Size = new System.Drawing.Size(433, 60);
+            exitToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4;
+            exitToolStripMenuItem.Size = new System.Drawing.Size(318, 44);
             exitToolStripMenuItem.Text = "Exit";
             exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
             // 
@@ -140,22 +140,22 @@ namespace TP14_JeudelaVie
             // 
             simulationToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { startToolStripMenuItem, stopToolStripMenuItem });
             simulationToolStripMenuItem.Name = "simulationToolStripMenuItem";
-            simulationToolStripMenuItem.Size = new System.Drawing.Size(220, 58);
+            simulationToolStripMenuItem.Size = new System.Drawing.Size(148, 58);
             simulationToolStripMenuItem.Text = "&Simulation";
             // 
             // startToolStripMenuItem
             // 
             startToolStripMenuItem.Name = "startToolStripMenuItem";
-            startToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
-            startToolStripMenuItem.Size = new System.Drawing.Size(240, 60);
+            startToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R;
+            startToolStripMenuItem.Size = new System.Drawing.Size(275, 44);
             startToolStripMenuItem.Text = "Run";
             startToolStripMenuItem.Click += runToolStripMenuItem_Click;
             // 
             // stopToolStripMenuItem
             // 
             stopToolStripMenuItem.Name = "stopToolStripMenuItem";
-            stopToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            stopToolStripMenuItem.Size = new System.Drawing.Size(240, 60);
+            stopToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S;
+            stopToolStripMenuItem.Size = new System.Drawing.Size(275, 44);
             stopToolStripMenuItem.Text = "Stop";
             stopToolStripMenuItem.Click += stopToolStripMenuItem_Click;
             // 
@@ -163,27 +163,27 @@ namespace TP14_JeudelaVie
             // 
             vitesseToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { lentToolStripMenuItem, middleSpeedToolStripMenuItem, rapideToolStripMenuItem });
             vitesseToolStripMenuItem.Name = "vitesseToolStripMenuItem";
-            vitesseToolStripMenuItem.Size = new System.Drawing.Size(146, 58);
+            vitesseToolStripMenuItem.Size = new System.Drawing.Size(101, 58);
             vitesseToolStripMenuItem.Text = "Sp&eed";
             // 
             // lentToolStripMenuItem
             // 
             lentToolStripMenuItem.Name = "lentToolStripMenuItem";
-            lentToolStripMenuItem.Size = new System.Drawing.Size(303, 60);
+            lentToolStripMenuItem.Size = new System.Drawing.Size(237, 44);
             lentToolStripMenuItem.Text = "Slow";
             lentToolStripMenuItem.Click += slowToolStripMenuItem_Click;
             // 
             // middleSpeedToolStripMenuItem
             // 
             middleSpeedToolStripMenuItem.Name = "middleSpeedToolStripMenuItem";
-            middleSpeedToolStripMenuItem.Size = new System.Drawing.Size(303, 60);
+            middleSpeedToolStripMenuItem.Size = new System.Drawing.Size(237, 44);
             middleSpeedToolStripMenuItem.Text = "Medium";
             middleSpeedToolStripMenuItem.Click += normalSpeedToolStripMenuItem_Click;
             // 
             // rapideToolStripMenuItem
             // 
             rapideToolStripMenuItem.Name = "rapideToolStripMenuItem";
-            rapideToolStripMenuItem.Size = new System.Drawing.Size(303, 60);
+            rapideToolStripMenuItem.Size = new System.Drawing.Size(237, 44);
             rapideToolStripMenuItem.Text = "Quick";
             rapideToolStripMenuItem.Click += quickToolStripMenuItem_Click;
             // 
@@ -191,7 +191,7 @@ namespace TP14_JeudelaVie
             // 
             patternToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { randomToolStripMenuItem, tileSelectionToolStripMenuItem, shapesToolStripMenuItem, tilingsToolStripMenuItem });
             patternToolStripMenuItem.Name = "patternToolStripMenuItem";
-            patternToolStripMenuItem.Size = new System.Drawing.Size(162, 58);
+            patternToolStripMenuItem.Size = new System.Drawing.Size(109, 58);
             patternToolStripMenuItem.Text = "&Pattern";
             // 
             // randomToolStripMenuItem
@@ -199,14 +199,14 @@ namespace TP14_JeudelaVie
             randomToolStripMenuItem.Checked = true;
             randomToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
             randomToolStripMenuItem.Name = "randomToolStripMenuItem";
-            randomToolStripMenuItem.Size = new System.Drawing.Size(381, 60);
+            randomToolStripMenuItem.Size = new System.Drawing.Size(339, 44);
             randomToolStripMenuItem.Text = "Random";
             randomToolStripMenuItem.Click += randomToolStripMenuItem_Click;
             // 
             // tileSelectionToolStripMenuItem
             // 
             tileSelectionToolStripMenuItem.Name = "tileSelectionToolStripMenuItem";
-            tileSelectionToolStripMenuItem.Size = new System.Drawing.Size(381, 60);
+            tileSelectionToolStripMenuItem.Size = new System.Drawing.Size(339, 44);
             tileSelectionToolStripMenuItem.Text = "Tile Selection... (T)";
             tileSelectionToolStripMenuItem.Click += tileSelectionToolStripMenuItem_Click;
             // 
@@ -214,140 +214,182 @@ namespace TP14_JeudelaVie
             // 
             shapesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { gliderToolStripMenuItem, lwssToolStripMenuItem, blinkerToolStripMenuItem, toadToolStripMenuItem, beaconToolStripMenuItem, pulsarToolStripMenuItem, toolStripSeparator1, rPentominoToolStripMenuItem, acornToolStripMenuItem, diehardToolStripMenuItem, toolStripSeparator2, gosperGliderGunToolStripMenuItem });
             shapesToolStripMenuItem.Name = "shapesToolStripMenuItem";
-            shapesToolStripMenuItem.Size = new System.Drawing.Size(381, 60);
+            shapesToolStripMenuItem.Size = new System.Drawing.Size(339, 44);
             shapesToolStripMenuItem.Text = "Shapes...";
             // 
             // gliderToolStripMenuItem
             // 
             gliderToolStripMenuItem.Name = "gliderToolStripMenuItem";
-            gliderToolStripMenuItem.Size = new System.Drawing.Size(662, 60);
+            gliderToolStripMenuItem.Size = new System.Drawing.Size(465, 44);
             gliderToolStripMenuItem.Text = "Glider";
             gliderToolStripMenuItem.Click += gliderToolStripMenuItem_Click;
             // 
             // lwssToolStripMenuItem
             // 
             lwssToolStripMenuItem.Name = "lwssToolStripMenuItem";
-            lwssToolStripMenuItem.Size = new System.Drawing.Size(662, 60);
+            lwssToolStripMenuItem.Size = new System.Drawing.Size(465, 44);
             lwssToolStripMenuItem.Text = "Lightweight Spaceship (LWSS)";
             lwssToolStripMenuItem.Click += lwssToolStripMenuItem_Click;
             // 
             // blinkerToolStripMenuItem
             // 
             blinkerToolStripMenuItem.Name = "blinkerToolStripMenuItem";
-            blinkerToolStripMenuItem.Size = new System.Drawing.Size(662, 60);
+            blinkerToolStripMenuItem.Size = new System.Drawing.Size(465, 44);
             blinkerToolStripMenuItem.Text = "Blinker";
             blinkerToolStripMenuItem.Click += blinkerToolStripMenuItem_Click;
             // 
             // toadToolStripMenuItem
             // 
             toadToolStripMenuItem.Name = "toadToolStripMenuItem";
-            toadToolStripMenuItem.Size = new System.Drawing.Size(662, 60);
+            toadToolStripMenuItem.Size = new System.Drawing.Size(465, 44);
             toadToolStripMenuItem.Text = "Toad";
             toadToolStripMenuItem.Click += toadToolStripMenuItem_Click;
             // 
             // beaconToolStripMenuItem
             // 
             beaconToolStripMenuItem.Name = "beaconToolStripMenuItem";
-            beaconToolStripMenuItem.Size = new System.Drawing.Size(662, 60);
+            beaconToolStripMenuItem.Size = new System.Drawing.Size(465, 44);
             beaconToolStripMenuItem.Text = "Beacon";
             beaconToolStripMenuItem.Click += beaconToolStripMenuItem_Click;
             // 
             // pulsarToolStripMenuItem
             // 
             pulsarToolStripMenuItem.Name = "pulsarToolStripMenuItem";
-            pulsarToolStripMenuItem.Size = new System.Drawing.Size(662, 60);
+            pulsarToolStripMenuItem.Size = new System.Drawing.Size(465, 44);
             pulsarToolStripMenuItem.Text = "Pulsar";
             pulsarToolStripMenuItem.Click += pulsarToolStripMenuItem_Click;
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new System.Drawing.Size(659, 6);
+            toolStripSeparator1.Size = new System.Drawing.Size(462, 6);
             // 
             // rPentominoToolStripMenuItem
             // 
             rPentominoToolStripMenuItem.Name = "rPentominoToolStripMenuItem";
-            rPentominoToolStripMenuItem.Size = new System.Drawing.Size(662, 60);
+            rPentominoToolStripMenuItem.Size = new System.Drawing.Size(465, 44);
             rPentominoToolStripMenuItem.Text = "R-Pentomino";
             rPentominoToolStripMenuItem.Click += rPentominoToolStripMenuItem_Click;
             // 
             // acornToolStripMenuItem
             // 
             acornToolStripMenuItem.Name = "acornToolStripMenuItem";
-            acornToolStripMenuItem.Size = new System.Drawing.Size(662, 60);
+            acornToolStripMenuItem.Size = new System.Drawing.Size(465, 44);
             acornToolStripMenuItem.Text = "Acorn";
             acornToolStripMenuItem.Click += acornToolStripMenuItem_Click;
             // 
             // diehardToolStripMenuItem
             // 
             diehardToolStripMenuItem.Name = "diehardToolStripMenuItem";
-            diehardToolStripMenuItem.Size = new System.Drawing.Size(662, 60);
+            diehardToolStripMenuItem.Size = new System.Drawing.Size(465, 44);
             diehardToolStripMenuItem.Text = "Diehard";
             diehardToolStripMenuItem.Click += diehardToolStripMenuItem_Click;
             // 
             // toolStripSeparator2
             // 
             toolStripSeparator2.Name = "toolStripSeparator2";
-            toolStripSeparator2.Size = new System.Drawing.Size(659, 6);
+            toolStripSeparator2.Size = new System.Drawing.Size(462, 6);
             // 
             // gosperGliderGunToolStripMenuItem
             // 
             gosperGliderGunToolStripMenuItem.Name = "gosperGliderGunToolStripMenuItem";
-            gosperGliderGunToolStripMenuItem.Size = new System.Drawing.Size(662, 60);
+            gosperGliderGunToolStripMenuItem.Size = new System.Drawing.Size(465, 44);
             gosperGliderGunToolStripMenuItem.Text = "Gosper Glider Gun";
             gosperGliderGunToolStripMenuItem.Click += gosperGliderGunToolStripMenuItem_Click;
+            // 
+            // tilingsToolStripMenuItem
+            // 
+            tilingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { chessboardToolStripMenuItem, brickPatternToolStripMenuItem, diagonalStripesToolStripMenuItem, doubleDiagonalToolStripMenuItem, concentricRectanglesToolStripMenuItem });
+            tilingsToolStripMenuItem.Name = "tilingsToolStripMenuItem";
+            tilingsToolStripMenuItem.Size = new System.Drawing.Size(339, 44);
+            tilingsToolStripMenuItem.Text = "Tilings...";
+            // 
+            // chessboardToolStripMenuItem
+            // 
+            chessboardToolStripMenuItem.Name = "chessboardToolStripMenuItem";
+            chessboardToolStripMenuItem.Size = new System.Drawing.Size(382, 44);
+            chessboardToolStripMenuItem.Text = "Chessboard (5x5)";
+            chessboardToolStripMenuItem.Click += chessboardToolStripMenuItem_Click;
+            // 
+            // brickPatternToolStripMenuItem
+            // 
+            brickPatternToolStripMenuItem.Name = "brickPatternToolStripMenuItem";
+            brickPatternToolStripMenuItem.Size = new System.Drawing.Size(382, 44);
+            brickPatternToolStripMenuItem.Text = "Ladder Brick";
+            brickPatternToolStripMenuItem.Click += brickPatternToolStripMenuItem_Click;
+            // 
+            // diagonalStripesToolStripMenuItem
+            // 
+            diagonalStripesToolStripMenuItem.Name = "diagonalStripesToolStripMenuItem";
+            diagonalStripesToolStripMenuItem.Size = new System.Drawing.Size(382, 44);
+            diagonalStripesToolStripMenuItem.Text = "Diagonal Stripes";
+            diagonalStripesToolStripMenuItem.Click += diagonalStripesToolStripMenuItem_Click;
+            // 
+            // doubleDiagonalToolStripMenuItem
+            // 
+            doubleDiagonalToolStripMenuItem.Name = "doubleDiagonalToolStripMenuItem";
+            doubleDiagonalToolStripMenuItem.Size = new System.Drawing.Size(382, 44);
+            doubleDiagonalToolStripMenuItem.Text = "Double Diagonal";
+            doubleDiagonalToolStripMenuItem.Click += doubleDiagonalToolStripMenuItem_Click;
+            // 
+            // concentricRectanglesToolStripMenuItem
+            // 
+            concentricRectanglesToolStripMenuItem.Name = "concentricRectanglesToolStripMenuItem";
+            concentricRectanglesToolStripMenuItem.Size = new System.Drawing.Size(382, 44);
+            concentricRectanglesToolStripMenuItem.Text = "Concentric Rectangles";
+            concentricRectanglesToolStripMenuItem.Click += concentricRectanglesToolStripMenuItem_Click;
             // 
             // colorModeComboBox
             // 
             colorModeComboBox.DropDownWidth = 450;
-            colorModeComboBox.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            colorModeComboBox.Font = new System.Drawing.Font("Segoe UI", 12F);
             colorModeComboBox.Name = "colorModeComboBox";
-            colorModeComboBox.Size = new System.Drawing.Size(400, 58);
+            colorModeComboBox.Size = new System.Drawing.Size(249, 58);
             colorModeComboBox.SelectedIndexChanged += colorModeComboBox_SelectedIndexChanged;
             // 
             // toolStripIterationsTextbox
             // 
-            toolStripIterationsTextbox.Font = new System.Drawing.Font("Segoe UI", 12.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            toolStripIterationsTextbox.Font = new System.Drawing.Font("Segoe UI", 12.75F, System.Drawing.FontStyle.Bold);
             toolStripIterationsTextbox.MaxLength = 200;
             toolStripIterationsTextbox.Name = "toolStripIterationsTextbox";
-            toolStripIterationsTextbox.Size = new System.Drawing.Size(250, 58);
+            toolStripIterationsTextbox.Size = new System.Drawing.Size(156, 58);
             toolStripIterationsTextbox.Text = "Tick = 0";
             toolStripIterationsTextbox.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // toolStripAliveCountBox
             // 
-            toolStripAliveCountBox.Font = new System.Drawing.Font("Segoe UI", 12.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            toolStripAliveCountBox.Font = new System.Drawing.Font("Segoe UI", 12.75F, System.Drawing.FontStyle.Bold);
             toolStripAliveCountBox.Name = "toolStripAliveCountBox";
-            toolStripAliveCountBox.Size = new System.Drawing.Size(245, 58);
+            toolStripAliveCountBox.Size = new System.Drawing.Size(153, 58);
             toolStripAliveCountBox.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // toolStripModeIndicator
             // 
             toolStripModeIndicator.AutoSize = false;
             toolStripModeIndicator.BackColor = System.Drawing.Color.LightGreen;
-            toolStripModeIndicator.Font = new System.Drawing.Font("Segoe UI", 12.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            toolStripModeIndicator.Font = new System.Drawing.Font("Segoe UI", 12.75F, System.Drawing.FontStyle.Bold);
             toolStripModeIndicator.Name = "toolStripModeIndicator";
             toolStripModeIndicator.ReadOnly = true;
-            toolStripModeIndicator.Size = new System.Drawing.Size(320, 58);
+            toolStripModeIndicator.Size = new System.Drawing.Size(200, 53);
             toolStripModeIndicator.Text = "Mode: Drawing";
             toolStripModeIndicator.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // toolStripSpacebarComment
             // 
             toolStripSpacebarComment.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            toolStripSpacebarComment.Font = new System.Drawing.Font("Segoe UI", 12.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            toolStripSpacebarComment.Font = new System.Drawing.Font("Segoe UI", 12.75F, System.Drawing.FontStyle.Bold);
             toolStripSpacebarComment.Name = "toolStripSpacebarComment";
-            toolStripSpacebarComment.Size = new System.Drawing.Size(520, 58);
+            toolStripSpacebarComment.Size = new System.Drawing.Size(323, 58);
             toolStripSpacebarComment.Text = "Spacebar=Start/Stop";
             toolStripSpacebarComment.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // toolStripTextBoxStatus
             // 
             toolStripTextBoxStatus.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            toolStripTextBoxStatus.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            toolStripTextBoxStatus.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Bold);
             toolStripTextBoxStatus.ForeColor = System.Drawing.Color.Red;
             toolStripTextBoxStatus.Name = "toolStripTextBoxStatus";
-            toolStripTextBoxStatus.Size = new System.Drawing.Size(250, 58);
+            toolStripTextBoxStatus.Size = new System.Drawing.Size(156, 58);
             toolStripTextBoxStatus.Text = "Stopped";
             toolStripTextBoxStatus.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -358,82 +400,34 @@ namespace TP14_JeudelaVie
             // squareModel
             // 
             squareModel.BackColor = System.Drawing.SystemColors.ActiveBorder;
-            squareModel.Location = new System.Drawing.Point(194, 266);
-            squareModel.Margin = new System.Windows.Forms.Padding(7, 11, 7, 11);
+            squareModel.Location = new System.Drawing.Point(120, 167);
+            squareModel.Margin = new System.Windows.Forms.Padding(4, 7, 4, 7);
             squareModel.Name = "squareModel";
-            squareModel.Size = new System.Drawing.Size(51, 64);
+            squareModel.Size = new System.Drawing.Size(32, 40);
             squareModel.TabIndex = 1;
             squareModel.TabStop = false;
             // 
             // squareModelAlive
             // 
             squareModelAlive.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-            squareModelAlive.Location = new System.Drawing.Point(343, 266);
-            squareModelAlive.Margin = new System.Windows.Forms.Padding(7, 11, 7, 11);
+            squareModelAlive.Location = new System.Drawing.Point(212, 167);
+            squareModelAlive.Margin = new System.Windows.Forms.Padding(4, 7, 4, 7);
             squareModelAlive.Name = "squareModelAlive";
-            squareModelAlive.Size = new System.Drawing.Size(51, 64);
+            squareModelAlive.Size = new System.Drawing.Size(32, 40);
             squareModelAlive.TabIndex = 2;
             squareModelAlive.TabStop = false;
             // 
-            // tilingsToolStripMenuItem
-            // 
-            tilingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { 
-    chessboardToolStripMenuItem, 
-    brickPatternToolStripMenuItem, 
-    diagonalStripesToolStripMenuItem,
-    doubleDiagonalToolStripMenuItem,
-    concentricRectanglesToolStripMenuItem 
-});
-            tilingsToolStripMenuItem.Name = "tilingsToolStripMenuItem";
-            tilingsToolStripMenuItem.Size = new System.Drawing.Size(381, 60);
-            tilingsToolStripMenuItem.Text = "Tilings...";
-            // 
-            // chessboardToolStripMenuItem
-            // 
-            chessboardToolStripMenuItem.Name = "chessboardToolStripMenuItem";
-            chessboardToolStripMenuItem.Size = new System.Drawing.Size(450, 60);
-            chessboardToolStripMenuItem.Text = "Chessboard (5x5)";
-            chessboardToolStripMenuItem.Click += chessboardToolStripMenuItem_Click;
-            // 
-            // brickPatternToolStripMenuItem
-            // 
-            brickPatternToolStripMenuItem.Name = "brickPatternToolStripMenuItem";
-            brickPatternToolStripMenuItem.Size = new System.Drawing.Size(450, 60);
-            brickPatternToolStripMenuItem.Text = "Ladder Brick";
-            brickPatternToolStripMenuItem.Click += brickPatternToolStripMenuItem_Click;
-            // 
-            // diagonalStripesToolStripMenuItem
-            // 
-            diagonalStripesToolStripMenuItem.Name = "diagonalStripesToolStripMenuItem";
-            diagonalStripesToolStripMenuItem.Size = new System.Drawing.Size(450, 60);
-            diagonalStripesToolStripMenuItem.Text = "Diagonal Stripes";
-            diagonalStripesToolStripMenuItem.Click += diagonalStripesToolStripMenuItem_Click;
-            // 
-            // doubleDiagonalToolStripMenuItem
-            // 
-            doubleDiagonalToolStripMenuItem.Name = "doubleDiagonalToolStripMenuItem";
-            doubleDiagonalToolStripMenuItem.Size = new System.Drawing.Size(450, 60);
-            doubleDiagonalToolStripMenuItem.Text = "Double Diagonal";
-            doubleDiagonalToolStripMenuItem.Click += doubleDiagonalToolStripMenuItem_Click;
-            // 
-            // concentricRectanglesToolStripMenuItem
-            // 
-            concentricRectanglesToolStripMenuItem.Name = "concentricRectanglesToolStripMenuItem";
-            concentricRectanglesToolStripMenuItem.Size = new System.Drawing.Size(450, 60);
-            concentricRectanglesToolStripMenuItem.Text = "Concentric Rectangles";
-            concentricRectanglesToolStripMenuItem.Click += concentricRectanglesToolStripMenuItem_Click;
-            // 
             // Form1
             // 
-            AutoScaleDimensions = new System.Drawing.SizeF(21F, 51F);
+            AutoScaleDimensions = new System.Drawing.SizeF(13F, 32F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(3066, 1316);
+            ClientSize = new System.Drawing.Size(2313, 1428);
             Controls.Add(squareModelAlive);
             Controls.Add(squareModel);
             Controls.Add(menuEtatVitesse);
             Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
             KeyPreview = true;
-            Margin = new System.Windows.Forms.Padding(7, 11, 7, 11);
+            Margin = new System.Windows.Forms.Padding(4, 7, 4, 7);
             Name = "Form1";
             Text = "Game of Life";
             Load += Form1_Load;
