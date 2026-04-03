@@ -1,12 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.3.11520.95 d18.3
+VisualStudioVersion = 18.3.11520.95
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameOfLife", "GameOfLife\GameOfLife.csproj", "{DB76038D-0229-4643-BC5E-F0AFDB802A1B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DF033121-F1BD-4320-936E-B579C6F27AFE}"
 	ProjectSection(SolutionItems) = preProject
+		EDUCATIONAL.md = EDUCATIONAL.md
 		..\..\..\Documents\GameOfLife.ico = ..\..\..\Documents\GameOfLife.ico
 		README-original.md = README-original.md
 		README.md = README.md
