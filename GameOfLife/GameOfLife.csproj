@@ -5,6 +5,7 @@
     <TargetFramework>net10.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <ApplicationIcon>..\GameOfLife.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
