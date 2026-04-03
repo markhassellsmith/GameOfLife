@@ -1280,61 +1280,139 @@ namespace TP14_JeudelaVie
             // Only adjust density when Ctrl is held (plain wheel scrolls the grid panel)
             if (Control.ModifierKeys.HasFlag(Keys.Control))
             {
+                // Calculate how many cells to add or remove (5% of current population, minimum 1)
+                int cellChangeAmount = Math.Max(1, (int)Math.Round(AliveCount * 0.05));
+
                 if (e.Delta > 0)
-                    populationDensity = Math.Min(100, populationDensity + 5);
+                {
+                    // Scroll up: increase density (add cells)
+                    AdjustPatternDensity(cellChangeAmount);
+                    populationDensity = Math.Min(100, populationDensity + 5); // Update display value
+                }
                 else if (e.Delta < 0)
-                    populationDensity = Math.Max(0, populationDensity - 5);
+                {
+                    // Scroll down: decrease density (remove cells)
+                    AdjustPatternDensity(-cellChangeAmount);
+                    populationDensity = Math.Max(0, populationDensity - 5); // Update display value
+                }
 
                 showDensityOverlay = true;
                 densityOverlayTimer.Stop();
                 densityOverlayTimer.Start();
                 gridDisplay.Invalidate();
-                ApplyDensityToGrid();
             }
             // If Ctrl not held, event bubbles up to gridPanel for scrolling (default behavior)
         }
 
-        private void ApplyDensityToGrid()
+        /// <summary>
+        /// Adjusts the density of the current pattern by adding or removing cells.
+        /// When adding cells, they spawn near existing alive cells (localized growth).
+        /// When removing cells, they are randomly selected from alive cells.
+        /// This preserves and organically extends the existing pattern structure.
+        /// </summary>
+        private void AdjustPatternDensity(int cellDelta)
         {
-            int totalCells = squarePerLine * squarePerColumn;
-            int targetAliveCount = (int)Math.Round(totalCells * populationDensity / 100.0);
-            int currentAliveCount = AliveCount;
             Random random = new Random();
             List<(int, int)> changedCells = new List<(int, int)>();
 
-            if (targetAliveCount > currentAliveCount)
+            if (cellDelta > 0)
             {
-                int cellsToAdd = targetAliveCount - currentAliveCount;
-                int attempts = 0;
-                int maxAttempts = cellsToAdd * 150;
-                while (cellsToAdd > 0 && attempts < maxAttempts)
+                // Add cells near existing alive cells (localized growth)
+                int cellsToAdd = cellDelta;
+
+                // Build list of currently alive cells
+                List<(int i, int j)> aliveCells = new List<(int, int)>();
+                for (int i = 0; i < squarePerLine; i++)
+                {
+                    for (int j = 0; j < squarePerColumn; j++)
+                    {
+                        if (squaresState[i, j])
+                            aliveCells.Add((i, j));
+                    }
+                }
+
+                // If no alive cells, add randomly (fallback for empty grid)
+                if (aliveCells.Count == 0)
                 {
                     int i = random.Next(squarePerLine);
                     int j = random.Next(squarePerColumn);
-                    if (!squaresState[i, j])
+                    squaresState[i, j] = true;
+                    AliveCount++;
+                    if (currentColorMode == ColorMode.BirthGeneration)
+                        cellColor[i, j] = squareModelAlive.BackColor;
+                    else
                     {
-                        squaresState[i, j] = true;
-                        AliveCount++;
-                        if (currentColorMode == ColorMode.BirthGeneration)
-                            cellColor[i, j] = squareModelAlive.BackColor;
-                        else
-                        {
-                            cellAge[i, j] = 0;
-                            int colorIndex = 240;
-                            cellColor[i, j] = Color.FromArgb(
-                                ColorPalettes.Spectrum360[colorIndex].red,
-                                ColorPalettes.Spectrum360[colorIndex].green,
-                                ColorPalettes.Spectrum360[colorIndex].blue);
-                        }
-                        changedCells.Add((i, j));
-                        cellsToAdd--;
+                        cellAge[i, j] = 0;
+                        int colorIndex = 240;
+                        cellColor[i, j] = Color.FromArgb(
+                            ColorPalettes.Spectrum360[colorIndex].red,
+                            ColorPalettes.Spectrum360[colorIndex].green,
+                            ColorPalettes.Spectrum360[colorIndex].blue);
                     }
-                    attempts++;
+                    changedCells.Add((i, j));
+                    aliveCells.Add((i, j));
+                    cellsToAdd--;
+                }
+
+                // Add cells near existing alive cells
+                int searchRadius = 3; // Search within 3 cells of an alive cell
+                int maxAttemptsPerCell = 50; // Try 50 times to find a spot near each seed
+
+                while (cellsToAdd > 0 && aliveCells.Count > 0)
+                {
+                    // Pick a random alive cell as seed
+                    var seed = aliveCells[random.Next(aliveCells.Count)];
+
+                    // Try to find a dead cell nearby
+                    bool foundSpot = false;
+                    for (int attempt = 0; attempt < maxAttemptsPerCell && !foundSpot; attempt++)
+                    {
+                        // Random offset within search radius
+                        int di = random.Next(-searchRadius, searchRadius + 1);
+                        int dj = random.Next(-searchRadius, searchRadius + 1);
+
+                        // Calculate target position with toroidal wrapping
+                        int targetI = (seed.i + di + squarePerLine) % squarePerLine;
+                        int targetJ = (seed.j + dj + squarePerColumn) % squarePerColumn;
+
+                        // Check if dead cell
+                        if (!squaresState[targetI, targetJ])
+                        {
+                            squaresState[targetI, targetJ] = true;
+                            AliveCount++;
+                            if (currentColorMode == ColorMode.BirthGeneration)
+                                cellColor[targetI, targetJ] = squareModelAlive.BackColor;
+                            else
+                            {
+                                cellAge[targetI, targetJ] = 0;
+                                int colorIndex = 240;
+                                cellColor[targetI, targetJ] = Color.FromArgb(
+                                    ColorPalettes.Spectrum360[colorIndex].red,
+                                    ColorPalettes.Spectrum360[colorIndex].green,
+                                    ColorPalettes.Spectrum360[colorIndex].blue);
+                            }
+                            changedCells.Add((targetI, targetJ));
+                            aliveCells.Add((targetI, targetJ)); // Add to list so it can be a seed for next cells
+                            cellsToAdd--;
+                            foundSpot = true;
+                        }
+                    }
+
+                    // If we couldn't find a spot near this seed after many attempts,
+                    // the pattern might be fully dense in this area, so we'll try a different seed next iteration
+                    if (!foundSpot)
+                    {
+                        // Prevent infinite loop: if we've tried all seeds, give up
+                        if (aliveCells.Count >= AliveCount * 0.9) // Pattern is very dense
+                            break;
+                    }
                 }
             }
-            else if (targetAliveCount < currentAliveCount)
+            else if (cellDelta < 0)
             {
-                int cellsToRemove = currentAliveCount - targetAliveCount;
+                // Remove cells randomly from alive cells
+                int cellsToRemove = Math.Abs(cellDelta);
+                cellsToRemove = Math.Min(cellsToRemove, AliveCount);
                 int attempts = 0;
                 int maxAttempts = cellsToRemove * 150;
                 while (cellsToRemove > 0 && attempts < maxAttempts)
@@ -2401,6 +2479,198 @@ namespace TP14_JeudelaVie
                    "Dynamic Pattern Loaded",
                    MessageBoxButtons.OK,
                    MessageBoxIcon.Information);
+        }
+
+        /// <summary>
+        /// Loads thin diagonal stripes pattern (1-2 cell width).
+        /// Creates many gliders and long-lived evolution with symmetric appearance.
+        /// </summary>
+        private void thinDiagonalStripesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LoadThinDiagonalStripesPattern();
+        }
+
+        /// <summary>
+        /// Loads a grid of Pulsar patterns.
+        /// Creates beautiful synchronized period-3 oscillation across the entire grid.
+        /// </summary>
+        private void pulsarGridToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LoadPulsarGridPattern();
+        }
+
+        /// <summary>
+        /// Generates thin diagonal stripes (1-2 cells wide) that spawn gliders and create long-lived evolution.
+        /// Much more dynamic than thick stripes (width=5) while maintaining visual symmetry.
+        /// </summary>
+        private void LoadThinDiagonalStripesPattern()
+        {
+            // Clear the grid first
+            for (int i = 0; i < squarePerLine; i++)
+            {
+                for (int j = 0; j < squarePerColumn; j++)
+                {
+                    squaresState[i, j] = false;
+                    cellColor[i, j] = squareModel.BackColor;
+                }
+            }
+
+            // Thin diagonal stripes: width 1-2 cells, spacing 10 cells
+            int stripeWidth = 2;  // Thin stripes (1-2 cells)
+            int stripeSpacing = 10;  // Distance between stripes
+
+            AliveCount = 0;
+            for (int i = 0; i < squarePerLine; i++)
+            {
+                for (int j = 0; j < squarePerColumn; j++)
+                {
+                    // Diagonal pattern: cells where (i+j) falls within stripe regions
+                    int diagonalPosition = (i + j) % stripeSpacing;
+                    bool shouldBeAlive = diagonalPosition < stripeWidth;
+
+                    if (shouldBeAlive)
+                    {
+                        squaresState[i, j] = true;
+                        AliveCount++;
+
+                        // Set color based on current mode
+                        if (currentColorMode == ColorMode.BirthGeneration)
+                        {
+                            cellColor[i, j] = squareModelAlive.BackColor;
+                            cellAge[i, j] = 0;
+                        }
+                        else // CellAging mode
+                        {
+                            cellAge[i, j] = 0;
+                            int colorIndex = 240; // Blue
+                            cellColor[i, j] = Color.FromArgb(
+                                ColorPalettes.Spectrum360[colorIndex].red,
+                                ColorPalettes.Spectrum360[colorIndex].green,
+                                ColorPalettes.Spectrum360[colorIndex].blue);
+                        }
+                    }
+                }
+            }
+
+            // Reset game state
+            TickNumber = 0;
+            toolStripIterationsTextbox.Text = "Tick = 0";
+            toolStripAliveCountBox.Text = AliveCount.ToString() + " alive.";
+            PreviousAliveCount = -1;
+            stableConsecutiveCount = 0;
+
+            // Render the pattern
+            RenderGrid();
+
+            MessageBox.Show($"Thin diagonal stripes loaded! ({stripeWidth} cells wide, {stripeSpacing} spacing)\n{AliveCount} cells alive.\n\nWatch for gliders spawning along the diagonal wavefront!",
+                           "Long-Lived Pattern Loaded",
+                           MessageBoxButtons.OK,
+                           MessageBoxIcon.Information);
+        }
+
+        /// <summary>
+        /// Generates a grid of Pulsar oscillators with synchronized period-3 pulsing.
+        /// Creates a beautiful, symmetric field of oscillating stars.
+        /// </summary>
+        private void LoadPulsarGridPattern()
+        {
+            // Clear the grid first
+            for (int i = 0; i < squarePerLine; i++)
+            {
+                for (int j = 0; j < squarePerColumn; j++)
+                {
+                    squaresState[i, j] = false;
+                    cellColor[i, j] = squareModel.BackColor;
+                }
+            }
+
+            // Pulsar is 13x13, we'll tile it with spacing
+            // Get Pulsar pattern from library
+            var patterns = GameOfLife.PatternLibrary.GetAllPatterns();
+            if (!patterns.ContainsKey("Pulsar"))
+            {
+                MessageBox.Show("Pulsar pattern not found in library!", "Error",
+                               MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            string pulsarRle = patterns["Pulsar"];
+            GameOfLife.Pattern pulsarPattern = GameOfLife.RleParser.Parse(pulsarRle);
+
+            // Pulsar dimensions (13x13) + spacing
+            int pulsarSize = 13;
+            int spacing = 8;  // Space between pulsars
+            int tileUnit = pulsarSize + spacing;  // 21 cells per tile
+
+            // Calculate how many pulsars fit in the grid
+            int tilesX = squarePerLine / tileUnit;
+            int tilesY = squarePerColumn / tileUnit;
+
+            // Center the grid of pulsars
+            int offsetX = (squarePerLine - tilesX * tileUnit) / 2;
+            int offsetY = (squarePerColumn - tilesY * tileUnit) / 2;
+
+            AliveCount = 0;
+
+            // Tile the pulsars across the grid
+            for (int tileI = 0; tileI < tilesX; tileI++)
+            {
+                for (int tileJ = 0; tileJ < tilesY; tileJ++)
+                {
+                    int startX = offsetX + tileI * tileUnit;
+                    int startY = offsetY + tileJ * tileUnit;
+
+                    // Place the pulsar pattern
+                    for (int px = 0; px < pulsarPattern.Width && startX + px < squarePerLine; px++)
+                    {
+                        for (int py = 0; py < pulsarPattern.Height && startY + py < squarePerColumn; py++)
+                        {
+                            if (pulsarPattern.Cells[px, py])
+                            {
+                                int gridX = startX + px;
+                                int gridY = startY + py;
+
+                                if (gridX >= 0 && gridX < squarePerLine && gridY >= 0 && gridY < squarePerColumn)
+                                {
+                                    squaresState[gridX, gridY] = true;
+                                    AliveCount++;
+
+                                    // Set color based on current mode
+                                    if (currentColorMode == ColorMode.BirthGeneration)
+                                    {
+                                        cellColor[gridX, gridY] = squareModelAlive.BackColor;
+                                        cellAge[gridX, gridY] = 0;
+                                    }
+                                    else // CellAging mode
+                                    {
+                                        cellAge[gridX, gridY] = 0;
+                                        int colorIndex = 240; // Blue
+                                        cellColor[gridX, gridY] = Color.FromArgb(
+                                            ColorPalettes.Spectrum360[colorIndex].red,
+                                            ColorPalettes.Spectrum360[colorIndex].green,
+                                            ColorPalettes.Spectrum360[colorIndex].blue);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Reset game state
+            TickNumber = 0;
+            toolStripIterationsTextbox.Text = "Tick = 0";
+            toolStripAliveCountBox.Text = AliveCount.ToString() + " alive.";
+            PreviousAliveCount = -1;
+            stableConsecutiveCount = 0;
+
+            // Render the pattern
+            RenderGrid();
+
+            MessageBox.Show($"Pulsar Grid loaded! ({tilesX}×{tilesY} pulsars)\n{AliveCount} cells alive.\n\nWatch the synchronized period-3 oscillation create a beautiful pulsing field!",
+                           "Symmetric Oscillator Field Loaded",
+                           MessageBoxButtons.OK,
+                           MessageBoxIcon.Information);
         }
 
         // Edit menu event handlers

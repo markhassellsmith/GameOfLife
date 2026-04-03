@@ -90,6 +90,18 @@ The architecture makes it easy to add:
 - Do interactions create new stable patterns?
 - Load preset **Chessboard (5×5)** tiling - why is this spacing significant?
 
+**NEW Patterns to Explore**:
+- **Pulsar Grid (period-3)**: A field of synchronized oscillators
+  - Watch the beautiful synchronized "breathing" pattern
+  - Observe how the 8-cell spacing keeps each pulsar isolated
+  - What happens at the boundaries between pulsars?
+
+- **Thin Diagonal Stripes (width 1-2)**: Symmetric long-lived evolution
+  - Notice how thin stripes (width 1-2) behave differently than thick stripes (width 5)
+  - Watch gliders spawn along the diagonal wavefronts
+  - Observe how symmetry is preserved even as the pattern evolves (100-800+ generations)
+  - Compare to Diagonal Stripes (width 5) which stabilizes much faster
+
 ### Activity 4: Methuselah Comparison (Advanced)
 **Objective**: Study long-term pattern evolution and emergent complexity
 

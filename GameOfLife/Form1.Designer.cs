@@ -80,8 +80,10 @@ namespace TP14_JeudelaVie
             chessboardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             brickPatternToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             diagonalStripesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            thinDiagonalStripesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             doubleDiagonalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             concentricRectanglesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            pulsarGridToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             colorModeComboBox = new System.Windows.Forms.ToolStripComboBox();
             toolStripIterationsTextbox = new System.Windows.Forms.ToolStripTextBox();
             toolStripAliveCountBox = new System.Windows.Forms.ToolStripTextBox();
@@ -427,7 +429,7 @@ namespace TP14_JeudelaVie
             // 
             // tilingsToolStripMenuItem
             // 
-            tilingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { chessboardToolStripMenuItem, brickPatternToolStripMenuItem, diagonalStripesToolStripMenuItem, doubleDiagonalToolStripMenuItem, concentricRectanglesToolStripMenuItem });
+            tilingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { chessboardToolStripMenuItem, brickPatternToolStripMenuItem, diagonalStripesToolStripMenuItem, thinDiagonalStripesToolStripMenuItem, doubleDiagonalToolStripMenuItem, concentricRectanglesToolStripMenuItem, pulsarGridToolStripMenuItem });
             tilingsToolStripMenuItem.Name = "tilingsToolStripMenuItem";
             tilingsToolStripMenuItem.Size = new System.Drawing.Size(339, 44);
             tilingsToolStripMenuItem.Text = "Tilings...";
@@ -450,8 +452,15 @@ namespace TP14_JeudelaVie
             // 
             diagonalStripesToolStripMenuItem.Name = "diagonalStripesToolStripMenuItem";
             diagonalStripesToolStripMenuItem.Size = new System.Drawing.Size(382, 44);
-            diagonalStripesToolStripMenuItem.Text = "Diagonal Stripes";
+            diagonalStripesToolStripMenuItem.Text = "Diagonal Stripes (width 5)";
             diagonalStripesToolStripMenuItem.Click += diagonalStripesToolStripMenuItem_Click;
+            // 
+            // thinDiagonalStripesToolStripMenuItem
+            // 
+            thinDiagonalStripesToolStripMenuItem.Name = "thinDiagonalStripesToolStripMenuItem";
+            thinDiagonalStripesToolStripMenuItem.Size = new System.Drawing.Size(382, 44);
+            thinDiagonalStripesToolStripMenuItem.Text = "Thin Diagonal Stripes (width 1-2)";
+            thinDiagonalStripesToolStripMenuItem.Click += thinDiagonalStripesToolStripMenuItem_Click;
             // 
             // doubleDiagonalToolStripMenuItem
             // 
@@ -466,6 +475,13 @@ namespace TP14_JeudelaVie
             concentricRectanglesToolStripMenuItem.Size = new System.Drawing.Size(382, 44);
             concentricRectanglesToolStripMenuItem.Text = "Concentric Rectangles";
             concentricRectanglesToolStripMenuItem.Click += concentricRectanglesToolStripMenuItem_Click;
+            // 
+            // pulsarGridToolStripMenuItem
+            // 
+            pulsarGridToolStripMenuItem.Name = "pulsarGridToolStripMenuItem";
+            pulsarGridToolStripMenuItem.Size = new System.Drawing.Size(382, 44);
+            pulsarGridToolStripMenuItem.Text = "Pulsar Grid (period-3)";
+            pulsarGridToolStripMenuItem.Click += pulsarGridToolStripMenuItem_Click;
             // 
             // colorModeComboBox
             // 
@@ -633,6 +649,8 @@ namespace TP14_JeudelaVie
         private System.Windows.Forms.ToolStripMenuItem diagonalStripesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem doubleDiagonalToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem concentricRectanglesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem thinDiagonalStripesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pulsarGridToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pasteToolStripMenuItem;

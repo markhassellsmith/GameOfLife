@@ -138,17 +138,19 @@ These operations modify the clipboard pattern **before** placement:
 - **Copy/Paste**: Building complex structures, experimenting with orientations, level editing
 
 ###  Density Variation
-Ctrl+Mouse wheel adjusts initial population density; applies to all patterns (destructive of original pattern):
-- **Ctrl+Scroll up**: Increase density (more alive cells)
-- **Ctrl+Scroll down**: Decrease density (fewer alive cells)
-- Works whether simulation is stopped or running (applies to current grid state)
-- **Range from 0% to 100%** in 5% increments (default 50%)
+Ctrl+Mouse wheel adjusts pattern density by adding or removing cells:
+- **Ctrl+Scroll up**: Add ~5% more cells randomly (increases density)
+- **Ctrl+Scroll down**: Remove ~5% of cells randomly (decreases density)
+- Works whether simulation is stopped or running (modifies current pattern)
+- **Adds/removes approximately 5% of the current cell count** per scroll (minimum 1 cell)
 - **Density value appears near mouse cursor for real-time feedback while adjusting**
 - **Plain mouse wheel** (without Ctrl) scrolls the grid when it doesn't fit the window
-- **Applies to**:
-  - Random pattern: Adjusts probability of alive cells at start
-  - Blank grid or Any pattern: Randomly kills or alives cells to achieve target density while preserving overall structure
-  - Imported RLE patterns: Randomly kills or alives cells to achieve target density
+- **Non-destructive**: Preserves existing pattern structure while adding/removing cells
+- **Applies to all pattern types**:
+  - Preset shapes (Glider, Pulsar, etc.): Adds/removes cells while keeping the original pattern intact
+  - Manual drawings: Fine-tune your creations by adding or removing individual cells
+  - Tiled patterns: Adjust density of the tiled result
+  - Imported RLE patterns: Modify density after import
 	 
 ### Core Simulation
 - **150×72 cell grid** (10,800 cells total)
@@ -169,7 +171,9 @@ Ctrl+Mouse wheel adjusts initial population density; applies to all patterns (de
 - **Mouse Drawing**: 
   - **Left-click + drag** paints cells alive (single cell precision)
   - **Right-click + drag** erases 5×5 area (rounded eraser cursor shown)
-- **Mouse Wheel**: Adjusts population density in 5% increments (0-100%)
+- **Mouse Wheel**: 
+  - **Ctrl+Wheel** adjusts pattern density by adding/removing cells (preserves existing pattern)
+  - **Plain Wheel** scrolls the grid viewport when grid is larger than window
 - **Pattern Tiling**:
   - **Ctrl+Drag** for quick one-off selections
   - **T key** for persistent selection mode
@@ -269,9 +273,11 @@ dotnet run
   - **Tilings...** - Full-grid geometric patterns
 	- Chessboard (5×5) - Alternating blocks with perfect symmetry
 	- Ladder Brick - Dynamic brick pattern with oscillators
-	- Diagonal Stripes - 45° bands spawning spaceships
+	- Diagonal Stripes (width 5) - 45° bands spawning spaceships
+	- Thin Diagonal Stripes (width 1-2) - **NEW!** Narrow diagonals creating long-lived glider fields with symmetric evolution
 	- Double Diagonal - Cross-hatch diamond lattice
 	- Concentric Rectangles - Radial pulsing waves
+	- Pulsar Grid (period-3) - **NEW!** Synchronized field of pulsars creating beautiful oscillating patterns
 - **Tile Selection (Ctrl+Drag or T)** - Enter/exit manual tiling mode
 
 #### **Color Mode Dropdown** (in menu bar)
@@ -557,7 +563,7 @@ Original repository: [Im-Rises/GameOfLife](https://github.com/Im-Rises/GameOfLif
   - Real-time mode switching with instant grid recoloring
 - **Pattern Library**:
   - 10 preset shapes (spaceships, oscillators, methuselahs, guns)
-  - 5 mathematically interesting tiling patterns
+  - 7 mathematically interesting tiling patterns (including NEW: Pulsar Grid and Thin Diagonal Stripes)
   - Organized menu hierarchy (Shapes... and Tilings... submenus)
 - **Visual Feedback Enhancements**:
   - Mode indicator with state-based coloring (green/cyan/sky blue)
