@@ -1,6 +1,6 @@
 # Conway's Game of Life - Enhanced Edition
 
-A high-performance Windows Forms implementation of Conway's Game of Life featuring dual cellular visualization modes, intelligent pattern tiling, and an intuitive creative workflow for exploring cellular automata.
+A high-performance Windows Forms implementation of Conway's Game of Life featuring dual cellular visualization modes, intelligent pattern tiling, clipboard-based editing with transforms, and an intuitive creative workflow for exploring cellular automata.
 
 ![.NET 10](https://img.shields.io/badge/.NET-10.0-blue)
 ![C#](https://img.shields.io/badge/C%23-14.0-purple)
@@ -8,7 +8,7 @@ A high-performance Windows Forms implementation of Conway's Game of Life featuri
 
 ## 🌟 Overview
 
-This project implements Conway's Game of Life with two distinctive visual modes that reveal different aspects of cellular evolution. Switch between generation tracking and lifespan visualization to explore patterns in unique ways.
+This project implements Conway's Game of Life with two distinctive visual modes that reveal different aspects of cellular evolution. Switch between generation tracking and lifespan visualization to explore patterns in unique ways. Features both full-grid tiling for symmetry and precision copy/paste editing with preview and transform operations.
 
 ## ✨ Features
 
@@ -80,6 +80,60 @@ Draw small pattern → Ctrl+Drag to select → Enter → Ctrl+R to run!
 - Testing how local patterns interact globally
 - Generating beautiful geometric structures
 - Quick experimentation with spacing variations
+
+### ✂️ **Copy/Paste/Transform System** - NEW!
+
+Precise pattern manipulation with preview-before-place workflow:
+
+#### **Copy Operation (Ctrl+C)**
+- **Select a region** using T-key mode or Ctrl+Drag
+- **Press Ctrl+C** → Pattern copied to clipboard
+- **Selection remains visible** (can copy multiple times)
+- **Captures**: Cell states + colors (preserves visual appearance)
+
+#### **Paste Preview Mode (Ctrl+V)**
+- **Press Ctrl+V** → Enters paste preview mode
+- **Mode indicator turns light green**: "Paste mode"
+- **Pattern appears as overlay** following your mouse cursor
+- **Transform operations available** (H, V, R, Shift+R) - see below
+- **Click to place** → Pattern pastes at clicked location
+- **Press Esc** → Cancel and exit paste mode
+
+#### **Transform Operations (Work ONLY in Paste Mode)**
+These operations modify the clipboard pattern **before** placement:
+
+| Key | Operation | Description |
+|-----|-----------|-------------|
+| **H** | Flip Horizontal | Mirror pattern left-to-right |
+| **V** | Flip Vertical | Mirror pattern top-to-bottom |
+| **R** | Rotate 90° CW | Clockwise quarter turn |
+| **Shift+R** | Rotate 90° CCW | Counter-clockwise quarter turn |
+
+**Additional transform** (from Edit → Transform menu):
+- **Rotate 180°** - Half turn (equivalent to H+V or R+R)
+
+#### **Paste Mode Workflow**
+```
+1. Select region → 2. Ctrl+C (copy) → 3. Ctrl+V (enter paste mode)
+4. Transform (H/V/R) [optional] → 5. Click to place → 6. Done!
+   Or press Esc to cancel
+```
+
+#### **Key Distinction: Tiling vs. Copy/Paste**
+
+| Feature | **Tiling (Enter)** | **Copy/Paste (Ctrl+C/V)** |
+|---------|-------------------|---------------------------|
+| **Action** | Repeats pattern across **entire grid** | Places pattern **once** at clicked location |
+| **Workflow** | Select → Enter | Select → Ctrl+C → Ctrl+V → Click |
+| **Grid cleared?** | ✅ Yes (destructive) | ❌ No (additive) |
+| **Transform support** | ❌ No | ✅ Yes (H/V/R/Shift+R) |
+| **Preview** | ❌ No | ✅ Yes (paste mode overlay) |
+| **Multiple placements** | ❌ Single application | ✅ Can paste multiple times (Ctrl+V again) |
+| **Use case** | Create symmetric full-grid patterns | Precise single-placement editing |
+
+**Perfect for**:
+- **Tiling**: Wallpaper patterns, test periodic behaviors
+- **Copy/Paste**: Building complex structures, experimenting with orientations, level editing
 
 ###  Density Variation
 Mouse wheel adjusts initial population density; applies to all patterns (destructive of original pattern):
@@ -169,6 +223,16 @@ dotnet run
 - **Import Pattern...** - Load pattern from RLE file with preview
 - **Exit (Alt+F4)** - Close application
 
+#### **Edit**
+- **Copy (Ctrl+C)** - Copy selected region to clipboard
+- **Paste (Ctrl+V)** - Enter paste preview mode with clipboard pattern
+- **Transform** - Modify clipboard pattern (only works in paste mode):
+  - **Flip Horizontal (H)** - Mirror pattern left-to-right
+  - **Flip Vertical (V)** - Mirror pattern top-to-bottom
+  - **Rotate 90° CW (R)** - Clockwise quarter turn
+  - **Rotate 90° CCW (Shift+R)** - Counter-clockwise quarter turn
+  - **Rotate 180°** - Half turn
+
 #### **Simulation**
 - **Start (Ctrl+R)** - Begin the simulation [Left-hand shortcut!]
 - **Stop (Ctrl+S)** - Pause the simulation [Left-hand shortcut!]
@@ -213,15 +277,23 @@ Select visualization mode:
 | **Ctrl+R** | **Run/Start** simulation | ✅ Yes (menu shortcut) |
 | **Ctrl+S** | **Stop** simulation | ✅ Yes (menu shortcut) |
 | `Spacebar` | Toggle Start/Stop | When grid focused |
+| **Ctrl+C** | **Copy** selected region to clipboard | ✅ Yes (menu shortcut) |
+| **Ctrl+V** | **Paste** - Enter paste preview mode | ✅ Yes (menu shortcut) |
+| **H** | Flip Horizontal | ⚠️ **Only in paste mode** |
+| **V** | Flip Vertical | ⚠️ **Only in paste mode** |
+| **R** | Rotate 90° CW | ⚠️ **Only in paste mode** |
+| **Shift+R** | Rotate 90° CCW | ⚠️ **Only in paste mode** |
 | **T** | Toggle Tiling Selection mode | ✅ Yes |
 | **Ctrl+Drag** | Quick tiling selection | While holding Ctrl |
 | **Enter** | Apply tiling (when selection active) | ✅ Yes |
-| **Escape** | Cancel selection / Exit tiling mode | ✅ Yes |
+| **Escape** | Cancel selection / Exit tiling or paste mode | ✅ Yes |
 | `Alt+F4` | Exit application | ✅ Yes (menu shortcut) |
 
-**Left-Hand Friendly**: Ctrl+R and Ctrl+S work regardless of which control has focus!
+**Left-Hand Friendly**: Ctrl+R, Ctrl+S, Ctrl+C, and Ctrl+V work regardless of which control has focus!
 
-**Tip**: Press **Alt** to reveal menu access keys (Alt+F for File, Alt+S for Simulation, Alt+E for Speed, Alt+P for Pattern)
+**Transform Keys**: H, V, R, and Shift+R only work when in paste preview mode (after pressing Ctrl+V). They have no effect in other modes.
+
+**Tip**: Press **Alt** to reveal menu access keys (Alt+F for File, Alt+E for Edit, Alt+S for Simulation, Alt+E for Speed, Alt+P for Pattern)
 
 ### Mouse Controls
 | Action | Result | Visual Feedback |
@@ -239,7 +311,9 @@ Select visualization mode:
   - Cyan "Ctrl+Drag to Select" = Ctrl key held
   - Sky blue "Mode: Select Region (Ctrl)" = Ctrl+drag active
   - Sky blue "Mode: Select Region (T)" = T-key mode active
+  - Light green "Paste mode" = Paste preview active (Ctrl+V pressed)
 - **Selection Rectangle**: Blue dashed line with dimensions overlay
+- **Paste Overlay**: Pattern preview following mouse cursor in paste mode
 - **Density Overlay**: Yellow tooltip near cursor (auto-hides after 5 seconds)
 - **Eraser Cursor**: Black rounded rectangle outline (5×5 cells)
 
@@ -265,6 +339,11 @@ Select visualization mode:
   - `InteractionMode.TilingSelection`: Selection mode (T-key or Ctrl+drag)
   - Smart pattern capture (states + colors)
   - Modulo-based seamless tiling algorithm
+- **Copy/Paste System**:
+  - Clipboard storage for selected patterns
+  - Paste preview mode with real-time transform operations
+  - Transform functions: Flip horizontal/vertical, rotate 90°/180°
+  - Non-destructive single-placement editing
 - **Grid Management**: 150×72 boolean array with double-buffering
 - **Simulation Engine**: Neighbor calculation with toroidal wrapping
 - **Rendering Pipeline**: Optimized bitmap-based drawing with age-aware invalidation
@@ -274,7 +353,8 @@ Select visualization mode:
 - **Event Handlers**: UI interaction and timer-driven updates
 - **Keyboard Handling**: 
   - Form-level `KeyPreview = true` for reliable key capture
-  - Menu shortcuts (Ctrl+R, Ctrl+S) work regardless of focus
+  - Menu shortcuts (Ctrl+R, Ctrl+S, Ctrl+C, Ctrl+V) work regardless of focus
+  - Mode-aware key handling (H/V/R only work in paste mode)
 
 #### **ColorPalettes.cs**
 - **Spectrum360**: 360-color RGB gradient array
@@ -450,9 +530,16 @@ Original repository: [Im-Rises/GameOfLife](https://github.com/Im-Rises/GameOfLif
   - Smart pattern capture (states + colors + spacing)
   - Seamless modulo-based tiling algorithm
   - Visual feedback (crosshair cursor, mode indicator, selection dimensions)
+- **Copy/Paste/Transform System**:
+  - Clipboard-based pattern editing with Ctrl+C / Ctrl+V
+  - Preview-before-place workflow (paste mode overlay)
+  - Real-time transform operations (flip horizontal/vertical, rotate 90°/180°)
+  - Non-destructive single-placement editing
+  - Mode-aware keyboard handling (transforms only work in paste mode)
 - **Left-Hand Keyboard Shortcuts**:
   - Ctrl+R = Run/Start (always available via menu shortcut)
   - Ctrl+S = Stop (always available via menu shortcut)
+  - Ctrl+C = Copy, Ctrl+V = Paste (always available)
   - Reliable focus handling with `KeyPreview = true`
   - T key for tiling mode toggle
 - **Dual color mode system**:

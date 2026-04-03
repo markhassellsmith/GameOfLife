@@ -153,6 +153,7 @@ namespace TP14_JeudelaVie
         private Point selectionEnd = Point.Empty;
         private Rectangle selectionRect = Rectangle.Empty;
         private bool isCtrlKeyHeld = false; // Track Ctrl key state for temporary selection mode
+        private bool isTemporarySelectionMode = false; // True for Ctrl+drag, false for T-key persistent mode
 
         /// <summary>
         /// Population density percentage (0-100). Controls the proportion of alive cells.
@@ -169,6 +170,14 @@ namespace TP14_JeudelaVie
         /// Timer to hide the density overlay after 5 seconds of inactivity.
         /// </summary>
         private System.Windows.Forms.Timer densityOverlayTimer;
+
+        // Clipboard fields for copy/paste with transforms
+        private bool[,] clipboard = null;
+        private Color[,] clipboardColors = null;
+        private int clipboardWidth = 0;
+        private int clipboardHeight = 0;
+        private bool pasteMode = false;
+        private Point pastePreviewCell = new Point(-1, -1);
 
         // Renderer for grid visualization
         private GridRenderer gridRenderer;
@@ -198,6 +207,45 @@ namespace TP14_JeudelaVie
                 }
                 isStart = !isStart;
             }
+            else if (e.KeyCode == Keys.C && e.Control && !e.Shift && !e.Alt)
+            {
+                // Copy selection (Ctrl+C)
+                CopySelection();
+                e.Handled = true;
+            }
+            else if (e.KeyCode == Keys.V && e.Control && !e.Shift && !e.Alt)
+            {
+                // Paste (Ctrl+V)
+                if (clipboard != null)
+                {
+                    EnterPasteMode();
+                }
+                e.Handled = true;
+            }
+            else if (pasteMode && e.KeyCode == Keys.H && !e.Control && !e.Shift && !e.Alt)
+            {
+                // Flip horizontal in paste mode
+                FlipClipboardHorizontal();
+                gridDisplay.Invalidate();
+            }
+            else if (pasteMode && e.KeyCode == Keys.V && !e.Control && !e.Shift && !e.Alt)
+            {
+                // Flip vertical in paste mode
+                FlipClipboardVertical();
+                gridDisplay.Invalidate();
+            }
+            else if (pasteMode && e.KeyCode == Keys.R && !e.Control && !e.Shift && !e.Alt)
+            {
+                // Rotate 90° CW in paste mode
+                RotateClipboard90CW();
+                gridDisplay.Invalidate();
+            }
+            else if (pasteMode && e.KeyCode == Keys.R && !e.Control && e.Shift && !e.Alt)
+            {
+                // Rotate 90° CCW in paste mode (Shift+R)
+                RotateClipboard90CCW();
+                gridDisplay.Invalidate();
+            }
             else if (e.KeyCode == Keys.T && !e.Control && !e.Shift && !e.Alt)
             {
                 // Toggle selection mode with T key
@@ -205,8 +253,12 @@ namespace TP14_JeudelaVie
             }
             else if (e.KeyCode == Keys.Escape)
             {
-                // Exit selection mode with Escape (works for both T-key and Ctrl-drag)
-                if (currentMode == InteractionMode.TilingSelection || !selectionRect.IsEmpty)
+                // Exit paste mode or selection mode with Escape
+                if (pasteMode)
+                {
+                    ExitPasteMode();
+                }
+                else if (currentMode == InteractionMode.TilingSelection || !selectionRect.IsEmpty)
                 {
                     ExitSelectionMode();
                 }
@@ -307,6 +359,9 @@ namespace TP14_JeudelaVie
             };
 
             RenderGrid();
+
+            // Initialize Edit menu state
+            UpdateEditMenuState();
 
 #if DEBUG
             // TestRleParser();  // Uncomment to test RLE parser
@@ -863,6 +918,7 @@ namespace TP14_JeudelaVie
             selectionStart = Point.Empty;
             selectionEnd = Point.Empty;
             selectionRect = Rectangle.Empty;
+            isTemporarySelectionMode = false; // T-key is persistent mode
 
             // Update UI
             toolStripModeIndicator.Text = "Mode: Select Region (T)";
@@ -885,6 +941,7 @@ namespace TP14_JeudelaVie
             selectionStart = Point.Empty;
             selectionEnd = Point.Empty;
             selectionRect = Rectangle.Empty;
+            isTemporarySelectionMode = false;
 
             // Update UI
             toolStripModeIndicator.Text = "Mode: Drawing";
@@ -903,6 +960,7 @@ namespace TP14_JeudelaVie
         private void EnterTemporarySelectionMode()
         {
             currentMode = InteractionMode.TilingSelection;
+            isTemporarySelectionMode = true; // Ctrl+drag is temporary mode
 
             // Update UI to show temporary selection mode
             toolStripModeIndicator.Text = "Mode: Select Region (Ctrl)";
@@ -1048,9 +1106,23 @@ namespace TP14_JeudelaVie
             PreviousAliveCount = -1;
             stableConsecutiveCount = 0;
 
-            // Render and exit selection mode
+            // Render grid
             RenderGrid();
-            ExitSelectionMode();
+
+            // Only exit selection mode for temporary Ctrl+drag; stay in selection mode for persistent T-key
+            if (isTemporarySelectionMode)
+            {
+                ExitSelectionMode();
+            }
+            else
+            {
+                // Clear selection but stay in selection mode (T-key persistent mode)
+                selectionRect = Rectangle.Empty;
+                selectionStart = Point.Empty;
+                selectionEnd = Point.Empty;
+                isSelecting = false;
+                gridDisplay.Invalidate();
+            }
 
             MessageBox.Show($"Pattern tiled successfully!\n{patternWidth}×{patternHeight} tile unit repeated across grid.\n{AliveCount} cells alive.",
                            "Tiling Complete",
@@ -1087,6 +1159,25 @@ namespace TP14_JeudelaVie
 
         private void Grid_MouseDown(object sender, MouseEventArgs e)
         {
+            // Handle paste mode click
+            if (pasteMode && e.Button == MouseButtons.Left)
+            {
+                int cellX = e.X / cellSpacing;
+                int cellY = e.Y / cellSpacing;
+                if (cellX >= 0 && cellX < squarePerLine && cellY >= 0 && cellY < squarePerColumn)
+                {
+                    PasteAtPosition(cellX, cellY);
+                }
+                return;
+            }
+
+            // Handle paste mode right-click (exit)
+            if (pasteMode && e.Button == MouseButtons.Right)
+            {
+                ExitPasteMode();
+                return;
+            }
+
             // Check if Ctrl+Left-drag should start selection (temporary mode)
             if (isCtrlKeyHeld && e.Button == MouseButtons.Left && currentMode == InteractionMode.Drawing)
             {
@@ -1132,6 +1223,13 @@ namespace TP14_JeudelaVie
             if (cellI != currentMouseCell.X || cellJ != currentMouseCell.Y)
             {
                 currentMouseCell = new Point(cellI, cellJ);
+
+                // Update paste preview position
+                if (pasteMode && cellI >= 0 && cellI < squarePerLine && cellJ >= 0 && cellJ < squarePerColumn)
+                {
+                    pastePreviewCell = new Point(cellI, cellJ);
+                }
+
                 gridDisplay.Invalidate();
             }
 
@@ -1340,6 +1438,45 @@ namespace TP14_JeudelaVie
 
         private void Grid_Paint(object sender, PaintEventArgs e)
         {
+            // Draw paste preview ghost
+            if (pasteMode && clipboard != null && pastePreviewCell.X >= 0 && pastePreviewCell.Y >= 0)
+            {
+                using (Brush ghostBrush = new SolidBrush(Color.FromArgb(100, 0, 255, 0))) // Semi-transparent green
+                using (Pen ghostPen = new Pen(Color.FromArgb(180, 0, 200, 0), 2))
+                {
+                    for (int i = 0; i < clipboardWidth; i++)
+                    {
+                        for (int j = 0; j < clipboardHeight; j++)
+                        {
+                            if (clipboard[i, j])
+                            {
+                                int targetX = (pastePreviewCell.X + i) % squarePerLine;
+                                int targetY = (pastePreviewCell.Y + j) % squarePerColumn;
+                                int x = targetX * cellSpacing;
+                                int y = targetY * cellSpacing;
+                                e.Graphics.FillRectangle(ghostBrush, x, y, squareSize, squareSize);
+                                e.Graphics.DrawRectangle(ghostPen, x, y, squareSize, squareSize);
+                            }
+                        }
+                    }
+                }
+
+                // Draw paste info
+                string pasteInfo = $"{clipboardWidth}×{clipboardHeight} (H=FlipH, V=FlipV, R=Rotate90)";
+                using (Font font = new Font("Segoe UI", 12, FontStyle.Bold))
+                using (Brush textBrush = new SolidBrush(Color.White))
+                using (Brush bgBrush = new SolidBrush(Color.FromArgb(220, 0, 150, 0)))
+                {
+                    SizeF textSize = e.Graphics.MeasureString(pasteInfo, font);
+                    int infoX = pastePreviewCell.X * cellSpacing;
+                    int infoY = pastePreviewCell.Y * cellSpacing - 25;
+                    if (infoY < 0) infoY = pastePreviewCell.Y * cellSpacing + clipboardHeight * cellSpacing + 5;
+
+                    e.Graphics.FillRectangle(bgBrush, infoX - 5, infoY - 2, textSize.Width + 10, textSize.Height + 4);
+                    e.Graphics.DrawString(pasteInfo, font, textBrush, infoX, infoY);
+                }
+            }
+
             // Draw selection rectangle if in tiling mode
             if (currentMode == InteractionMode.TilingSelection && !selectionRect.IsEmpty)
             {
@@ -1414,6 +1551,291 @@ namespace TP14_JeudelaVie
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Copies the current selection to the clipboard.
+        /// </summary>
+        private void CopySelection()
+        {
+            if (selectionRect.IsEmpty || selectionRect.Width == 0 || selectionRect.Height == 0)
+            {
+                MessageBox.Show("No region selected. Use Ctrl+Drag or T-mode to select a region first.",
+                               "Copy Selection",
+                               MessageBoxButtons.OK,
+                               MessageBoxIcon.Information);
+                return;
+            }
+
+            // Convert pixel coordinates to cell coordinates
+            int startCellX = selectionRect.X / cellSpacing;
+            int startCellY = selectionRect.Y / cellSpacing;
+            int endCellX = (selectionRect.X + selectionRect.Width) / cellSpacing;
+            int endCellY = (selectionRect.Y + selectionRect.Height) / cellSpacing;
+
+            // Ensure bounds
+            startCellX = Math.Max(0, startCellX);
+            startCellY = Math.Max(0, startCellY);
+            endCellX = Math.Min(squarePerLine, endCellX);
+            endCellY = Math.Min(squarePerColumn, endCellY);
+
+            clipboardWidth = endCellX - startCellX;
+            clipboardHeight = endCellY - startCellY;
+
+            if (clipboardWidth <= 0 || clipboardHeight <= 0)
+            {
+                MessageBox.Show("Selected region is too small.",
+                               "Copy Selection",
+                               MessageBoxButtons.OK,
+                               MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Allocate clipboard arrays
+            clipboard = new bool[clipboardWidth, clipboardHeight];
+            clipboardColors = new Color[clipboardWidth, clipboardHeight];
+
+            // Copy cells to clipboard
+            for (int i = 0; i < clipboardWidth; i++)
+            {
+                for (int j = 0; j < clipboardHeight; j++)
+                {
+                    clipboard[i, j] = squaresState[startCellX + i, startCellY + j];
+                    clipboardColors[i, j] = cellColor[startCellX + i, startCellY + j];
+                }
+            }
+
+            toolStripModeIndicator.Text = $"Copied {clipboardWidth}×{clipboardHeight}";
+            toolStripModeIndicator.BackColor = Color.LightYellow;
+
+            // Update Edit menu state
+            UpdateEditMenuState();
+
+            // Reset after 2 seconds
+            System.Threading.Tasks.Task.Delay(2000).ContinueWith(_ =>
+            {
+                this.Invoke((Action)(() =>
+                {
+                    if (pasteMode)
+                    {
+                        toolStripModeIndicator.Text = "Paste Mode (Click to paste, Esc to exit)";
+                        toolStripModeIndicator.BackColor = Color.LightCoral;
+                    }
+                    else if (currentMode == InteractionMode.Drawing)
+                    {
+                        RestoreModeIndicator();
+                    }
+                }));
+            });
+        }
+
+        /// <summary>
+        /// Enters paste mode with visual preview.
+        /// </summary>
+        private void EnterPasteMode()
+        {
+            pasteMode = true;
+            pastePreviewCell = new Point(-1, -1);
+
+            toolStripModeIndicator.Text = "Paste Mode (Click to paste, Esc to exit)";
+            toolStripModeIndicator.BackColor = Color.LightCoral;
+
+            gridDisplay.Cursor = Cursors.Cross;
+
+            // Update Edit menu state
+            UpdateEditMenuState();
+
+            gridDisplay.Invalidate();
+        }
+
+        /// <summary>
+        /// Exits paste mode and returns to previous mode.
+        /// </summary>
+        private void ExitPasteMode()
+        {
+            pasteMode = false;
+            pastePreviewCell = new Point(-1, -1);
+
+            if (currentMode == InteractionMode.TilingSelection)
+            {
+                toolStripModeIndicator.Text = "Mode: Select Region (T)";
+                toolStripModeIndicator.BackColor = Color.LightSkyBlue;
+                gridDisplay.Cursor = Cursors.Cross;
+            }
+            else
+            {
+                RestoreModeIndicator();
+                UpdateCursorForCtrlKey();
+            }
+
+            // Update Edit menu state
+            UpdateEditMenuState();
+
+            gridDisplay.Invalidate();
+        }
+
+        /// <summary>
+        /// Pastes clipboard content at the specified cell position.
+        /// </summary>
+        private void PasteAtPosition(int cellX, int cellY)
+        {
+            if (clipboard == null || clipboardWidth == 0 || clipboardHeight == 0)
+                return;
+
+            List<(int, int)> changedCells = new List<(int, int)>();
+
+            for (int i = 0; i < clipboardWidth; i++)
+            {
+                for (int j = 0; j < clipboardHeight; j++)
+                {
+                    int targetX = cellX + i;
+                    int targetY = cellY + j;
+
+                    // Wrap around grid (toroidal)
+                    targetX = (targetX + squarePerLine) % squarePerLine;
+                    targetY = (targetY + squarePerColumn) % squarePerColumn;
+
+                    bool oldState = squaresState[targetX, targetY];
+                    bool newState = clipboard[i, j];
+
+                    if (oldState != newState)
+                    {
+                        squaresState[targetX, targetY] = newState;
+                        cellColor[targetX, targetY] = clipboardColors[i, j];
+
+                        if (newState)
+                            AliveCount++;
+                        else
+                            AliveCount = Math.Max(0, AliveCount - 1);
+
+                        changedCells.Add((targetX, targetY));
+                    }
+                    else if (newState) // Cell already alive, update color
+                    {
+                        cellColor[targetX, targetY] = clipboardColors[i, j];
+                        changedCells.Add((targetX, targetY));
+                    }
+                }
+            }
+
+            if (changedCells.Count > 0)
+            {
+                toolStripAliveCountBox.Text = AliveCount.ToString() + " cells alive.";
+                RenderGridDirty(changedCells);
+            }
+        }
+
+        /// <summary>
+        /// Flips clipboard horizontally (mirrors left-right).
+        /// </summary>
+        private void FlipClipboardHorizontal()
+        {
+            if (clipboard == null) return;
+
+            bool[,] flipped = new bool[clipboardWidth, clipboardHeight];
+            Color[,] flippedColors = new Color[clipboardWidth, clipboardHeight];
+
+            for (int i = 0; i < clipboardWidth; i++)
+            {
+                for (int j = 0; j < clipboardHeight; j++)
+                {
+                    flipped[i, j] = clipboard[clipboardWidth - 1 - i, j];
+                    flippedColors[i, j] = clipboardColors[clipboardWidth - 1 - i, j];
+                }
+            }
+
+            clipboard = flipped;
+            clipboardColors = flippedColors;
+        }
+
+        /// <summary>
+        /// Flips clipboard vertically (mirrors top-bottom).
+        /// </summary>
+        private void FlipClipboardVertical()
+        {
+            if (clipboard == null) return;
+
+            bool[,] flipped = new bool[clipboardWidth, clipboardHeight];
+            Color[,] flippedColors = new Color[clipboardWidth, clipboardHeight];
+
+            for (int i = 0; i < clipboardWidth; i++)
+            {
+                for (int j = 0; j < clipboardHeight; j++)
+                {
+                    flipped[i, j] = clipboard[i, clipboardHeight - 1 - j];
+                    flippedColors[i, j] = clipboardColors[i, clipboardHeight - 1 - j];
+                }
+            }
+
+            clipboard = flipped;
+            clipboardColors = flippedColors;
+        }
+
+        /// <summary>
+        /// Rotates clipboard 90 degrees clockwise.
+        /// </summary>
+        private void RotateClipboard90CW()
+        {
+            if (clipboard == null) return;
+
+            // Swap dimensions
+            int newWidth = clipboardHeight;
+            int newHeight = clipboardWidth;
+
+            bool[,] rotated = new bool[newWidth, newHeight];
+            Color[,] rotatedColors = new Color[newWidth, newHeight];
+
+            for (int i = 0; i < clipboardWidth; i++)
+            {
+                for (int j = 0; j < clipboardHeight; j++)
+                {
+                    rotated[clipboardHeight - 1 - j, i] = clipboard[i, j];
+                    rotatedColors[clipboardHeight - 1 - j, i] = clipboardColors[i, j];
+                }
+            }
+
+            clipboard = rotated;
+            clipboardColors = rotatedColors;
+            clipboardWidth = newWidth;
+            clipboardHeight = newHeight;
+        }
+
+        /// <summary>
+        /// Rotates clipboard 90 degrees counter-clockwise.
+        /// </summary>
+        private void RotateClipboard90CCW()
+        {
+            if (clipboard == null) return;
+
+            // Swap dimensions
+            int newWidth = clipboardHeight;
+            int newHeight = clipboardWidth;
+
+            bool[,] rotated = new bool[newWidth, newHeight];
+            Color[,] rotatedColors = new Color[newWidth, newHeight];
+
+            for (int i = 0; i < clipboardWidth; i++)
+            {
+                for (int j = 0; j < clipboardHeight; j++)
+                {
+                    rotated[j, clipboardWidth - 1 - i] = clipboard[i, j];
+                    rotatedColors[j, clipboardWidth - 1 - i] = clipboardColors[i, j];
+                }
+            }
+
+            clipboard = rotated;
+            clipboardColors = rotatedColors;
+            clipboardWidth = newWidth;
+            clipboardHeight = newHeight;
+        }
+
+        /// <summary>
+        /// Rotates clipboard 180 degrees.
+        /// </summary>
+        private void RotateClipboard180()
+        {
+            FlipClipboardHorizontal();
+            FlipClipboardVertical();
         }
 
         private void colorModeComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -1964,6 +2386,82 @@ namespace TP14_JeudelaVie
                    "Dynamic Pattern Loaded",
                    MessageBoxButtons.OK,
                    MessageBoxIcon.Information);
+        }
+
+        // Edit menu event handlers
+
+        /// <summary>
+        /// Updates the enabled state of Edit menu items based on clipboard and paste mode state.
+        /// </summary>
+        private void UpdateEditMenuState()
+        {
+            if (pasteToolStripMenuItem != null)
+            {
+                pasteToolStripMenuItem.Enabled = (clipboard != null);
+            }
+
+            if (transformToolStripMenuItem != null)
+            {
+                transformToolStripMenuItem.Enabled = pasteMode && (clipboard != null);
+            }
+        }
+
+        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CopySelection();
+        }
+
+        private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (clipboard != null)
+            {
+                EnterPasteMode();
+            }
+        }
+
+        private void flipHorizontalToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (pasteMode && clipboard != null)
+            {
+                FlipClipboardHorizontal();
+                gridDisplay.Invalidate();
+            }
+        }
+
+        private void flipVerticalToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (pasteMode && clipboard != null)
+            {
+                FlipClipboardVertical();
+                gridDisplay.Invalidate();
+            }
+        }
+
+        private void rotate90CWToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (pasteMode && clipboard != null)
+            {
+                RotateClipboard90CW();
+                gridDisplay.Invalidate();
+            }
+        }
+
+        private void rotate90CCWToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (pasteMode && clipboard != null)
+            {
+                RotateClipboard90CCW();
+                gridDisplay.Invalidate();
+            }
+        }
+
+        private void rotate180ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (pasteMode && clipboard != null)
+            {
+                RotateClipboard180();
+                gridDisplay.Invalidate();
+            }
         }
     }
 }

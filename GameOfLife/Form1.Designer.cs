@@ -37,6 +37,17 @@ namespace TP14_JeudelaVie
             exportPatternToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             importPatternToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            pasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            transformToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            flipHorizontalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            flipVerticalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            rotate90CWToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            rotate90CCWToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            rotate180ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             simulationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             startToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             stopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -83,7 +94,7 @@ namespace TP14_JeudelaVie
             // menuEtatVitesse
             // 
             menuEtatVitesse.ImageScalingSize = new System.Drawing.Size(20, 20);
-            menuEtatVitesse.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { fileToolStripMenuItem, simulationToolStripMenuItem, vitesseToolStripMenuItem, patternToolStripMenuItem, colorModeComboBox, toolStripIterationsTextbox, toolStripAliveCountBox, toolStripModeIndicator, toolStripSpacebarComment, toolStripTextBoxStatus });
+            menuEtatVitesse.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { fileToolStripMenuItem, editToolStripMenuItem, simulationToolStripMenuItem, vitesseToolStripMenuItem, patternToolStripMenuItem, colorModeComboBox, toolStripIterationsTextbox, toolStripAliveCountBox, toolStripModeIndicator, toolStripSpacebarComment, toolStripTextBoxStatus });
             menuEtatVitesse.Location = new System.Drawing.Point(0, 0);
             menuEtatVitesse.Name = "menuEtatVitesse";
             menuEtatVitesse.Padding = new System.Windows.Forms.Padding(10, 3, 0, 3);
@@ -135,6 +146,81 @@ namespace TP14_JeudelaVie
             exitToolStripMenuItem.Size = new System.Drawing.Size(318, 44);
             exitToolStripMenuItem.Text = "Exit";
             exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
+            // 
+            // editToolStripMenuItem
+            // 
+            editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { copyToolStripMenuItem, pasteToolStripMenuItem, toolStripSeparator3, transformToolStripMenuItem });
+            editToolStripMenuItem.Name = "editToolStripMenuItem";
+            editToolStripMenuItem.Size = new System.Drawing.Size(74, 58);
+            editToolStripMenuItem.Text = "&Edit";
+            // 
+            // copyToolStripMenuItem
+            // 
+            copyToolStripMenuItem.Name = "copyToolStripMenuItem";
+            copyToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C;
+            copyToolStripMenuItem.Size = new System.Drawing.Size(290, 44);
+            copyToolStripMenuItem.Text = "Copy";
+            copyToolStripMenuItem.Click += copyToolStripMenuItem_Click;
+            // 
+            // pasteToolStripMenuItem
+            // 
+            pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
+            pasteToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V;
+            pasteToolStripMenuItem.Size = new System.Drawing.Size(290, 44);
+            pasteToolStripMenuItem.Text = "Paste";
+            pasteToolStripMenuItem.Click += pasteToolStripMenuItem_Click;
+            // 
+            // toolStripSeparator3
+            // 
+            toolStripSeparator3.Name = "toolStripSeparator3";
+            toolStripSeparator3.Size = new System.Drawing.Size(287, 6);
+            // 
+            // transformToolStripMenuItem
+            // 
+            transformToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { flipHorizontalToolStripMenuItem, flipVerticalToolStripMenuItem, rotate90CWToolStripMenuItem, rotate90CCWToolStripMenuItem, toolStripSeparator4, rotate180ToolStripMenuItem });
+            transformToolStripMenuItem.Name = "transformToolStripMenuItem";
+            transformToolStripMenuItem.Size = new System.Drawing.Size(290, 44);
+            transformToolStripMenuItem.Text = "Transform";
+            // 
+            // flipHorizontalToolStripMenuItem
+            // 
+            flipHorizontalToolStripMenuItem.Name = "flipHorizontalToolStripMenuItem";
+            flipHorizontalToolStripMenuItem.Size = new System.Drawing.Size(350, 44);
+            flipHorizontalToolStripMenuItem.Text = "Flip Horizontal (H)";
+            flipHorizontalToolStripMenuItem.Click += flipHorizontalToolStripMenuItem_Click;
+            // 
+            // flipVerticalToolStripMenuItem
+            // 
+            flipVerticalToolStripMenuItem.Name = "flipVerticalToolStripMenuItem";
+            flipVerticalToolStripMenuItem.Size = new System.Drawing.Size(350, 44);
+            flipVerticalToolStripMenuItem.Text = "Flip Vertical (V)";
+            flipVerticalToolStripMenuItem.Click += flipVerticalToolStripMenuItem_Click;
+            // 
+            // rotate90CWToolStripMenuItem
+            // 
+            rotate90CWToolStripMenuItem.Name = "rotate90CWToolStripMenuItem";
+            rotate90CWToolStripMenuItem.Size = new System.Drawing.Size(350, 44);
+            rotate90CWToolStripMenuItem.Text = "Rotate 90° CW (R)";
+            rotate90CWToolStripMenuItem.Click += rotate90CWToolStripMenuItem_Click;
+            // 
+            // rotate90CCWToolStripMenuItem
+            // 
+            rotate90CCWToolStripMenuItem.Name = "rotate90CCWToolStripMenuItem";
+            rotate90CCWToolStripMenuItem.Size = new System.Drawing.Size(350, 44);
+            rotate90CCWToolStripMenuItem.Text = "Rotate 90° CCW (Shift+R)";
+            rotate90CCWToolStripMenuItem.Click += rotate90CCWToolStripMenuItem_Click;
+            // 
+            // toolStripSeparator4
+            // 
+            toolStripSeparator4.Name = "toolStripSeparator4";
+            toolStripSeparator4.Size = new System.Drawing.Size(347, 6);
+            // 
+            // rotate180ToolStripMenuItem
+            // 
+            rotate180ToolStripMenuItem.Name = "rotate180ToolStripMenuItem";
+            rotate180ToolStripMenuItem.Size = new System.Drawing.Size(350, 44);
+            rotate180ToolStripMenuItem.Text = "Rotate 180°";
+            rotate180ToolStripMenuItem.Click += rotate180ToolStripMenuItem_Click;
             // 
             // simulationToolStripMenuItem
             // 
@@ -207,7 +293,7 @@ namespace TP14_JeudelaVie
             // 
             tileSelectionToolStripMenuItem.Name = "tileSelectionToolStripMenuItem";
             tileSelectionToolStripMenuItem.Size = new System.Drawing.Size(339, 44);
-            tileSelectionToolStripMenuItem.Text = "Tile Selection... (T)";
+            tileSelectionToolStripMenuItem.Text = "Tile Selection (T)";
             tileSelectionToolStripMenuItem.Click += tileSelectionToolStripMenuItem_Click;
             // 
             // shapesToolStripMenuItem
@@ -380,7 +466,7 @@ namespace TP14_JeudelaVie
             toolStripSpacebarComment.Font = new System.Drawing.Font("Segoe UI", 12.75F, System.Drawing.FontStyle.Bold);
             toolStripSpacebarComment.Name = "toolStripSpacebarComment";
             toolStripSpacebarComment.Size = new System.Drawing.Size(323, 58);
-            toolStripSpacebarComment.Text = "Spacebar=Start/Stop";
+            toolStripSpacebarComment.Text = "Space = Start/Stop";
             toolStripSpacebarComment.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // toolStripTextBoxStatus
@@ -486,5 +572,16 @@ namespace TP14_JeudelaVie
         private System.Windows.Forms.ToolStripMenuItem diagonalStripesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem doubleDiagonalToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem concentricRectanglesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pasteToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripMenuItem transformToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem flipHorizontalToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem flipVerticalToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem rotate90CWToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem rotate90CCWToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripMenuItem rotate180ToolStripMenuItem;
     }
 }
