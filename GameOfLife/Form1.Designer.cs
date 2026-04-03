@@ -61,16 +61,21 @@ namespace TP14_JeudelaVie
             shapesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             gliderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             lwssToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            mwssToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            hwssToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             blinkerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             beaconToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             pulsarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            pentadecathlonToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             rPentominoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             acornToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             diehardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            piHeptominoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             gosperGliderGunToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            eater1ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             tilingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             chessboardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             brickPatternToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -300,7 +305,7 @@ namespace TP14_JeudelaVie
             // 
             // shapesToolStripMenuItem
             // 
-            shapesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { gliderToolStripMenuItem, lwssToolStripMenuItem, blinkerToolStripMenuItem, toadToolStripMenuItem, beaconToolStripMenuItem, pulsarToolStripMenuItem, toolStripSeparator1, rPentominoToolStripMenuItem, acornToolStripMenuItem, diehardToolStripMenuItem, toolStripSeparator2, gosperGliderGunToolStripMenuItem });
+            shapesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { gliderToolStripMenuItem, lwssToolStripMenuItem, mwssToolStripMenuItem, hwssToolStripMenuItem, blinkerToolStripMenuItem, toadToolStripMenuItem, beaconToolStripMenuItem, pulsarToolStripMenuItem, pentadecathlonToolStripMenuItem, toolStripSeparator1, rPentominoToolStripMenuItem, acornToolStripMenuItem, diehardToolStripMenuItem, piHeptominoToolStripMenuItem, toolStripSeparator2, gosperGliderGunToolStripMenuItem, eater1ToolStripMenuItem });
             shapesToolStripMenuItem.Name = "shapesToolStripMenuItem";
             shapesToolStripMenuItem.Size = new System.Drawing.Size(339, 44);
             shapesToolStripMenuItem.Text = "Shapes...";
@@ -318,6 +323,20 @@ namespace TP14_JeudelaVie
             lwssToolStripMenuItem.Size = new System.Drawing.Size(465, 44);
             lwssToolStripMenuItem.Text = "Lightweight Spaceship (LWSS)";
             lwssToolStripMenuItem.Click += lwssToolStripMenuItem_Click;
+            // 
+            // mwssToolStripMenuItem
+            // 
+            mwssToolStripMenuItem.Name = "mwssToolStripMenuItem";
+            mwssToolStripMenuItem.Size = new System.Drawing.Size(465, 44);
+            mwssToolStripMenuItem.Text = "Middleweight Spaceship (MWSS)";
+            mwssToolStripMenuItem.Click += mwssToolStripMenuItem_Click;
+            // 
+            // hwssToolStripMenuItem
+            // 
+            hwssToolStripMenuItem.Name = "hwssToolStripMenuItem";
+            hwssToolStripMenuItem.Size = new System.Drawing.Size(465, 44);
+            hwssToolStripMenuItem.Text = "Heavyweight Spaceship (HWSS)";
+            hwssToolStripMenuItem.Click += hwssToolStripMenuItem_Click;
             // 
             // blinkerToolStripMenuItem
             // 
@@ -347,6 +366,13 @@ namespace TP14_JeudelaVie
             pulsarToolStripMenuItem.Text = "Pulsar";
             pulsarToolStripMenuItem.Click += pulsarToolStripMenuItem_Click;
             // 
+            // pentadecathlonToolStripMenuItem
+            // 
+            pentadecathlonToolStripMenuItem.Name = "pentadecathlonToolStripMenuItem";
+            pentadecathlonToolStripMenuItem.Size = new System.Drawing.Size(465, 44);
+            pentadecathlonToolStripMenuItem.Text = "Pentadecathlon";
+            pentadecathlonToolStripMenuItem.Click += pentadecathlonToolStripMenuItem_Click;
+            // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
@@ -373,6 +399,13 @@ namespace TP14_JeudelaVie
             diehardToolStripMenuItem.Text = "Diehard";
             diehardToolStripMenuItem.Click += diehardToolStripMenuItem_Click;
             // 
+            // piHeptominoToolStripMenuItem
+            // 
+            piHeptominoToolStripMenuItem.Name = "piHeptominoToolStripMenuItem";
+            piHeptominoToolStripMenuItem.Size = new System.Drawing.Size(465, 44);
+            piHeptominoToolStripMenuItem.Text = "Pi Heptomino";
+            piHeptominoToolStripMenuItem.Click += piHeptominoToolStripMenuItem_Click;
+            // 
             // toolStripSeparator2
             // 
             toolStripSeparator2.Name = "toolStripSeparator2";
@@ -384,6 +417,13 @@ namespace TP14_JeudelaVie
             gosperGliderGunToolStripMenuItem.Size = new System.Drawing.Size(465, 44);
             gosperGliderGunToolStripMenuItem.Text = "Gosper Glider Gun";
             gosperGliderGunToolStripMenuItem.Click += gosperGliderGunToolStripMenuItem_Click;
+            // 
+            // eater1ToolStripMenuItem
+            // 
+            eater1ToolStripMenuItem.Name = "eater1ToolStripMenuItem";
+            eater1ToolStripMenuItem.Size = new System.Drawing.Size(465, 44);
+            eater1ToolStripMenuItem.Text = "Eater 1";
+            eater1ToolStripMenuItem.Click += eater1ToolStripMenuItem_Click;
             // 
             // tilingsToolStripMenuItem
             // 
@@ -572,16 +612,21 @@ namespace TP14_JeudelaVie
         private System.Windows.Forms.ToolStripMenuItem shapesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem gliderToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem lwssToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem mwssToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem hwssToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem blinkerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toadToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem beaconToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pulsarToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pentadecathlonToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem rPentominoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem acornToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem diehardToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem piHeptominoToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem gosperGliderGunToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem eater1ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem tilingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem chessboardToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem brickPatternToolStripMenuItem;

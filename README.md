@@ -10,6 +10,8 @@ A high-performance Windows Forms implementation of Conway's Game of Life featuri
 
 This project implements Conway's Game of Life with two distinctive visual modes that reveal different aspects of cellular evolution. Switch between generation tracking and lifespan visualization to explore patterns in unique ways. Features both full-grid tiling for symmetry and precision copy/paste editing with preview and transform operations.
 
+**📚 For Educators**: See [EDUCATIONAL.md](EDUCATIONAL.md) for classroom activities, code quality learning points, extensibility exercises, and mathematical exploration topics.
+
 ## ✨ Features
 
 ### Visual Innovation - Dual Color Modes
@@ -249,16 +251,21 @@ dotnet run
   - **Shapes...** - Classic Game of Life patterns
 	- Glider - Simple period-4 spaceship
 	- Lightweight Spaceship (LWSS) - Period-4 spaceship
+	- Middleweight Spaceship (MWSS) - Period-4 spaceship
+	- Heavyweight Spaceship (HWSS) - Period-4 spaceship
 	- Blinker - Period-2 oscillator
 	- Toad - Period-2 oscillator
 	- Beacon - Period-2 oscillator
 	- Pulsar - Period-3 oscillator
+	- Pentadecathlon - Period-15 oscillator
 	- *──────────*
 	- R-Pentomino - Famous methuselah (~1100 generations)
 	- Acorn - Methuselah (~5200 generations)
 	- Diehard - Methuselah (dies after 130 generations)
+	- Pi Heptomino - Methuselah (~173 generations)
 	- *──────────*
 	- Gosper Glider Gun - Period-30 glider generator
+	- Eater 1 - Stable glider consumer
   - **Tilings...** - Full-grid geometric patterns
 	- Chessboard (5×5) - Alternating blocks with perfect symmetry
 	- Ladder Brick - Dynamic brick pattern with oscillators

@@ -876,6 +876,10 @@ namespace TP14_JeudelaVie
 
         private void lwssToolStripMenuItem_Click(object sender, EventArgs e) => LoadPresetPattern("Lightweight Spaceship (LWSS)");
 
+        private void mwssToolStripMenuItem_Click(object sender, EventArgs e) => LoadPresetPattern("Middleweight Spaceship (MWSS)");
+
+        private void hwssToolStripMenuItem_Click(object sender, EventArgs e) => LoadPresetPattern("Heavyweight Spaceship (HWSS)");
+
         private void blinkerToolStripMenuItem_Click(object sender, EventArgs e) => LoadPresetPattern("Blinker");
 
         private void toadToolStripMenuItem_Click(object sender, EventArgs e) => LoadPresetPattern("Toad");
@@ -884,13 +888,19 @@ namespace TP14_JeudelaVie
 
         private void pulsarToolStripMenuItem_Click(object sender, EventArgs e) => LoadPresetPattern("Pulsar");
 
+        private void pentadecathlonToolStripMenuItem_Click(object sender, EventArgs e) => LoadPresetPattern("Pentadecathlon");
+
         private void rPentominoToolStripMenuItem_Click(object sender, EventArgs e) => LoadPresetPattern("R-Pentomino");
 
         private void acornToolStripMenuItem_Click(object sender, EventArgs e) => LoadPresetPattern("Acorn");
 
         private void diehardToolStripMenuItem_Click(object sender, EventArgs e) => LoadPresetPattern("Diehard");
 
+        private void piHeptominoToolStripMenuItem_Click(object sender, EventArgs e) => LoadPresetPattern("Pi Heptomino");
+
         private void gosperGliderGunToolStripMenuItem_Click(object sender, EventArgs e) => LoadPresetPattern("Gosper Glider Gun");
+
+        private void eater1ToolStripMenuItem_Click(object sender, EventArgs e) => LoadPresetPattern("Eater 1");
 
         /// <summary>
         /// Handles the Tile Selection menu item click to enter selection mode.

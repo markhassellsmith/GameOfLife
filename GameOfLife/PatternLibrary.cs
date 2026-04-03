@@ -16,14 +16,19 @@ namespace GameOfLife
             {
                 { "Glider", Glider },
                 { "Lightweight Spaceship (LWSS)", LightweightSpaceship },
+                { "Middleweight Spaceship (MWSS)", MiddleweightSpaceship },
+                { "Heavyweight Spaceship (HWSS)", HeavyweightSpaceship },
                 { "Blinker", Blinker },
                 { "Toad", Toad },
                 { "Beacon", Beacon },
                 { "Pulsar", Pulsar },
+                { "Pentadecathlon", Pentadecathlon },
                 { "Gosper Glider Gun", GosperGliderGun },
                 { "R-Pentomino", RPentomino },
                 { "Acorn", Acorn },
-                { "Diehard", Diehard }
+                { "Diehard", Diehard },
+                { "Pi Heptomino", PiHeptomino },
+                { "Eater 1", Eater1 }
             };
         }
 
@@ -48,6 +53,26 @@ bob$2bo$3o!";
 #C Moves with period 4.
 x = 5, y = 4, rule = B3/S23
 b3o$o3bo$4bo$o2bo!";
+
+        /// <summary>
+        /// A medium-sized spaceship that travels orthogonally.
+        /// Moves horizontally with period 4. Size: 6x5.
+        /// </summary>
+        public static readonly string MiddleweightSpaceship = @"#N Middleweight Spaceship
+#C A medium-sized spaceship that travels orthogonally.
+#C Moves with period 4.
+x = 6, y = 5, rule = B3/S23
+3bo$o3bo$5bo$o4bo$b4o!";
+
+        /// <summary>
+        /// A large spaceship that travels orthogonally.
+        /// Moves horizontally with period 4. Size: 7x5.
+        /// </summary>
+        public static readonly string HeavyweightSpaceship = @"#N Heavyweight Spaceship
+#C A large spaceship that travels orthogonally.
+#C Moves with period 4.
+x = 7, y = 5, rule = B3/S23
+3b2o$o5bo$6bo$o5bo$2b4o!";
 
         /// <summary>
         /// The smallest and most common oscillator.
@@ -87,6 +112,17 @@ x = 13, y = 13, rule = B3/S23
 2b3o3b3o2b2$o4bobo4bo$o4bobo4bo$o4bobo4bo$2b3o3b3o2b2$2b3o3b3o2b$o4bobo
 4bo$o4bobo4bo$o4bobo4bo2$2b3o3b3o!";
 
+        /// <summary>
+        /// A large period 15 oscillator.
+        /// One of the most well-known oscillators with longest period in basic set. Size: 10x18.
+        /// </summary>
+        public static readonly string Pentadecathlon = @"#N Pentadecathlon
+#C A period 15 oscillator.
+#C One of the most recognizable high-period oscillators.
+x = 10, y = 18, rule = B3/S23
+4b2o3b$4b2o3b$3bo2bo2b$2b6o$2bo4bo$2bo4bo$3bo2bo2b$4b2o3b2$4b2o3b$3bo2b
+o2b$2bo4bo$2bo4bo$2b6o$3bo2bo2b$4b2o3b$4b2o!";
+
         // Methuselahs (long-lived patterns)
 
         /// <summary>
@@ -119,6 +155,16 @@ bo5b$3bo3b$2o2b3o!";
 x = 8, y = 3, rule = B3/S23
 6b2o$2o6b$bo3b3o!";
 
+        /// <summary>
+        /// A methuselah that stabilizes after 173 generations.
+        /// Creates an interesting evolution from a simple heptomino. Size: 5x3.
+        /// </summary>
+        public static readonly string PiHeptomino = @"#N Pi Heptomino
+#C A methuselah that stabilizes after 173 generations.
+#C Creates an interesting evolution from a simple heptomino.
+x = 5, y = 3, rule = B3/S23
+3o$o$o!";
+
         // Complex patterns
 
         /// <summary>
@@ -131,5 +177,15 @@ x = 8, y = 3, rule = B3/S23
 x = 36, y = 9, rule = B3/S23
 24bo11b$22bobo11b$12b2o6b2o12b2o$11bo3bo4b2o12b2o$2o8bo5bo3b2o14b$2o8b
 o3bob2o4bobo11b$10bo5bo7bo11b$11bo3bo20b$12b2o!";
+
+        /// <summary>
+        /// A stable pattern that can consume gliders and other patterns.
+        /// One of the most useful eaters for pattern interaction. Size: 4x4.
+        /// </summary>
+        public static readonly string Eater1 = @"#N Eater 1
+#C A stable pattern that can consume gliders.
+#C One of the most useful eaters for pattern interaction.
+x = 4, y = 4, rule = B3/S23
+2o$obo$3bo$3b2o!";
     }
 }
