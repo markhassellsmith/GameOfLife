@@ -136,12 +136,13 @@ These operations modify the clipboard pattern **before** placement:
 - **Copy/Paste**: Building complex structures, experimenting with orientations, level editing
 
 ###  Density Variation
-Mouse wheel adjusts initial population density; applies to all patterns (destructive of original pattern):
-- **Scroll up**: Increase density (more alive cells)
-- **Scroll down**: Decrease density (fewer alive cells)
+Ctrl+Mouse wheel adjusts initial population density; applies to all patterns (destructive of original pattern):
+- **Ctrl+Scroll up**: Increase density (more alive cells)
+- **Ctrl+Scroll down**: Decrease density (fewer alive cells)
 - Works whether simulation is stopped or running (applies to current grid state)
 - **Range from 0% to 100%** in 5% increments (default 50%)
-- **Density value appears near mouse cursor for real-time feedback while adjusting 
+- **Density value appears near mouse cursor for real-time feedback while adjusting**
+- **Plain mouse wheel** (without Ctrl) scrolls the grid when it doesn't fit the window
 - **Applies to**:
   - Random pattern: Adjusts probability of alive cells at start
   - Blank grid or Any pattern: Randomly kills or alives cells to achieve target density while preserving overall structure
@@ -300,8 +301,9 @@ Select visualization mode:
 |--------|--------|-----------------|
 | `Left Click + Drag` | Paint cells alive | Single cell precision |
 | `Right Click + Drag` | Erase 5×5 area | Rounded eraser cursor |
-| `Mouse Wheel Up` | Increase density +5% | Overlay shows "Density: X%" |
-| `Mouse Wheel Down` | Decrease density -5% | Overlay shows "Density: X%" |
+| `Ctrl + Mouse Wheel Up` | Increase density +5% | Overlay shows "Density: X%" |
+| `Ctrl + Mouse Wheel Down` | Decrease density -5% | Overlay shows "Density: X%" |
+| `Mouse Wheel Up/Down` | Scroll grid vertically | Standard scrolling (when grid larger than window) |
 | **Hold Ctrl** | Show selection cursor | Crosshair + cyan hint in mode indicator |
 | **Ctrl + Left Drag** | Select region for tiling | Blue dashed rectangle + dimensions |
 

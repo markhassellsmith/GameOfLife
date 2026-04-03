@@ -293,10 +293,8 @@ namespace TP14_JeudelaVie
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            // roughly 90% of Vizio monitor resolution
-            this.Width = 1728;
-            this.Height = 972;
-            this.SetDesktopLocation(20, 20);
+            // Form will start at design-time size and be resizable
+            // Grid panel will show scrollbars when needed
 
             squareModel.Visible = false;
             squareModelAlive.Visible = false;
@@ -339,9 +337,10 @@ namespace TP14_JeudelaVie
             gridDisplay.MouseWheel += Grid_MouseWheel;
             gridDisplay.Paint += Grid_Paint; // Add paint handler for cursor overlay
             gridDisplay.Click += (s, e) => gridDisplay.Focus(); // Focus grid when clicked
-            this.Controls.Add(gridDisplay);
+            gridPanel.Controls.Add(gridDisplay);  // Add to panel instead of form
 
-            this.Size = new Size(positionOffsetX + bitmapWidth + positionOffsetX, positionOffsetY + bitmapHeight + positionOffsetY + 50);
+            // Don't manually size the form - let it use the design-time size
+            // The gridPanel will handle scrolling when the grid is larger than the visible area
 
             InitializeGame();
 
@@ -1267,16 +1266,21 @@ namespace TP14_JeudelaVie
 
         private void Grid_MouseWheel(object sender, MouseEventArgs e)
         {
-            if (e.Delta > 0)
-                populationDensity = Math.Min(100, populationDensity + 5);
-            else if (e.Delta < 0)
-                populationDensity = Math.Max(0, populationDensity - 5);
+            // Only adjust density when Ctrl is held (plain wheel scrolls the grid panel)
+            if (Control.ModifierKeys.HasFlag(Keys.Control))
+            {
+                if (e.Delta > 0)
+                    populationDensity = Math.Min(100, populationDensity + 5);
+                else if (e.Delta < 0)
+                    populationDensity = Math.Max(0, populationDensity - 5);
 
-            showDensityOverlay = true;
-            densityOverlayTimer.Stop();
-            densityOverlayTimer.Start();
-            gridDisplay.Invalidate();
-            ApplyDensityToGrid();
+                showDensityOverlay = true;
+                densityOverlayTimer.Stop();
+                densityOverlayTimer.Start();
+                gridDisplay.Invalidate();
+                ApplyDensityToGrid();
+            }
+            // If Ctrl not held, event bubbles up to gridPanel for scrolling (default behavior)
         }
 
         private void ApplyDensityToGrid()

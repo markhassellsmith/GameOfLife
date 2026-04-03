@@ -86,9 +86,11 @@ namespace TP14_JeudelaVie
             myTimer = new System.Windows.Forms.Timer(components);
             squareModel = new System.Windows.Forms.PictureBox();
             squareModelAlive = new System.Windows.Forms.PictureBox();
+            gridPanel = new System.Windows.Forms.Panel();
             menuEtatVitesse.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)squareModel).BeginInit();
             ((System.ComponentModel.ISupportInitialize)squareModelAlive).BeginInit();
+            gridPanel.SuspendLayout();
             SuspendLayout();
             // 
             // menuEtatVitesse
@@ -483,6 +485,15 @@ namespace TP14_JeudelaVie
             // 
             myTimer.Tick += tmrClock_Tick;
             // 
+            // gridPanel
+            // 
+            gridPanel.AutoScroll = true;
+            gridPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            gridPanel.Location = new System.Drawing.Point(0, 64);
+            gridPanel.Name = "gridPanel";
+            gridPanel.Size = new System.Drawing.Size(2313, 1364);
+            gridPanel.TabIndex = 3;
+            // 
             // squareModel
             // 
             squareModel.BackColor = System.Drawing.SystemColors.ActiveBorder;
@@ -492,6 +503,7 @@ namespace TP14_JeudelaVie
             squareModel.Size = new System.Drawing.Size(32, 40);
             squareModel.TabIndex = 1;
             squareModel.TabStop = false;
+            squareModel.Visible = false;
             // 
             // squareModelAlive
             // 
@@ -502,12 +514,14 @@ namespace TP14_JeudelaVie
             squareModelAlive.Size = new System.Drawing.Size(32, 40);
             squareModelAlive.TabIndex = 2;
             squareModelAlive.TabStop = false;
+            squareModelAlive.Visible = false;
             // 
             // Form1
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(13F, 32F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(2313, 1428);
+            Controls.Add(gridPanel);
             Controls.Add(squareModelAlive);
             Controls.Add(squareModel);
             Controls.Add(menuEtatVitesse);
@@ -519,6 +533,7 @@ namespace TP14_JeudelaVie
             Load += Form1_Load;
             menuEtatVitesse.ResumeLayout(false);
             menuEtatVitesse.PerformLayout();
+            gridPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)squareModel).EndInit();
             ((System.ComponentModel.ISupportInitialize)squareModelAlive).EndInit();
             ResumeLayout(false);
@@ -548,6 +563,7 @@ namespace TP14_JeudelaVie
         private System.Windows.Forms.ToolStripTextBox toolStripIterationsTextbox;
         private System.Windows.Forms.ToolStripTextBox toolStripAliveCountBox;
         private System.Windows.Forms.ToolStripTextBox toolStripModeIndicator;
+        private System.Windows.Forms.Panel gridPanel;
         private System.Windows.Forms.ToolStripTextBox toolStripTextBoxStatus;
         private System.Windows.Forms.ToolStripMenuItem exportPatternToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importPatternToolStripMenuItem;
