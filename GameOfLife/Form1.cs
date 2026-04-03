@@ -173,6 +173,7 @@ namespace TP14_JeudelaVie
 
         // Clipboard fields for copy/paste with transforms
         private bool[,] clipboard = null;
+
         private Color[,] clipboardColors = null;
         private int clipboardWidth = 0;
         private int clipboardHeight = 0;
@@ -425,7 +426,7 @@ namespace TP14_JeudelaVie
             }
 
             // Update the display with actual count
-            toolStripAliveCountBox.Text = AliveCount.ToString() + " cells alive.";
+            toolStripAliveCountBox.Text = AliveCount.ToString() + " alive.";
             this.toolStripAliveCountBox.AutoSize = true;  // Will expand
         }
 
@@ -554,7 +555,7 @@ namespace TP14_JeudelaVie
                 }
                 // The preceding block of code determines the cell viability
             }
-            toolStripAliveCountBox.Text = AliveCount.ToString() + " cells alive.";
+            toolStripAliveCountBox.Text = AliveCount.ToString() + " alive.";
             transferBoolArray(squaresPastState, squaresState);
             transferBoolArray(squaresState, squaresFutureState);
 
@@ -838,7 +839,7 @@ namespace TP14_JeudelaVie
             // Reset game state
             TickNumber = 0;
             toolStripIterationsTextbox.Text = "Tick = 0";
-            toolStripAliveCountBox.Text = AliveCount.ToString() + " cells alive.";
+            toolStripAliveCountBox.Text = AliveCount.ToString() + " alive.";
             PreviousAliveCount = -1;
             stableConsecutiveCount = 0;
 
@@ -1111,7 +1112,7 @@ namespace TP14_JeudelaVie
                 }
             }
 
-            toolStripAliveCountBox.Text = AliveCount.ToString() + " cells alive.";
+            toolStripAliveCountBox.Text = AliveCount.ToString() + " alive.";
             PreviousAliveCount = -1;
             stableConsecutiveCount = 0;
 
@@ -1354,7 +1355,7 @@ namespace TP14_JeudelaVie
 
             if (changedCells.Count > 0)
             {
-                toolStripAliveCountBox.Text = AliveCount.ToString() + " cells alive.";
+                toolStripAliveCountBox.Text = AliveCount.ToString() + " alive.";
                 RenderGridDirty(changedCells);
             }
         }
@@ -1413,7 +1414,7 @@ namespace TP14_JeudelaVie
 
             if (cellsToUpdate.Count > 0)
             {
-                toolStripAliveCountBox.Text = AliveCount.ToString() + " cells alive.";
+                toolStripAliveCountBox.Text = AliveCount.ToString() + " alive.";
                 RenderGridDirty(cellsToUpdate);
             }
         }
@@ -1734,7 +1735,7 @@ namespace TP14_JeudelaVie
 
             if (changedCells.Count > 0)
             {
-                toolStripAliveCountBox.Text = AliveCount.ToString() + " cells alive.";
+                toolStripAliveCountBox.Text = AliveCount.ToString() + " alive.";
                 RenderGridDirty(changedCells);
             }
         }
@@ -1966,7 +1967,7 @@ namespace TP14_JeudelaVie
             // Reset game state
             TickNumber = 0;
             toolStripIterationsTextbox.Text = "Tick = 0";
-            toolStripAliveCountBox.Text = AliveCount.ToString() + " cells alive.";
+            toolStripAliveCountBox.Text = AliveCount.ToString() + " alive.";
             PreviousAliveCount = -1;
             stableConsecutiveCount = 0;
 
@@ -2072,7 +2073,7 @@ namespace TP14_JeudelaVie
             // Reset game state
             TickNumber = 0;
             toolStripIterationsTextbox.Text = "Tick = 0";
-            toolStripAliveCountBox.Text = AliveCount.ToString() + " cells alive.";
+            toolStripAliveCountBox.Text = AliveCount.ToString() + " alive.";
             PreviousAliveCount = -1;
             stableConsecutiveCount = 0;
 
@@ -2183,7 +2184,7 @@ namespace TP14_JeudelaVie
             // Reset game state
             TickNumber = 0;
             toolStripIterationsTextbox.Text = "Tick = 0";
-            toolStripAliveCountBox.Text = AliveCount.ToString() + " cells alive.";
+            toolStripAliveCountBox.Text = AliveCount.ToString() + " alive.";
             PreviousAliveCount = -1;
             stableConsecutiveCount = 0;
 
@@ -2258,7 +2259,7 @@ namespace TP14_JeudelaVie
             // Reset game state
             TickNumber = 0;
             toolStripIterationsTextbox.Text = "Tick = 0";
-            toolStripAliveCountBox.Text = AliveCount.ToString() + " cells alive.";
+            toolStripAliveCountBox.Text = AliveCount.ToString() + " alive.";
             PreviousAliveCount = -1;
             stableConsecutiveCount = 0;
 
@@ -2389,7 +2390,7 @@ namespace TP14_JeudelaVie
             // Reset game state
             TickNumber = 0;
             toolStripIterationsTextbox.Text = "Tick = 0";
-            toolStripAliveCountBox.Text = AliveCount.ToString() + " cells alive.";
+            toolStripAliveCountBox.Text = AliveCount.ToString() + " alive.";
             PreviousAliveCount = -1;
             stableConsecutiveCount = 0;
 
